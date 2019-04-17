@@ -14,22 +14,9 @@ class Rect extends PureComponent<IProps, IState> {
   componentDidMount() {
     // console.log('did mount',this.domRef.current)
   }
-  handleMouseEnter = () => {
-    this.hover = true
-    const { onHoverChange } = this.props
-    onHoverChange && onHoverChange(this.hover)
-  }
-  handleMouseLeave = () => {
-    this.hover = false
-    const { onHoverChange } = this.props
-    onHoverChange && onHoverChange(this.hover)
-  }
   render() {
-    const { x = 0, y = 0 } = this.props
     return (
       <div
-        onMouseEnter={this.handleMouseEnter}
-        onMouseLeave={this.handleMouseLeave}
         ref={this.domRef}
         style={{
           width: '100px',
@@ -37,8 +24,9 @@ class Rect extends PureComponent<IProps, IState> {
           background: '#ccc',
           color: '#fff',
           textAlign: 'center',
-          lineHeight: '100px',
-          border: '1px dashed #333'
+          border: '1px dashed #333',
+          fontSize: 40,
+          lineHeight: '100px'
         }}
       >
         rect
