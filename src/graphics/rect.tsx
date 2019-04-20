@@ -7,8 +7,13 @@ interface IProps {
   x?: number
   y?: number
 }
-interface IState {}
+interface IState {
+  list: any[]
+}
 class Rect extends PureComponent<IProps, IState> {
+  state = {
+    list: []
+  }
   domRef: React.RefObject<any> = React.createRef()
   hover: boolean = false
   componentDidMount() {
