@@ -8,7 +8,9 @@ export default class Vector2d {
     this.magnitude = this.getMagnitude();
   }
 
-  /*取模*/
+  /**
+   * 取模
+   */
   getMagnitude(): number {
     if (this.x === 0 && this.y === 0) {
       return 0.000000001;
@@ -16,12 +18,18 @@ export default class Vector2d {
     return Math.sqrt(this.x * this.x + this.y * this.y);
   }
 
-  /*矢量加*/
+  /**
+   * 矢量加
+   * @param target 
+   */
   add(target: Vector2d): Vector2d {
     return new Vector2d(this.x + target.x, this.y + target.y);
   }
 
-  /*矢量减*/
+  /**
+   * 矢量减
+   * @param target 
+   */
   substract(target: Vector2d): Vector2d {
     return new Vector2d(this.x - target.x, this.y - target.y);
   }
@@ -31,7 +39,10 @@ export default class Vector2d {
     return this.x * target.x + this.y * target.y;
   }
 
-  /*与标量的积*/
+  /**
+   * 与标量的积
+   * @param scalar 
+   */
   scale(scalar: number): Vector2d {
     return new Vector2d(this.x * scalar, this.y * scalar);
   }
@@ -46,12 +57,16 @@ export default class Vector2d {
     return new Vector2d(this.y, -this.x);
   }
 
-  /*单位向量*/
+  /**
+   * 求单位向量
+   */
   normalize(): Vector2d {
     return new Vector2d(this.x / this.magnitude, this.y / this.magnitude);
   }
 
-  /*法向量*/
+  /**
+   * 求法向量
+   */
   normal(): Vector2d {
     return this.perpendicular().normalize();
   }

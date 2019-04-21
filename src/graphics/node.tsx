@@ -12,18 +12,19 @@ class Node extends PureComponent<IProps, IState> {
     return (
       <div
         style={{
-          width: '80px',
-          height: '80px',
+          width: '60px',
+          height: '60px',
           borderRadius: '50%',
           background: '#ccc',
           color: 'white',
           fontSize: '12px',
           textAlign: 'center',
-          lineHeight: '80px',
+          lineHeight: '60px',
           position: 'absolute',
-          left: `${x}px`,
-          top: `${y}px`,
-          transform: 'translate(-50%,-50%)'
+          left: 0,
+          top: 0,
+          margin: '-30px -30px',
+          transform: `translate3d(${x}px,${y}px,0)`
         }}
       >
         {name}
