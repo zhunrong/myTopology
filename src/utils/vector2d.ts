@@ -93,4 +93,13 @@ export default class Vector2d {
   angle(target: Vector2d): number {
     return Math.acos(this.cosAngle(target));
   }
+
+  /**
+   * 与x轴夹角
+   */
+  xAxisAngle(): number {
+    const xAxis = new Vector2d(1, 0)
+    const angle = this.angle(xAxis)
+    return this.y > 0 ? angle : -angle
+  }
 }

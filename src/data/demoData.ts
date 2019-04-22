@@ -43,6 +43,10 @@ const data: IData = {
     {
       name: 'node10',
       id: 'n10'
+    },
+    {
+      name: 'node11',
+      id: 'n11'
     }
   ],
   "edges": [
@@ -100,6 +104,11 @@ const data: IData = {
       id: 'e11',
       target: 'n9',
       source: 'n5'
+    },
+    {
+      id: 'e12',
+      target: 'n11',
+      source: 'n7'
     }
   ]
 }

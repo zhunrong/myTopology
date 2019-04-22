@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import Node from '../graphics/node'
-import Edge from '../graphics/edge'
+import Edge from '../graphics/connector'
 import demoData, { IData } from '../data/demoData'
 import Vector2d from '../utils/vector2d'
-let RENDER_COUNT = 1200
+let RENDER_COUNT = 600
 let UNIT_TIME = 0.5
-let x = 800
-let y = 300
+let x = window.innerWidth / 2 - 200
+let y = window.innerHeight / 2 - 100
 
 interface IProps {}
 interface INode {
@@ -20,6 +20,7 @@ interface INode {
   position: Vector2d
   source: Set<INode>
   target: Set<INode>
+  rootNode: boolean
 }
 interface IEdge {
   x1: number
@@ -34,11 +35,13 @@ interface IState {
   edges: IEdge[]
 }
 class Demo extends Component<IProps, IState> {
+  targetNodeIds: Set<string> = new Set()
+  rootNodeIds: Set<string> = new Set()
   constructor(props: IProps) {
     super(props)
     this.state = {
-      nodes: this.generateNodes(demoData),
-      edges: this.generateEdges(demoData)
+      edges: this.generateEdges(demoData),
+      nodes: this.generateNodes(demoData)
     }
   }
   componentDidMount() {
@@ -63,6 +66,7 @@ class Demo extends Component<IProps, IState> {
     const nodes: INode[] = nodeData.map(node => {
       x = x + Math.random() * 5 + 20
       y = y + Math.random() * 5 + 20
+      const rootNode: boolean = !this.targetNodeIds.has(node.id)
       return {
         source: new Set(),
         target: new Set(),
@@ -70,10 +74,11 @@ class Demo extends Component<IProps, IState> {
         velocity: new Vector2d(0, 0),
         acceleration: new Vector2d(0, 0),
         force: new Vector2d(0, 0),
-        M: 1,
-        Q: 16,
+        M: rootNode ? 2 : 1,
+        Q: rootNode ? 20 : 16,
         name: node.name,
-        id: node.id
+        id: node.id,
+        rootNode
       }
     })
     edges.forEach(edge => {
@@ -90,6 +95,7 @@ class Demo extends Component<IProps, IState> {
   generateEdges(data: IData): IEdge[] {
     const { edges } = data
     return edges.map(edge => {
+      this.targetNodeIds.add(edge.target)
       return {
         x1: 0,
         y1: 0,
@@ -128,7 +134,7 @@ class Demo extends Component<IProps, IState> {
         // 弹性系数
         const k: number = 0.005
         // 拉力绳自然长度
-        const L: number = 150
+        const L: number = 100
         const v = target.position.substract(node.position)
         // 节点间的距离
         const distance = v.magnitude
@@ -195,8 +201,16 @@ class Demo extends Component<IProps, IState> {
           }}
         >
           {nodes.map(node => {
-            const { name, position, id } = node
-            return <Node x={position.x} y={position.y} name={name} key={id} />
+            const { name, position, id, rootNode } = node
+            return (
+              <Node
+                x={position.x}
+                y={position.y}
+                name={name}
+                key={id}
+                rootNode={rootNode}
+              />
+            )
           })}
         </div>
         <svg

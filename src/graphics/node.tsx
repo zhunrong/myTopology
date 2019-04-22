@@ -4,15 +4,16 @@ interface IProps {
   x: number
   y: number
   name: string
+  rootNode?: boolean
 }
 interface IState {}
 
 class Node extends PureComponent<IProps, IState> {
   render() {
-    const { x, y, name } = this.props
+    const { x, y, name, rootNode } = this.props
     return (
       <div
-        className={style.node}
+        className={`${style.node} ${rootNode ? 'root' : ''}`}
         style={{
           transform: `translate3d(${x}px,${y}px,0)`
         }}
