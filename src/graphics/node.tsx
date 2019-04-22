@@ -6,6 +6,7 @@ interface IProps {
   name: string
 }
 interface IState {}
+
 class Node extends PureComponent<IProps, IState> {
   render() {
     const { x, y, name } = this.props

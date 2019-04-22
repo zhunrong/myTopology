@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Node from '../graphics/node'
-import Connector from '../graphics/connector'
+import Edge from '../graphics/edge'
 import demoData, { IData } from '../data/demoData'
 import Vector2d from '../utils/vector2d'
 let RENDER_COUNT = 1200
@@ -21,7 +21,7 @@ interface INode {
   source: Set<INode>
   target: Set<INode>
 }
-interface IConnector {
+interface IEdge {
   x1: number
   y1: number
   x2: number
@@ -31,14 +31,14 @@ interface IConnector {
 }
 interface IState {
   nodes: INode[]
-  connectors: IConnector[]
+  edges: IEdge[]
 }
 class Demo extends Component<IProps, IState> {
   constructor(props: IProps) {
     super(props)
     this.state = {
       nodes: this.generateNodes(demoData),
-      connectors: this.generateConnectors(demoData)
+      edges: this.generateEdges(demoData)
     }
   }
   componentDidMount() {
@@ -47,11 +47,9 @@ class Demo extends Component<IProps, IState> {
   loop = () => {
     if (RENDER_COUNT-- < 0) return
     requestAnimationFrame(this.loop)
-    this.calculateForce()
-    this.calculateAccelation()
-    this.calculateVelocity()
-    this.calculatePosition()
-    this.updateConnectors()
+    this.calculateNodeForce()
+    this.updateNodes()
+    this.updateEdges()
   }
   /**
    * 生成节点
@@ -85,7 +83,7 @@ class Demo extends Component<IProps, IState> {
     return nodes
   }
   // 生成连线
-  generateConnectors(data: IData): IConnector[] {
+  generateEdges(data: IData): IEdge[] {
     const { edges } = data
     return edges.map(edge => {
       return {
@@ -98,8 +96,8 @@ class Demo extends Component<IProps, IState> {
       }
     })
   }
-  // 计算受力
-  calculateForce() {
+  // 计算节点受力
+  calculateNodeForce() {
     const { nodes } = this.state
     nodes.forEach(node => {
       node.force = new Vector2d(0, 0)
@@ -109,7 +107,6 @@ class Demo extends Component<IProps, IState> {
         const v = node.position.substract(target.position)
         // 节点间的距离
         const distance = v.magnitude
-        // console.log(distance)
         // 系数
         const k: number = 100
         // 斥力
@@ -146,46 +143,33 @@ class Demo extends Component<IProps, IState> {
       node.force = node.force.add(F)
     })
   }
-  // 计算加速度
-  calculateAccelation() {
+  // 更新节点
+  updateNodes(){
     const { nodes } = this.state
     nodes.forEach(node => {
-      // if (node.force.magnitude < 0.04) return
-      // console.log(node.force.magnitude)
       node.acceleration = node.force.scale(1 / node.M)
-    })
-  }
-  // 计算速度
-  calculateVelocity() {
-    const { nodes } = this.state
-    nodes.forEach(node => {
       node.velocity = node.velocity.add(node.acceleration.scale(UNIT_TIME))
-    })
-  }
-  // 计算位置
-  calculatePosition() {
-    const { nodes } = this.state
-    nodes.forEach(node => {
       node.position = node.position.add(node.velocity.scale(UNIT_TIME))
     })
     this.setState({ nodes })
   }
-  updateConnectors() {
-    const { connectors, nodes } = this.state
-    connectors.forEach(connector => {
-      const target = nodes.find(node => node.id === connector.target)
-      const source = nodes.find(node => node.id === connector.source)
+  // 更新连线
+  updateEdges() {
+    const { edges, nodes } = this.state
+    edges.forEach(edge => {
+      const target = nodes.find(node => node.id === edge.target)
+      const source = nodes.find(node => node.id === edge.source)
       if (target && source) {
-        connector.x1 = source.position.x
-        connector.y1 = source.position.y
-        connector.x2 = target.position.x
-        connector.y2 = target.position.y
+        edge.x1 = source.position.x
+        edge.y1 = source.position.y
+        edge.x2 = target.position.x
+        edge.y2 = target.position.y
       }
     })
-    this.setState({ connectors })
+    this.setState({ edges })
   }
   render() {
-    const { nodes, connectors } = this.state
+    const { nodes, edges } = this.state
     return (
       <div
         style={{
@@ -222,14 +206,14 @@ class Demo extends Component<IProps, IState> {
             left: 0
           }}
         >
-          {connectors.map(connector => {
+          {edges.map(edge => {
             return (
-              <Connector
-                key={`${connector.source}-${connector.target}`}
-                x1={connector.x1}
-                y1={connector.y1}
-                x2={connector.x2}
-                y2={connector.y2}
+              <Edge
+                key={`${edge.source}-${edge.target}`}
+                x1={edge.x1}
+                y1={edge.y1}
+                x2={edge.x2}
+                y2={edge.y2}
               />
             )
           })}

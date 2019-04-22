@@ -34,7 +34,10 @@ export default class Vector2d {
     return new Vector2d(this.x - target.x, this.y - target.y);
   }
 
-  /*点积*/
+  /**
+   * 点积
+   * @param target 
+   */
   dotProduct(target: Vector2d): number {
     return this.x * target.x + this.y * target.y;
   }
@@ -47,12 +50,16 @@ export default class Vector2d {
     return new Vector2d(this.x * scalar, this.y * scalar);
   }
 
-  /*求边缘向量*/
+  /**
+   * 求边缘向量
+   */
   edge(target: Vector2d): Vector2d {
     return this.substract(target);
   }
 
-  /*正交向量*/
+  /**
+   * 求正交向量
+   */
   perpendicular(): Vector2d {
     return new Vector2d(this.y, -this.x);
   }
@@ -71,12 +78,18 @@ export default class Vector2d {
     return this.perpendicular().normalize();
   }
 
-  /*求与目标向量的夹角余弦值*/
+  /**
+   * 求与目标向量的夹角余弦值
+   * @param target 
+   */
   cosAngle(target: Vector2d): number {
     return this.dotProduct(target) / (this.magnitude * target.magnitude);
   }
 
-  /*求与目标向量的夹角*/
+  /**
+   * 求与目标向量的夹角
+   * @param target 
+   */
   angle(target: Vector2d): number {
     return Math.acos(this.cosAngle(target));
   }
