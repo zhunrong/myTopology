@@ -44,12 +44,16 @@ class Demo extends Component<IProps, IState> {
   componentDidMount() {
     this.loop()
   }
+  // 渲染循环
   loop = () => {
     if (RENDER_COUNT-- < 0) return
     requestAnimationFrame(this.loop)
     this.calculateNodeForce()
+    // 下面这两个步骤耗时比较久
+    // const start = Date.now()
     this.updateNodes()
     this.updateEdges()
+    // console.log(Date.now() - start)
   }
   /**
    * 生成节点
@@ -134,7 +138,7 @@ class Demo extends Component<IProps, IState> {
         node.force = node.force.add(F)
       })
       // 阻尼系数
-      const k = 0.1
+      const k: number = 0.1
       // 阻尼
       // const F = node.velocity.scale(-1 * k)
       const F = node.velocity
@@ -144,7 +148,7 @@ class Demo extends Component<IProps, IState> {
     })
   }
   // 更新节点
-  updateNodes(){
+  updateNodes() {
     const { nodes } = this.state
     nodes.forEach(node => {
       node.acceleration = node.force.scale(1 / node.M)

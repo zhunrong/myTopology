@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-
+import style from './node.scss'
 interface IProps {
   x: number
   y: number
@@ -12,19 +12,8 @@ class Node extends PureComponent<IProps, IState> {
     const { x, y, name } = this.props
     return (
       <div
+        className={style.node}
         style={{
-          width: '60px',
-          height: '60px',
-          borderRadius: '50%',
-          background: '#ccc',
-          color: 'white',
-          fontSize: '12px',
-          textAlign: 'center',
-          lineHeight: '60px',
-          position: 'absolute',
-          left: 0,
-          top: 0,
-          margin: '-30px -30px',
           transform: `translate3d(${x}px,${y}px,0)`
         }}
       >
