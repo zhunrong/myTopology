@@ -45,8 +45,28 @@ const data: IData = {
       id: 'n10'
     },
     {
-      name: 'node11',
-      id: 'n11'
+      name: 'node12',
+      id: 'n12'
+    },
+    {
+      name: 'node13',
+      id: 'n13'
+    },
+    {
+      name: 'node14',
+      id: 'n14'
+    },
+    {
+      name: 'node15',
+      id: 'n15'
+    },
+    {
+      name: 'node16',
+      id: 'n16'
+    },
+    {
+      name: 'node17',
+      id: 'n17'
     }
   ],
   "edges": [
@@ -109,6 +129,16 @@ const data: IData = {
       id: 'e12',
       target: 'n11',
       source: 'n7'
+    },
+    {
+      id: 'e13',
+      target: 'n16',
+      source: 'n15'
+    },
+    {
+      id: 'e14',
+      target: 'n12',
+      source: 'n14'
     }
   ]
 }

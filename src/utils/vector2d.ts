@@ -102,4 +102,13 @@ export default class Vector2d {
     const angle = this.angle(xAxis)
     return this.y > 0 ? angle : -angle
   }
+
+  /**
+   * 对向量进行旋转
+   * @param deg 
+   */
+  rotate(deg: number): Vector2d {
+    const { x, y } = this
+    return new Vector2d(x * Math.cos(deg) - y * Math.sin(deg), x * Math.sin(deg) + y * Math.cos(deg))
+  }
 }
