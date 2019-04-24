@@ -5,6 +5,8 @@ interface IProps {
   y1: number
   x2: number
   y2: number
+  start?: Vector2d
+  end?: Vector2d
 }
 class Edge extends PureComponent<IProps> {
   render() {
@@ -14,7 +16,6 @@ class Edge extends PureComponent<IProps> {
     const v = end.substract(start)
     const vn = v.normalize().scale(30)
     const arrowStart = v.substract(vn).add(start)
-    const arrowCenter = arrowStart.substract(v.normalize().scale(4))
     const arrowX = arrowStart.x
     const arrowY = arrowStart.y
     let rotate = (v.xAxisAngle() / Math.PI) * 180

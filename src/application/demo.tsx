@@ -5,10 +5,11 @@ import demoData, { IData } from '../data/demoData'
 import Vector2d from '../utils/vector2d'
 let RENDER_COUNT = 1200
 let UNIT_TIME = 0.5
-
 const CENTER = new Vector2d(window.innerWidth / 2, window.innerHeight / 2)
 
-interface IProps {}
+let totalTime = 0
+
+interface IProps { }
 interface INode {
   id: string
   name: string
@@ -41,6 +42,8 @@ interface IState {
 class Demo extends Component<IProps, IState> {
   targetNodeIds: Set<string> = new Set()
   rootNodeIds: Set<string> = new Set()
+  canvasRef: React.RefObject<HTMLCanvasElement> = React.createRef()
+  canvasCtx: CanvasRenderingContext2D | null = null
   constructor(props: IProps) {
     super(props)
     this.state = {
@@ -49,19 +52,37 @@ class Demo extends Component<IProps, IState> {
     }
   }
   componentDidMount() {
+    const canvas = this.canvasRef.current
+    if (canvas) {
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+      this.canvasCtx = canvas.getContext('2d')
+    }
     this.loop()
   }
   // 渲染循环
   loop = () => {
-    if (RENDER_COUNT-- < 0) return
-    requestAnimationFrame(this.loop)
+    if (RENDER_COUNT-- < 0) {
+      return console.log(totalTime)
+    }
+
+    const start = Date.now()
     this.calculateNodeForce()
+
+    if (!this.canvasCtx) return
+    this.canvasCtx.clearRect(0, 0, window.innerWidth, window.innerHeight)
     // 下面这两个步骤耗时比较久
-    // const start = Date.now()
-    this.updateNodes()
-    // debugger
     this.updateEdges()
-    // console.log(Date.now() - start)
+    this.updateNodes()
+    totalTime += Date.now() - start
+
+
+    if (RENDER_COUNT > 1200) {
+      this.loop()
+    } else {
+      requestAnimationFrame(this.loop)
+    }
+
   }
   /**
    * 生成节点
@@ -73,7 +94,7 @@ class Demo extends Component<IProps, IState> {
       return {
         source: new Set(),
         target: new Set(),
-        // 螺旋布局
+        // 初始布局：螺旋分布
         position: CENTER.add(
           new Vector2d(index * 5, 0).rotate(((index * 10) / 180) * Math.PI)
         ),
@@ -96,42 +117,77 @@ class Demo extends Component<IProps, IState> {
       }
     })
 
-    // 位置屏幕四边上的8个固定节点
-    const positions: Vector2d[] = [
-      new Vector2d(0, 0),
-      new Vector2d(window.innerWidth / 4, 0),
-      new Vector2d(window.innerWidth / 2, 0),
-      new Vector2d((window.innerWidth / 4) * 3, 0),
-      new Vector2d(window.innerWidth, 0),
-      new Vector2d(window.innerWidth, window.innerHeight / 4),
-      new Vector2d(window.innerWidth, window.innerHeight / 2),
-      new Vector2d(window.innerWidth, (window.innerHeight / 4) * 3),
-      new Vector2d(window.innerWidth, window.innerHeight),
-      new Vector2d((window.innerWidth / 4) * 3, window.innerHeight),
-      new Vector2d(window.innerWidth / 2, window.innerHeight),
-      new Vector2d(window.innerWidth / 4, window.innerHeight),
-      new Vector2d(0, window.innerHeight),
-      new Vector2d(0, (window.innerHeight / 4) * 3),
-      new Vector2d(0, window.innerHeight / 2),
-      new Vector2d(0, window.innerHeight / 4)
-    ]
-    positions.forEach((pos, index) => {
+    // 生成屏幕四周的固定节点
+    let horizontalCount = Math.floor(window.innerWidth / 60) - 1
+    const horizontalUnitDistance = window.innerWidth / horizontalCount
+    let vertitalCount = Math.floor(window.innerHeight / 60) - 1
+    const vertitalUnitDistance = window.innerHeight / vertitalCount
+    while (horizontalCount-- > 0) {
       nodes.push({
         source: new Set(),
         target: new Set(),
-        position: pos,
+        position: new Vector2d(horizontalUnitDistance * horizontalCount, 0),
         velocity: new Vector2d(0, 0),
         acceleration: new Vector2d(0, 0),
         force: new Vector2d(0, 0),
         M: 1,
-        Q: 80,
+        Q: 6,
         name: '固定节点',
-        id: `fixed-${index}`,
+        id: `fixed-top-${horizontalCount}`,
         rootNode: true,
         hidden: true,
         fixed: true
-      })
-    })
+      },
+        {
+          source: new Set(),
+          target: new Set(),
+          position: new Vector2d(window.innerWidth, window.innerHeight).add(new Vector2d(-horizontalUnitDistance * horizontalCount, 0)),
+          velocity: new Vector2d(0, 0),
+          acceleration: new Vector2d(0, 0),
+          force: new Vector2d(0, 0),
+          M: 1,
+          Q: 6,
+          name: '固定节点',
+          id: `fixed-bottom-${horizontalCount}`,
+          rootNode: true,
+          hidden: true,
+          fixed: true
+        }
+      )
+    }
+    while (vertitalCount-- > 0) {
+      nodes.push({
+        source: new Set(),
+        target: new Set(),
+        position: new Vector2d(0, window.innerHeight).add(new Vector2d(0, -vertitalCount * vertitalUnitDistance)),
+        velocity: new Vector2d(0, 0),
+        acceleration: new Vector2d(0, 0),
+        force: new Vector2d(0, 0),
+        M: 1,
+        Q: 6,
+        name: '固定节点',
+        id: `fixed-left-${vertitalCount}`,
+        rootNode: true,
+        hidden: true,
+        fixed: true
+      },
+        {
+          source: new Set(),
+          target: new Set(),
+          position: new Vector2d(window.innerWidth, 0).add(new Vector2d(0, vertitalCount * vertitalUnitDistance)),
+          velocity: new Vector2d(0, 0),
+          acceleration: new Vector2d(0, 0),
+          force: new Vector2d(0, 0),
+          M: 1,
+          Q: 6,
+          name: '固定节点',
+          id: `fixed-right-${vertitalCount}`,
+          rootNode: true,
+          hidden: true,
+          fixed: true
+        }
+      )
+    }
     return nodes
   }
   // 生成连线
@@ -168,10 +224,6 @@ class Demo extends Component<IProps, IState> {
           .normalize()
           .scale((k * node.Q * target.Q) / Math.pow(distance, 2))
         node.force = node.force.add(F)
-        if (isNaN(node.force.magnitude)) {
-          console.log(node.force.magnitude)
-          debugger
-        }
       })
       const relationNode = [
         ...Array.from(node.source),
@@ -210,15 +262,29 @@ class Demo extends Component<IProps, IState> {
   updateNodes() {
     const { nodes } = this.state
     nodes.forEach(node => {
-      if (node.fixed) return
+      if (node.fixed || node.hidden) return
       node.acceleration = node.force.scale(1 / node.M)
       node.velocity = node.velocity.add(node.acceleration.scale(UNIT_TIME))
       node.position = node.position.add(node.velocity.scale(UNIT_TIME))
+
+      if (this.canvasCtx) {
+        const { x, y } = node.position
+        this.canvasCtx.beginPath()
+        this.canvasCtx.arc(x, y, 30, 0, Math.PI * 2)
+        this.canvasCtx.fillStyle = '#ccc'
+        this.canvasCtx.fill()
+        this.canvasCtx.textAlign = 'center'
+        this.canvasCtx.textBaseline = 'middle'
+        this.canvasCtx.fillStyle = '#fff'
+        this.canvasCtx.font = '12px sans-serif'
+        this.canvasCtx.fillText(node.name, x, y)
+      }
     })
-    this.setState({ nodes })
+    // this.setState({ nodes })
   }
   // 更新连线
   updateEdges() {
+
     const { edges, nodes } = this.state
     edges.forEach(edge => {
       const target = nodes.find(node => node.id === edge.target)
@@ -229,8 +295,14 @@ class Demo extends Component<IProps, IState> {
         edge.x2 = target.position.x
         edge.y2 = target.position.y
       }
+      if (this.canvasCtx) {
+        this.canvasCtx.beginPath()
+        this.canvasCtx.moveTo(edge.x1, edge.y1)
+        this.canvasCtx.lineTo(edge.x2, edge.y2)
+        this.canvasCtx.stroke()
+      }
     })
-    this.setState({ edges })
+    // this.setState({ edges })
   }
   render() {
     const { nodes, edges } = this.state
@@ -244,7 +316,8 @@ class Demo extends Component<IProps, IState> {
           left: 0
         }}
       >
-        <div
+        <canvas ref={this.canvasRef}></canvas>
+        {/* <div
           style={{
             position: 'absolute',
             width: '100%',
@@ -267,8 +340,8 @@ class Demo extends Component<IProps, IState> {
               />
             )
           })}
-        </div>
-        <svg
+        </div> */}
+        {/* <svg
           xmlns="http://www.w3.org/2000/svg"
           version="1.1"
           style={{
@@ -276,7 +349,8 @@ class Demo extends Component<IProps, IState> {
             width: '100%',
             height: '100%',
             top: 0,
-            left: 0
+            left: 0,
+            transform:'translate3d(0,0,0)'
           }}
         >
           {edges.map(edge => {
@@ -290,7 +364,7 @@ class Demo extends Component<IProps, IState> {
               />
             )
           })}
-        </svg>
+        </svg> */}
       </div>
     )
   }
