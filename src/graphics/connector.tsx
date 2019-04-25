@@ -18,7 +18,7 @@ class Edge extends PureComponent<IProps> {
     const arrowStart = v.substract(vn).add(start)
     const arrowX = arrowStart.x
     const arrowY = arrowStart.y
-    let rotate = (v.xAxisAngle() / Math.PI) * 180
+    const rotate = (v.xAxisAngle() / Math.PI) * 180
     return (
       <g>
         <path d={`M${x1},${y1} L${x2},${y2}`} stroke="#ccc" />

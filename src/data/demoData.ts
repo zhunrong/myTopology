@@ -203,21 +203,6 @@ const data: IData = {
       id: 'e22',
       target: 'n13',
       source: 'n12'
-    },
-    {
-      id: 'e23',
-      target: 'n13',
-      source: 'n10'
-    },
-    {
-      id: 'e24',
-      target: 'n23',
-      source: 'n14'
-    },
-    {
-      id: 'e25',
-      target: 'n13',
-      source: 'n14'
     }
   ]
 }

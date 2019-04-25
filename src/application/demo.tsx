@@ -289,17 +289,32 @@ class Demo extends Component<IProps, IState> {
     edges.forEach(edge => {
       const target = nodes.find(node => node.id === edge.target)
       const source = nodes.find(node => node.id === edge.source)
-      if (target && source) {
+      if (target && source && this.canvasCtx) {
         edge.x1 = source.position.x
         edge.y1 = source.position.y
         edge.x2 = target.position.x
         edge.y2 = target.position.y
-      }
-      if (this.canvasCtx) {
+
         this.canvasCtx.beginPath()
+        // 画线
         this.canvasCtx.moveTo(edge.x1, edge.y1)
         this.canvasCtx.lineTo(edge.x2, edge.y2)
         this.canvasCtx.stroke()
+        // 画箭头
+        const sourceToTarget = target.position.substract(source.position)
+        const arrowStart = target.position.substract(sourceToTarget.normalize().scale(30))
+        this.canvasCtx.beginPath()
+        this.canvasCtx.save()
+        const rotate = sourceToTarget.xAxisAngle()
+        this.canvasCtx.translate(arrowStart.x, arrowStart.y)
+        this.canvasCtx.rotate(rotate)
+        this.canvasCtx.moveTo(0, 0)
+        this.canvasCtx.lineTo(- 8, + 3)
+        this.canvasCtx.lineTo(- 8, - 3)
+        this.canvasCtx.closePath()
+        this.canvasCtx.fillStyle = 'black'
+        this.canvasCtx.fill()
+        this.canvasCtx.restore()
       }
     })
     // this.setState({ edges })
