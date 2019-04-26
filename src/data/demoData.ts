@@ -2,97 +2,27 @@ export interface IData {
   nodes: any[]
   edges: any[]
 }
+
+let nodeId: number = 1
+
+let nodes: any[] = []
+// let edges: any[] = []
+function createNodes(count: number): any[] {
+  const nodes = []
+  while (count-- > 0) {
+    nodes.push({
+      name: `node_${nodeId}`,
+      id: `n${nodeId++}`
+    })
+  }
+  return nodes
+}
+// function createEdges(count: number): any[] {
+//   return []
+// }
+nodes = nodes.concat(createNodes(25))
 const data: IData = {
-  "nodes": [
-    {
-      "name": "node1",
-      "id": "n1"
-    },
-    {
-      "name": "node2",
-      "id": "n2"
-    },
-    {
-      "name": "node3",
-      "id": "n3"
-    },
-    {
-      name: 'node4',
-      id: 'n4'
-    },
-    {
-      name: 'node5',
-      id: 'n5'
-    },
-    {
-      name: 'node6',
-      id: 'n6'
-    },
-    {
-      name: 'node7',
-      id: 'n7'
-    },
-    {
-      name: 'node8',
-      id: 'n8'
-    },
-    {
-      name: 'node9',
-      id: 'n9'
-    },
-    {
-      name: 'node10',
-      id: 'n10'
-    },
-    {
-      name: 'node12',
-      id: 'n12'
-    },
-    {
-      name: 'node13',
-      id: 'n13'
-    },
-    {
-      name: 'node14',
-      id: 'n14'
-    },
-    {
-      name: 'node15',
-      id: 'n15'
-    },
-    {
-      name: 'node16',
-      id: 'n16'
-    },
-    {
-      name: 'node17',
-      id: 'n17'
-    },
-    {
-      name: 'node18',
-      id: 'n18'
-    },
-    {
-      name: 'node19',
-      id: 'n19'
-    },
-    {
-      name: 'node20',
-      id: 'n20'
-    },
-    {
-      name: 'node21',
-      id: 'n21'
-    },
-    {
-      name: 'node22',
-      id: 'n22'
-    },
-    {
-      name: 'node23',
-      id: 'n23'
-    }
-  ],
+  nodes,
   "edges": [
     {
       "id": "e1",

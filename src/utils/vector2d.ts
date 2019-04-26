@@ -87,7 +87,7 @@ export default class Vector2d {
   }
 
   /**
-   * 求与目标向量的夹角
+   * 求与目标向量的夹角 弧度值
    * @param target 
    */
   angle(target: Vector2d): number {
@@ -95,7 +95,7 @@ export default class Vector2d {
   }
 
   /**
-   * 与x轴夹角
+   * 与x轴夹角(顺时针为正)
    */
   xAxisAngle(): number {
     const xAxis = new Vector2d(1, 0)
@@ -104,7 +104,7 @@ export default class Vector2d {
   }
 
   /**
-   * 对向量进行旋转
+   * 对向量进行旋转(参数为弧度值)
    * @param deg 
    */
   rotate(deg: number): Vector2d {
