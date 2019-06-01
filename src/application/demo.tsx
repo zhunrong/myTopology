@@ -5,6 +5,7 @@ import Node from '../class/node'
 import Edge from '../class/edge'
 import demoData, { IData } from '../data/demoData'
 import Vector2d from '../utils/vector2d'
+import Application from '../class/application'
 let RENDER_COUNT = 1200
 let UNIT_TIME = 0.5
 const CENTER = new Vector2d(window.innerWidth / 2, window.innerHeight / 2)
@@ -16,15 +17,17 @@ interface IState {
   nodes: Node[]
   edges: Edge[]
 }
-class Demo extends Component<IProps, IState> {
+class Demo extends Application<IProps, IState> {
   targetNodeIds: Set<string> = new Set()
   sourceNodeIds: Set<string> = new Set()
   // 存储所有根节点
   rootNodes: Set<Node> = new Set()
+  containerRef: React.RefObject<HTMLDivElement> = React.createRef()
   canvasRef: React.RefObject<HTMLCanvasElement> = React.createRef()
   canvasCtx: CanvasRenderingContext2D | null = null
   constructor(props: IProps) {
     super(props)
+    console.log('demo', this)
     this.init()
   }
   init() {
@@ -46,7 +49,9 @@ class Demo extends Component<IProps, IState> {
   }
   componentDidMount() {
     const canvas = this.canvasRef.current
-    if (canvas) {
+    const container = this.containerRef.current
+    if (canvas && container) {
+      this.canvasInit(container, canvas)
       canvas.width = window.innerWidth
       canvas.height = window.innerHeight
       this.canvasCtx = canvas.getContext('2d')
@@ -270,6 +275,7 @@ class Demo extends Component<IProps, IState> {
     const { nodes, edges } = this.state
     return (
       <div
+        ref={this.containerRef}
         style={{
           position: 'fixed',
           width: '100%',
