@@ -1,10 +1,25 @@
-interface IListener {
-  (event: any): void
+export interface IListener {
+  (event?: IEventParams): void
 }
-interface IEventParams {
+export interface IEventParams {
   [key: string]: any
 }
-export default class EventEmitter {
-  on(eventName: string, listener: IListener) { }
-  emit(eventName: string, params?: IEventParams) { }
+export interface IEvents {
+  [eventName: string]: IListener[]
 }
+export default class EventEmitter {
+  events: IEvents = {}
+  on(eventName: string, listener: IListener) {
+    this.events[eventName] = this.events[eventName] || []
+    this.events[eventName].push(listener)
+  }
+  emit(eventName: string, params?: IEventParams) {
+    if (this.events[eventName]) {
+      this.events[eventName].forEach(listener => {
+        listener(params)
+      })
+    }
+  }
+}
+
+export const globalEvent = new EventEmitter()

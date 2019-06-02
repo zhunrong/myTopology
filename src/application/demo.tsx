@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import GraphNode from '../graphics/node'
 import GraphEdge from '../graphics/connector'
 import Node from '../class/node'
@@ -24,7 +24,6 @@ class Demo extends Application<IProps, IState> {
   rootNodes: Set<Node> = new Set()
   containerRef: React.RefObject<HTMLDivElement> = React.createRef()
   canvasRef: React.RefObject<HTMLCanvasElement> = React.createRef()
-  canvasCtx: CanvasRenderingContext2D | null = null
   constructor(props: IProps) {
     super(props)
     console.log('demo', this)
@@ -54,9 +53,7 @@ class Demo extends Application<IProps, IState> {
       this.canvasInit(container, canvas)
       canvas.width = window.innerWidth
       canvas.height = window.innerHeight
-      this.canvasCtx = canvas.getContext('2d')
     }
-    console.log(this)
     this.loop()
   }
   // 渲染循环
@@ -67,8 +64,8 @@ class Demo extends Application<IProps, IState> {
 
     this.calculateNodeForce()
 
-    if (!this.canvasCtx) return
-    this.canvasCtx.clearRect(0, 0, window.innerWidth, window.innerHeight)
+    if (!this.canvasContext) return
+    this.canvasContext.clearRect(0, 0, window.innerWidth, window.innerHeight)
     this.updateEdges()
     const start = Date.now()
     this.updateNodes()
@@ -237,8 +234,8 @@ class Demo extends Application<IProps, IState> {
       node.calculateAcceleration()
       node.calculateVelocity(UNIT_TIME)
       node.calculatePosition(UNIT_TIME)
-      if (this.canvasCtx) {
-        node.render(RENDER_COUNT, this.canvasCtx)
+      if (this.canvasContext) {
+        node.render(RENDER_COUNT, this.canvasContext)
       }
     })
 
@@ -249,8 +246,8 @@ class Demo extends Application<IProps, IState> {
     //     node.calculateAcceleration()
     //     node.calculateVelocity(UNIT_TIME)
     //     node.calculatePosition(UNIT_TIME)
-    //     if (self.canvasCtx) {
-    //       node.render(RENDER_COUNT, self.canvasCtx)
+    //     if (self.canvasContext) {
+    //       node.render(RENDER_COUNT, self.canvasContext)
     //     }
     //     if (node.expanded && node.target.size) {
     //       update(node.target)
@@ -265,8 +262,8 @@ class Demo extends Application<IProps, IState> {
 
     const { edges } = this.state
     edges.forEach(edge => {
-      if (this.canvasCtx) {
-        edge.render(this.canvasCtx)
+      if (this.canvasContext) {
+        edge.render(this.canvasContext)
       }
     })
     // this.setState({ edges })
