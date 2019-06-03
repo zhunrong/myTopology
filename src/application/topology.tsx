@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import Application from '../graphics/application'
+import Application from '../class/application'
 import Node from '../class/node2'
 import Edge from '../class/edge2'
 import Vector2d from '../utils/vector2d'
@@ -25,11 +25,17 @@ export default class Topology extends Component<IProps> {
   }]
   nodes: Node[] = []
   edges: Edge[] = []
+  containerRef: React.RefObject<HTMLDivElement> = React.createRef()
   constructor(props: IProps) {
     super(props)
 
   }
   componentDidMount() {
+    if (this.containerRef.current) {
+      new Application({
+        container: this.containerRef.current
+      })
+    }
     this.nodes = this.nodeDatas.map((item: any) => {
       return new Node({
         name: item.name,
@@ -68,9 +74,7 @@ export default class Topology extends Component<IProps> {
           <button onClick={this.zoomOut}>缩小</button>
           <button onClick={this.zoomIn}>放大</button>
         </div>
-        <div className="topo-chart">
-          <Application>
-          </Application>
+        <div ref={this.containerRef} className="topo-chart">
         </div>
       </div>
 

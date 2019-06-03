@@ -32,7 +32,7 @@ export default class Node {
     }
     return isHit
   }
-  render(rootElement: HTMLDivElement) {
+  render(parentNode: HTMLDivElement) {
     Object.assign(this.containerEl.style, {
       width: '50px',
       height: '50px',
@@ -45,7 +45,7 @@ export default class Node {
       transform: `translate3d(${this.position.x}px,${this.position.y}px,0)`
     })
     if (!this.mounted) {
-      rootElement.appendChild(this.containerEl)
+      parentNode.appendChild(this.containerEl)
       this.mounted = true
     }
   }
