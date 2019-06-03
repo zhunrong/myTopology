@@ -2,11 +2,15 @@ import EventEmitter, { globalEvent } from '../class/eventEmitter'
 import Vector2d from '../utils/vector2d'
 import ResizeObserver from 'resize-observer-polyfill'
 import { throttle } from '../utils/utils'
+import Node from './node2'
+import Edge from './edge2'
 interface IAPPOptions {
   container: HTMLElement
 }
 export default class Application {
-  mounted: boolean = false
+  private _mounted: boolean = false
+  private _running: boolean = false
+  private _animationFrameId: number = 0
   protected name: string = 'application'
   protected eventEmitter: EventEmitter = globalEvent
   protected container: HTMLElement
@@ -21,13 +25,15 @@ export default class Application {
   private mousedownPosition: Vector2d = new Vector2d(0, 0)
   private mouseupPosition: Vector2d = new Vector2d(0, 0)
   private mousemovePosition: Vector2d = new Vector2d(0, 0)
-  // containerRef: React.RefObject<HTMLDivElement> = React.createRef()
-  // canvasRef: React.RefObject<HTMLCanvasElement> = React.createRef()
-  // divRef: React.RefObject<HTMLDivElement> = React.createRef()
-  protected shapes: any[] = []
+
+  // 节点
+  protected nodes: Node[] = []
+  // 连线
+  protected edges: Edge[] = []
   // 活动的元素
   protected activeShapes: any[] = []
   protected activeShapeIds: Set<number> = new Set()
+  // resize监听器
   private ro: ResizeObserver
   // 画布
   viewWidth: number = 0
@@ -72,24 +78,33 @@ export default class Application {
   // 全局事件监听
   private globalEventInit() {
     globalEvent.on('register:node', this.handleRegisterNode)
-    globalEvent.on('unregister:node', this.handleUnregister)
+    globalEvent.on('unregister:node', this.handleUnregisterNode)
+    globalEvent.on('register:edge', this.handleRegisterEdge)
+    globalEvent.on('unregister:edge', this.handleUnregisterEdge)
     globalEvent.on('zoomIn', this.handleZoomIn)
     globalEvent.on('zoomOut', this.handleZoomOut)
   }
   // 注册节点
   private handleRegisterNode = (node: any) => {
-    console.log('register:node', node)
     node.render(this.root)
-    this.shapes.push(node)
+    this.nodes.push(node)
+  }
+
+  // 注销节点
+  private handleUnregisterNode = (shape: any) => {
+    const index = this.nodes.findIndex(item => item === shape)
+    this.nodes.splice(index, 1)
   }
   // 注册连线
   private handleRegisterEdge = (edge: any) => {
     console.log('register:edge', edge)
+    edge.render(this.canvasContext)
+    this.edges.push(edge)
   }
-  // 注销图形
-  private handleUnregister = (shape: any) => {
-    const index = this.shapes.findIndex(item => item === shape)
-    this.shapes.splice(index, 1)
+  // 注销连线
+  private handleUnregisterEdge = (edge: any) => {
+    const index = this.edges.findIndex(item => item === edge)
+    this.edges.splice(index)
   }
   private handleZoomIn = () => {
     console.log('zoom in')
@@ -111,19 +126,20 @@ export default class Application {
     console.log('mousedown', e)
     const target = e.target as HTMLElement
     if (!target) return
+    this.start()
     // this.activeShapeIds.clear()
     // const shapeId = Number(target.dataset.shapeId)
     // if (shapeId) {
     //   this.activeShapeIds.add(shapeId)
     // }
-    const activeShape = this.shapes.find(shape => {
+    const activeShape = this.nodes.find(shape => {
       return shape.hitTest(e)
     })
     console.log(activeShape)
     if (activeShape) {
       this.activeShapes = [activeShape]
     } else {
-      this.activeShapes = this.shapes
+      this.activeShapes = this.nodes
     }
     this.cachePositions = this.activeShapes.map(shape => shape.position)
 
@@ -152,6 +168,7 @@ export default class Application {
     })
   })
   private handleMouseUp = (e: MouseEvent) => {
+    this.stop()
     // console.log('mouseup', e)
     this.mouseupPosition = new Vector2d(e.clientX, e.clientY)
     this.eventEmitter.emit('mouseup', {
@@ -162,11 +179,12 @@ export default class Application {
     document.removeEventListener('mouseup', this.handleMouseUp)
   }
   render(parentNode: HTMLElement) {
-    if (!this.mounted) {
+    if (!this._mounted) {
       parentNode.append(this.wrapper)
       this.wrapper.appendChild(this.canvas)
       this.wrapper.appendChild(this.root)
-      this.mounted = true
+      this.eventEmitter.emit('canvas:mounted')
+      this._mounted = true
     }
     Object.assign(this.root.style, {
       position: 'absolute',
@@ -184,6 +202,26 @@ export default class Application {
       left: `${(this.viewWidth - this.canvasWidth) / 2}px`,
       top: `${(this.viewHeight - this.canvasHeight) / 2}px`,
       transform: `scale(${this.canvasScale})`
+    })
+  }
+  start() {
+    if (this._running) return
+    this._running = true
+    this.loop()
+  }
+  stop() {
+    if (!this._running) return
+    cancelAnimationFrame(this._animationFrameId)
+    this._running = false
+  }
+  loop() {
+    if (!this._running) return
+    this._animationFrameId = requestAnimationFrame(() => {
+      this.canvasContext.clearRect(0, 0, this.canvasWidth, this.canvasHeight)
+      this.edges.forEach(edge => {
+        edge.render(this.canvasContext)
+      })
+      this.loop()
     })
   }
 }

@@ -16,37 +16,54 @@ export default class Topology extends Component<IProps> {
   }, {
     name: 'node-2',
     id: 2,
-    x: 100,
+    x: 500,
+    y: 200
+  }, {
+    name: 'node-3',
+    id: 3,
+    x: 300,
     y: 150
   }]
   edgeDatas: any = [{
     targetId: 1,
     sourceId: 2
+  }, {
+    targetId: 2,
+    sourceId: 3
   }]
   nodes: Node[] = []
   edges: Edge[] = []
   containerRef: React.RefObject<HTMLDivElement> = React.createRef()
+  app: Application | undefined
   constructor(props: IProps) {
     super(props)
 
   }
   componentDidMount() {
     if (this.containerRef.current) {
-      new Application({
+      this.app = new Application({
         container: this.containerRef.current
       })
     }
-    this.nodes = this.nodeDatas.map((item: any) => {
-      return new Node({
-        name: item.name,
-        x: item.x,
-        y: item.y
+    globalEvent.on('canvas:mounted', () => {
+      this.nodes = this.nodeDatas.map((item: any) => {
+        return new Node({
+          id: item.id,
+          name: item.name,
+          x: item.x,
+          y: item.y
+        })
       })
-    })
-    this.edgeDatas.forEach((edge: any) => {
-      new Edge({
-        targetId: edge.targetId,
-        sourceId: edge.sourceId
+      this.edges = this.edgeDatas.map((item: any) => {
+        const { targetId, sourceId } = item
+        const sourceNode = this.nodes.find(node => node.id === sourceId)
+        const targetNode = this.nodes.find(node => node.id === targetId)
+        return new Edge({
+          targetId: targetId,
+          sourceId: sourceId,
+          sourceNode,
+          targetNode
+        })
       })
     })
   }
@@ -56,7 +73,6 @@ export default class Topology extends Component<IProps> {
       x: 500,
       y: 500
     })
-    this.setState({})
   }
   zoomOut = () => {
     // console.log('zoom out')

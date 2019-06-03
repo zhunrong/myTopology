@@ -1,30 +1,35 @@
-import Node from '../application/node'
+import Node from './node2'
 import { globalEvent } from './eventEmitter'
 interface IOptions {
   targetId: string
   sourceId: string
+  targetNode?: Node
+  sourceNode?: Node
 }
 export default class Edge {
   targetId: string
   sourceId: string
-  targetNode: Node | null = null
-  sourceNode: Node | null = null
+  targetNode: Node | undefined
+  sourceNode: Node | undefined
   constructor(options: IOptions) {
     this.targetId = options.targetId
     this.sourceId = options.sourceId
+    this.targetNode = options.targetNode
+    this.sourceNode = options.sourceNode
     globalEvent.emit('register:edge', this)
   }
   render(canvasCtx: CanvasRenderingContext2D) {
     const { sourceNode, targetNode } = this
     if (sourceNode && targetNode) {
+      console.log(sourceNode, targetNode)
       canvasCtx.beginPath()
       // 画线
-      canvasCtx.moveTo(sourceNode.position.x, sourceNode.position.y)
-      canvasCtx.lineTo(targetNode.position.x, targetNode.position.y)
+      canvasCtx.moveTo(sourceNode.joinPoint.x, sourceNode.joinPoint.y)
+      canvasCtx.lineTo(targetNode.joinPoint.x, targetNode.joinPoint.y)
       canvasCtx.stroke()
       // 画箭头
-      const sourceToTarget = targetNode.position.substract(sourceNode.position)
-      const arrowStart = targetNode.position.substract(sourceToTarget.normalize().scale(30))
+      const sourceToTarget = targetNode.joinPoint.substract(sourceNode.joinPoint)
+      const arrowStart = targetNode.joinPoint.substract(sourceToTarget.normalize().scale(25))
       canvasCtx.beginPath()
       canvasCtx.save()
       const rotate = sourceToTarget.xAxisAngle()

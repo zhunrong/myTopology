@@ -2,20 +2,26 @@ import { globalEvent, IListener } from './eventEmitter'
 import Vector2d from '../utils/vector2d'
 
 interface INodeOptions {
+  id: string | number
   name: string
   x: number
   y: number
 }
 export default class Node {
+  readonly id: string | number
   position: Vector2d
   containerEl: HTMLDivElement
   mounted: boolean = false
   constructor(options: INodeOptions) {
+    this.id = options.id
     this.position = new Vector2d(options.x, options.y)
     this.containerEl = document.createElement('div')
     this.containerEl.innerText = options.name
     globalEvent.emit('register:node', this)
     globalEvent.on('mousedown', this.handleMouseDown)
+  }
+  get joinPoint() {
+    return this.position.add(new Vector2d(25, 25))
   }
   handleMouseDown: IListener = params => {
     console.log(params)
