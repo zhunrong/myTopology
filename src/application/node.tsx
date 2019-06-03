@@ -1,23 +1,26 @@
 import React from 'react'
-import Graph from '../class/graph'
+import Shape from '../class/shape'
 import { globalEvent, IListener } from '../class/eventEmitter'
 import Vector2d from '../utils/vector2d'
-interface IProps { }
+interface IProps {
+  position?: Vector2d
+}
 interface IState {
   position: Vector2d
 }
-export default class Node extends Graph<IProps> {
-  state = {
-    position: new Vector2d(0, 0)
-  }
+export default class Node extends Shape<IProps> {
+  readonly renderType: string = 'html'
   constructor(props: IProps) {
     super(props)
-    this.init()
+    if (props.position) {
+      this.position = props.position
+      this.positionOld = props.position
+    }
     console.log(this)
   }
   render() {
     return (
-      <div data-graph-id={this.graphId} style={{
+      <div data-shape-id={this.shapeId} style={{
         width: 50,
         height: 50,
         fontSize: '12px',
@@ -26,7 +29,7 @@ export default class Node extends Graph<IProps> {
         backgroundColor: '#ccc',
         borderRadius: 25,
         position: 'absolute',
-        transform: `translate3d(${this.position.x}px,${this.position.y}px,0)`
+        transform: `translate3d(${this.position.x}px,${this.position.y}px,0) scale(${this.scale})`
       }}>node</div>
     )
   }

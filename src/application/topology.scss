@@ -1,0 +1,20 @@
+.topology {
+  .topo-bar {
+    height: 50px;
+    line-height: 50px;
+    box-sizing: border-box;
+    border-bottom: 1px solid #ccc;
+
+    button {
+      height: 30px;
+      margin: 0 5px;
+      border-radius: 3px;
+      color: #666;
+    }
+  }
+
+  .topo-chart {
+    height: calc(100vh - 50px);
+    position: relative;
+  }
+}
