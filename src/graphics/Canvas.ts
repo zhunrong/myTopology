@@ -1,9 +1,9 @@
-import EventEmitter, { globalEvent } from '../class/eventEmitter'
+import EventEmitter, { globalEvent } from '../events/eventEmitter'
 import Vector2d from '../utils/vector2d'
 import ResizeObserver from 'resize-observer-polyfill'
 import { throttle } from '../utils/utils'
-import Node from './node2'
-import Edge from './edge2'
+import ANode from './ANode'
+import AEdge from './AEdge'
 interface IAPPOptions {
   container: HTMLElement
 }
@@ -12,7 +12,7 @@ export default class Application {
   private _running: boolean = false
   private _animationFrameId: number = 0
   protected name: string = 'application'
-  protected eventEmitter: EventEmitter = globalEvent
+  public eventEmitter: EventEmitter = globalEvent
   protected container: HTMLElement
   // 最外层div
   protected wrapper: HTMLDivElement = document.createElement('div')
@@ -27,9 +27,9 @@ export default class Application {
   private mousemovePosition: Vector2d = new Vector2d(0, 0)
 
   // 节点
-  protected nodes: Node[] = []
+  protected nodes: ANode[] = []
   // 连线
-  protected edges: Edge[] = []
+  protected edges: AEdge[] = []
   // 活动的元素
   protected activeShapes: any[] = []
   protected activeShapeIds: Set<number> = new Set()
@@ -77,51 +77,56 @@ export default class Application {
   }
   // 全局事件监听
   private globalEventInit() {
-    globalEvent.on('register:node', this.handleRegisterNode)
-    globalEvent.on('unregister:node', this.handleUnregisterNode)
-    globalEvent.on('register:edge', this.handleRegisterEdge)
-    globalEvent.on('unregister:edge', this.handleUnregisterEdge)
     globalEvent.on('zoomIn', this.handleZoomIn)
     globalEvent.on('zoomOut', this.handleZoomOut)
   }
-  // 注册节点
-  private handleRegisterNode = (node: any) => {
-    node.render(this.root)
+  // 添加节点
+  public addNode(node: ANode) {
+    if (this.nodes.find(item => item === node)) return
+    node.render(this.root, this.canvasContext)
     this.nodes.push(node)
   }
-
-  // 注销节点
-  private handleUnregisterNode = (shape: any) => {
-    const index = this.nodes.findIndex(item => item === shape)
-    this.nodes.splice(index, 1)
+  // 删除节点
+  public removeNode(node: ANode) {
+    const index = this.nodes.findIndex(item => item === node)
+    if (index > -1) {
+      this.nodes.splice(index, 1)
+    }
   }
-  // 注册连线
-  private handleRegisterEdge = (edge: any) => {
-    console.log('register:edge', edge)
-    edge.render(this.canvasContext)
+
+  // 添加连线
+  public addEdge(edge: AEdge) {
+    if (this.edges.find(item => item === edge)) return
+    edge.render(this.root, this.canvasContext)
     this.edges.push(edge)
   }
-  // 注销连线
-  private handleUnregisterEdge = (edge: any) => {
+  // 删除连线
+  public removeEdge(edge: AEdge) {
     const index = this.edges.findIndex(item => item === edge)
-    this.edges.splice(index)
+    if (index > -1) {
+      this.edges.splice(index, 1)
+    }
   }
+
   private handleZoomIn = () => {
     console.log('zoom in')
     this.canvasScale += 0.1
     this.canvasWidth = this.viewWidth / this.canvasScale
     this.canvasHeight = this.viewHeight / this.canvasScale
   }
+
   private handleZoomOut = () => {
     this.canvasScale *= 0.9
     this.canvasWidth = this.viewWidth / this.canvasScale
     this.canvasHeight = this.viewHeight / this.canvasScale
     console.log('zoom out')
   }
+
   private handleClick = (e: MouseEvent) => {
     // console.log('click', e)
     this.eventEmitter.emit('click')
   }
+
   private handleMouseDown = (e: MouseEvent) => {
     console.log('mousedown', e)
     const target = e.target as HTMLElement
@@ -135,7 +140,6 @@ export default class Application {
     const activeShape = this.nodes.find(shape => {
       return shape.hitTest(e)
     })
-    console.log(activeShape)
     if (activeShape) {
       this.activeShapes = [activeShape]
     } else {
@@ -219,7 +223,7 @@ export default class Application {
     this._animationFrameId = requestAnimationFrame(() => {
       this.canvasContext.clearRect(0, 0, this.canvasWidth, this.canvasHeight)
       this.edges.forEach(edge => {
-        edge.render(this.canvasContext)
+        edge.render(this.root, this.canvasContext)
       })
       this.loop()
     })

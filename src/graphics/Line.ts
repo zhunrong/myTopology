@@ -1,27 +1,31 @@
-import Node from './node2'
-import { globalEvent } from './eventEmitter'
+import Node from './Circle'
+import AEdge from './AEdge'
+import { globalEvent } from '../events/eventEmitter'
 interface IOptions {
   targetId: string
   sourceId: string
   targetNode?: Node
   sourceNode?: Node
 }
-export default class Edge {
+export default class Line extends AEdge {
   targetId: string
   sourceId: string
   targetNode: Node | undefined
   sourceNode: Node | undefined
   constructor(options: IOptions) {
+    super()
     this.targetId = options.targetId
     this.sourceId = options.sourceId
     this.targetNode = options.targetNode
     this.sourceNode = options.sourceNode
-    globalEvent.emit('register:edge', this)
+    // globalEvent.emit('register:edge', this)
   }
-  render(canvasCtx: CanvasRenderingContext2D) {
+  hitTest() {
+    return false
+  }
+  render(parentNode: HTMLElement, canvasCtx: CanvasRenderingContext2D) {
     const { sourceNode, targetNode } = this
     if (sourceNode && targetNode) {
-      console.log(sourceNode, targetNode)
       canvasCtx.beginPath()
       // 画线
       canvasCtx.moveTo(sourceNode.joinPoint.x, sourceNode.joinPoint.y)

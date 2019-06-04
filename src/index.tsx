@@ -5,7 +5,7 @@ import './styles/styles.scss'
 ReactDOM.render(<App />, document.getElementById('app'))
 
 if(module.hot){
-  module.hot.accept('./app.tsx', () => {
+  module.hot.accept('./application/topology.tsx', () => {
     const AppUpdate = require('./application/topology').default
     ReactDOM.render(
       <AppUpdate />,

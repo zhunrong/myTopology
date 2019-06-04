@@ -1,9 +1,7 @@
 export interface IListener {
-  (event?: IEventParams): void
+  (event?: any): void
 }
-export interface IEventParams {
-  [key: string]: any
-}
+
 export interface IEvents {
   [eventName: string]: IListener[]
 }
@@ -33,7 +31,7 @@ export default class EventEmitter {
    * @param eventName 
    * @param params 
    */
-  emit(eventName: string, params?: IEventParams) {
+  emit(eventName: string, params?: any) {
     if (this.events[eventName]) {
       this.events[eventName].forEach(listener => {
         listener(params)

@@ -1,4 +1,5 @@
-import { globalEvent, IListener } from './eventEmitter'
+import ANode from './ANode'
+import { globalEvent, IListener } from '../events/eventEmitter'
 import Vector2d from '../utils/vector2d'
 
 interface INodeOptions {
@@ -7,17 +8,18 @@ interface INodeOptions {
   x: number
   y: number
 }
-export default class Node {
+export default class Node extends ANode {
   readonly id: string | number
   position: Vector2d
   containerEl: HTMLDivElement
   mounted: boolean = false
   constructor(options: INodeOptions) {
+    super()
     this.id = options.id
     this.position = new Vector2d(options.x, options.y)
     this.containerEl = document.createElement('div')
     this.containerEl.innerText = options.name
-    globalEvent.emit('register:node', this)
+    // globalEvent.emit('register:node', this)
     globalEvent.on('mousedown', this.handleMouseDown)
   }
   get joinPoint() {

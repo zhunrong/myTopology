@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import Application from '../class/application'
-import Node from '../class/node2'
-import Edge from '../class/edge2'
+import Canvas from '../graphics/Canvas'
+import Node from '../graphics/Circle'
+import Edge from '../graphics/Line'
 import Vector2d from '../utils/vector2d'
-import { globalEvent } from '../class/eventEmitter'
+import { globalEvent } from '../events/eventEmitter'
 import "./topology.scss"
 interface IProps { }
 
@@ -34,38 +34,46 @@ export default class Topology extends Component<IProps> {
   nodes: Node[] = []
   edges: Edge[] = []
   containerRef: React.RefObject<HTMLDivElement> = React.createRef()
-  app: Application | undefined
+  app: Canvas | undefined
   constructor(props: IProps) {
     super(props)
 
   }
   componentDidMount() {
     if (this.containerRef.current) {
-      this.app = new Application({
+      this.app = new Canvas({
         container: this.containerRef.current
       })
+      this.app.eventEmitter.on('canvas:mounted', () => {
+        this.nodes = this.nodeDatas.map((item: any) => {
+          const node = new Node({
+            id: item.id,
+            name: item.name,
+            x: item.x,
+            y: item.y
+          })
+          if (this.app) {
+            this.app.addNode(node)
+          }
+          return node
+        })
+        this.edges = this.edgeDatas.map((item: any) => {
+          const { targetId, sourceId } = item
+          const sourceNode = this.nodes.find(node => node.id === sourceId)
+          const targetNode = this.nodes.find(node => node.id === targetId)
+          const edge = new Edge({
+            targetId: targetId,
+            sourceId: sourceId,
+            sourceNode,
+            targetNode
+          })
+          if (this.app) {
+            this.app.addEdge(edge)
+          }
+          return edge
+        })
+      })
     }
-    globalEvent.on('canvas:mounted', () => {
-      this.nodes = this.nodeDatas.map((item: any) => {
-        return new Node({
-          id: item.id,
-          name: item.name,
-          x: item.x,
-          y: item.y
-        })
-      })
-      this.edges = this.edgeDatas.map((item: any) => {
-        const { targetId, sourceId } = item
-        const sourceNode = this.nodes.find(node => node.id === sourceId)
-        const targetNode = this.nodes.find(node => node.id === targetId)
-        return new Edge({
-          targetId: targetId,
-          sourceId: sourceId,
-          sourceNode,
-          targetNode
-        })
-      })
-    })
   }
   addNode = () => {
     this.nodeDatas.push({
