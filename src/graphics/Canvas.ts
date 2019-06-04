@@ -42,7 +42,7 @@ export default class Application {
   canvasHeight: number = 0
   canvasScale: number = 1
   // 重绘
-  repaint: boolean = false
+  updateCanvas: boolean = false
   // 拖拽
   cachePositions: Vector2d[] = []
 
@@ -59,12 +59,9 @@ export default class Application {
         console.log('Element:', entry.target);
         console.log(`Element's size: ${width}px x ${height}px`);
         console.log(`Element's paddings: ${top}px ; ${left}px`);
-        if (this.canvas) {
-          this.canvas.width = width
-          this.canvas.height = height
-        }
       }
       this.render(this.container)
+      this.draw()
     })
     this.ro.observe(this.container)
     this.nativeEventInit()
@@ -76,6 +73,7 @@ export default class Application {
     if (!this.wrapper) return
     this.wrapper.addEventListener('click', this.handleClick)
     this.wrapper.addEventListener('mousedown', this.handleMouseDown)
+    this.wrapper.addEventListener('mousewheel', this.handleMouseWheel)
   }
   // 全局事件监听
   private globalEventInit() {
@@ -110,18 +108,59 @@ export default class Application {
     }
   }
 
+  /**
+   * 监听画布放大
+   */
   private handleZoomIn = () => {
-    console.log('zoom in')
-    this.canvasScale += 0.1
-    this.canvasWidth = this.viewWidth / this.canvasScale
-    this.canvasHeight = this.viewHeight / this.canvasScale
+    this.zoomIn()
   }
 
-  private handleZoomOut = () => {
-    this.canvasScale *= 0.9
+  /**
+   * 画布放大
+   * @param focus 缩放焦点
+   */
+  zoomIn(focus?: Vector2d) {
+    focus = focus || new Vector2d(this.viewWidth / 2, this.viewHeight / 2)
+    const position = focus.scale(1 / this.canvasScale)
+    this.canvasScale += 0.1
+    const newPosition = focus.scale(1 / this.canvasScale)
     this.canvasWidth = this.viewWidth / this.canvasScale
     this.canvasHeight = this.viewHeight / this.canvasScale
-    console.log('zoom out')
+    const v = newPosition.substract(position)
+    this.nodes.forEach(node => {
+      node.position = node.position.add(v)
+    })
+    this.render(this.container)
+    this.draw()
+  }
+
+  /**
+   * 画布缩小
+   */
+  private handleZoomOut = () => {
+    this.zoomOut()
+  }
+
+  /**
+   * 画布缩小
+   * @param focus 
+   */
+  zoomOut(focus?: Vector2d) {
+    // 默认:画布中心
+    focus = focus || new Vector2d(this.viewWidth / 2, this.viewHeight / 2)
+    const position = focus.scale(1 / this.canvasScale)
+    this.canvasScale *= 0.9
+    const newPosition = focus.scale(1 / this.canvasScale)
+
+    this.canvasWidth = this.viewWidth / this.canvasScale
+    this.canvasHeight = this.viewHeight / this.canvasScale
+
+    const v = newPosition.substract(position)
+    this.nodes.forEach(node => {
+      node.position = node.position.add(v)
+    })
+    this.render(this.container)
+    this.draw()
   }
 
   private handleClick = (e: MouseEvent) => {
@@ -129,10 +168,21 @@ export default class Application {
     this.eventEmitter.emit('click')
   }
 
+  /**
+   * 处理鼠标滚轮事件
+   */
+  private handleMouseWheel = (e: Event) => {
+    const { deltaY, clientX, clientY } = e as WheelEvent
+    if (deltaY > 0) {
+      this.zoomIn(new Vector2d(clientX, clientY))
+    } else {
+      this.zoomOut(new Vector2d(clientX, clientY))
+    }
+  }
   private handleMouseDown = (e: MouseEvent) => {
     const target = e.target as HTMLElement
     if (!target) return
-    this.repaint = true
+    this.updateCanvas = true
     // this.start()
     // this.activeShapeIds.clear()
     // const shapeId = Number(target.dataset.shapeId)
@@ -169,13 +219,13 @@ export default class Application {
 
 
     this.activeNodes.forEach((shape, index) => {
-      shape.position = this.cachePositions[index].add(this.mousemovePosition.substract(this.mousedownPosition))
+      shape.position = this.cachePositions[index].add(this.mousemovePosition.substract(this.mousedownPosition).scale(1 / this.canvasScale))
     })
   })
   private handleMouseUp = (e: MouseEvent) => {
     // this.stop()
     // console.log('mouseup', e)
-    this.repaint = false
+    this.updateCanvas = false
     this.mouseupPosition = new Vector2d(e.clientX, e.clientY)
     this.eventEmitter.emit('mouseup', {
       mousePosition: this.mouseupPosition,
@@ -185,13 +235,6 @@ export default class Application {
     document.removeEventListener('mouseup', this.handleMouseUp)
   }
   render(parentNode: HTMLElement) {
-    if (!this._mounted) {
-      parentNode.append(this.wrapper)
-      this.wrapper.appendChild(this.canvas)
-      this.wrapper.appendChild(this.root)
-      this.eventEmitter.emit('canvas:mounted')
-      this._mounted = true
-    }
     Object.assign(this.root.style, {
       position: 'absolute',
       width: '100%',
@@ -207,8 +250,18 @@ export default class Application {
       overflow: 'hidden',
       left: `${(this.viewWidth - this.canvasWidth) / 2}px`,
       top: `${(this.viewHeight - this.canvasHeight) / 2}px`,
-      transform: `scale(${this.canvasScale})`
+      transform: `scale(${this.canvasScale})`,
+      transformOrigin: 'center center'
     })
+    this.canvas.width = this.canvasWidth
+    this.canvas.height = this.canvasHeight
+    if (!this._mounted) {
+      parentNode.append(this.wrapper)
+      this.wrapper.appendChild(this.canvas)
+      this.wrapper.appendChild(this.root)
+      this.eventEmitter.emit('canvas:mounted')
+      this._mounted = true
+    }
   }
   start() {
     if (this._running) return
@@ -226,13 +279,16 @@ export default class Application {
       this.nodes.forEach(node => {
         node.render(this.root, this.canvasContext)
       })
-      if (this.repaint) {
-        this.canvasContext.clearRect(0, 0, this.canvasWidth, this.canvasHeight)
-        this.edges.forEach(edge => {
-          edge.render(this.root, this.canvasContext)
-        })
+      if (this.updateCanvas) {
+        this.draw()
       }
       this.loop()
+    })
+  }
+  draw() {
+    this.canvasContext.clearRect(0, 0, this.canvasWidth, this.canvasHeight)
+    this.edges.forEach(edge => {
+      edge.render(this.root, this.canvasContext)
     })
   }
 }
