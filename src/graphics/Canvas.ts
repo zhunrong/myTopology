@@ -31,7 +31,7 @@ export default class Application {
   // 连线
   protected edges: AEdge[] = []
   // 活动的元素
-  protected activeShapes: any[] = []
+  protected activeNodes: ANode[] = []
   protected activeShapeIds: Set<number> = new Set()
   // resize监听器
   private ro: ResizeObserver
@@ -41,6 +41,8 @@ export default class Application {
   canvasWidth: number = 0
   canvasHeight: number = 0
   canvasScale: number = 1
+  // 重绘
+  repaint: boolean = false
   // 拖拽
   cachePositions: Vector2d[] = []
 
@@ -128,10 +130,10 @@ export default class Application {
   }
 
   private handleMouseDown = (e: MouseEvent) => {
-    console.log('mousedown', e)
     const target = e.target as HTMLElement
     if (!target) return
-    this.start()
+    this.repaint = true
+    // this.start()
     // this.activeShapeIds.clear()
     // const shapeId = Number(target.dataset.shapeId)
     // if (shapeId) {
@@ -141,11 +143,11 @@ export default class Application {
       return shape.hitTest(e)
     })
     if (activeShape) {
-      this.activeShapes = [activeShape]
+      this.activeNodes = [activeShape]
     } else {
-      this.activeShapes = this.nodes
+      this.activeNodes = this.nodes
     }
-    this.cachePositions = this.activeShapes.map(shape => shape.position)
+    this.cachePositions = this.activeNodes.map(shape => shape.position)
 
 
     this.mousedownPosition = new Vector2d(e.clientX, e.clientY)
@@ -166,14 +168,14 @@ export default class Application {
     })
 
 
-    this.activeShapes.forEach((shape, index) => {
+    this.activeNodes.forEach((shape, index) => {
       shape.position = this.cachePositions[index].add(this.mousemovePosition.substract(this.mousedownPosition))
-      shape.render()
     })
   })
   private handleMouseUp = (e: MouseEvent) => {
-    this.stop()
+    // this.stop()
     // console.log('mouseup', e)
+    this.repaint = false
     this.mouseupPosition = new Vector2d(e.clientX, e.clientY)
     this.eventEmitter.emit('mouseup', {
       mousePosition: this.mouseupPosition,
@@ -221,10 +223,15 @@ export default class Application {
   loop() {
     if (!this._running) return
     this._animationFrameId = requestAnimationFrame(() => {
-      this.canvasContext.clearRect(0, 0, this.canvasWidth, this.canvasHeight)
-      this.edges.forEach(edge => {
-        edge.render(this.root, this.canvasContext)
+      this.nodes.forEach(node => {
+        node.render(this.root, this.canvasContext)
       })
+      if (this.repaint) {
+        this.canvasContext.clearRect(0, 0, this.canvasWidth, this.canvasHeight)
+        this.edges.forEach(edge => {
+          edge.render(this.root, this.canvasContext)
+        })
+      }
       this.loop()
     })
   }

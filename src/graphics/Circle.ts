@@ -10,7 +10,6 @@ interface INodeOptions {
 }
 export default class Node extends ANode {
   readonly id: string | number
-  position: Vector2d
   containerEl: HTMLDivElement
   mounted: boolean = false
   constructor(options: INodeOptions) {
@@ -26,7 +25,7 @@ export default class Node extends ANode {
     return this.position.add(new Vector2d(25, 25))
   }
   handleMouseDown: IListener = params => {
-    console.log(params)
+    // console.log(params)
   }
   // 碰撞检测
   hitTest(event: MouseEvent) {
@@ -41,20 +40,24 @@ export default class Node extends ANode {
     return isHit
   }
   render(parentNode: HTMLDivElement) {
-    Object.assign(this.containerEl.style, {
-      width: '50px',
-      height: '50px',
-      fontSize: '12px',
-      lineHeight: '50px',
-      textAlign: 'center',
-      backgroundColor: 'rgb(204, 204, 204)',
-      borderRadius: '25px',
-      position: 'absolute',
-      transform: `translate3d(${this.position.x}px,${this.position.y}px,0)`
-    })
+
     if (!this.mounted) {
       parentNode.appendChild(this.containerEl)
       this.mounted = true
+    }
+    if (this.isUpdate) {
+      Object.assign(this.containerEl.style, {
+        width: '50px',
+        height: '50px',
+        fontSize: '12px',
+        lineHeight: '50px',
+        textAlign: 'center',
+        backgroundColor: 'rgb(204, 204, 204)',
+        borderRadius: '25px',
+        position: 'absolute',
+        transform: `translate3d(${this.position.x}px,${this.position.y}px,0)`
+      })
+      this.isUpdate = false
     }
   }
 }

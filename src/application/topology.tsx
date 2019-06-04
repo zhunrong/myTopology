@@ -73,22 +73,33 @@ export default class Topology extends Component<IProps> {
           return edge
         })
       })
+      this.app.start()
     }
   }
   addNode = () => {
-    this.nodeDatas.push({
-      name: 'node-??',
-      x: 500,
-      y: 500
-    })
+    if (this.app) {
+      const node = new Node({
+        name: 'node-??',
+        x: 500,
+        y: 500,
+        id: 4
+      })
+      this.app.addNode(node)
+    }
   }
   zoomOut = () => {
     // console.log('zoom out')
-    globalEvent.emit('zoomOut')
+    // globalEvent.emit('zoomOut')
+    if (this.app) {
+      this.app.eventEmitter.emit('zoomOut')
+    }
   }
   zoomIn = () => {
     // console.log('zoom in')
-    globalEvent.emit('zoomIn')
+    // globalEvent.emit('zoomIn')
+    if (this.app) {
+      this.app.eventEmitter.emit('zoomIn')
+    }
   }
   render() {
     return (
@@ -98,8 +109,7 @@ export default class Topology extends Component<IProps> {
           <button onClick={this.zoomOut}>缩小</button>
           <button onClick={this.zoomIn}>放大</button>
         </div>
-        <div ref={this.containerRef} className="topo-chart">
-        </div>
+        <div ref={this.containerRef} className="topo-chart" />
       </div>
 
     )
