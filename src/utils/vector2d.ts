@@ -43,6 +43,14 @@ export default class Vector2d {
   }
 
   /**
+   * 叉积
+   * @param target 
+   */
+  crossProduct(target: Vector2d): number {
+    return this.x * target.y - this.y * target.x
+  }
+
+  /**
    * 与标量的积
    * @param scalar 
    */

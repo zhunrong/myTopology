@@ -1,24 +1,21 @@
-import ANode from './ANode'
 import { globalEvent, IListener } from '../events/eventEmitter'
+import Circle, { ICircleOptions } from './shape/Circle'
 import Vector2d from '../utils/vector2d'
-
-interface INodeOptions {
+import Canvas from './Canvas'
+interface INodeOptions extends ICircleOptions {
   id: string | number
   name: string
-  x: number
-  y: number
 }
-export default class Node extends ANode {
+export default class Node extends Circle {
   readonly id: string | number
+  readonly renderType: string = 'dom'
   containerEl: HTMLDivElement
   mounted: boolean = false
   constructor(options: INodeOptions) {
-    super()
+    super(options)
     this.id = options.id
-    this.position = new Vector2d(options.x, options.y)
     this.containerEl = document.createElement('div')
     this.containerEl.innerText = options.name
-    // globalEvent.emit('register:node', this)
     globalEvent.on('mousedown', this.handleMouseDown)
   }
   get joinPoint() {
@@ -28,8 +25,9 @@ export default class Node extends ANode {
     // console.log(params)
   }
   // 碰撞检测
-  hitTest(event: MouseEvent) {
-    let el = event.target as HTMLElement
+  hitTest(canvas: Canvas) {
+    if (!canvas.nativeEvent) return false
+    let el = canvas.nativeEvent.target as HTMLElement
     let isHit = false
     while (el && !isHit) {
       if (el === this.containerEl) {
@@ -39,24 +37,31 @@ export default class Node extends ANode {
     }
     return isHit
   }
-  render(parentNode: HTMLDivElement) {
-
+  render(canvas: Canvas) {
+    const { root } = canvas
     if (!this.mounted) {
-      parentNode.appendChild(this.containerEl)
+      root.appendChild(this.containerEl)
       this.mounted = true
     }
     if (this.isUpdate) {
-      Object.assign(this.containerEl.style, {
-        width: '50px',
-        height: '50px',
-        fontSize: '12px',
-        lineHeight: '50px',
-        textAlign: 'center',
-        backgroundColor: 'rgb(204, 204, 204)',
-        borderRadius: '25px',
-        position: 'absolute',
-        transform: `translate3d(${this.position.x}px,${this.position.y}px,0)`
-      })
+      if (this.visible) {
+        Object.assign(this.containerEl.style, {
+          width: '50px',
+          height: '50px',
+          fontSize: '12px',
+          lineHeight: '50px',
+          textAlign: 'center',
+          backgroundColor: 'rgb(204, 204, 204)',
+          borderRadius: '25px',
+          position: 'absolute',
+          display: 'block',
+          transform: `translate3d(${this.position.x}px,${this.position.y}px,0)`
+        })
+      } else {
+        Object.assign(this.containerEl.style, {
+          display: 'none'
+        })
+      }
       this.isUpdate = false
     }
   }

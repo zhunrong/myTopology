@@ -16,5 +16,10 @@
   .topo-chart {
     height: calc(100vh - 50px);
     position: relative;
+    // width: 90%;
+    margin: 0 auto;
+    box-sizing: border-box;
+    // border-left: 1px solid #ccc;
+    // border-right: 1px solid #ccc;
   }
 }

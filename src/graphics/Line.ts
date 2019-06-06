@@ -1,51 +1,53 @@
-import Node from './Circle'
-import AEdge from './AEdge'
-import { globalEvent } from '../events/eventEmitter'
-interface IOptions {
+import ANode from './ANode'
+import AEdge, { IAEdgeOptions } from './AEdge'
+import Canvas from './Canvas'
+interface IOptions extends IAEdgeOptions {
   targetId: string
   sourceId: string
-  targetNode?: Node
-  sourceNode?: Node
+  targetNode?: ANode
+  sourceNode?: ANode
 }
 export default class Line extends AEdge {
+  readonly renderType: string = 'canvas'
   targetId: string
   sourceId: string
-  targetNode: Node | undefined
-  sourceNode: Node | undefined
+  targetNode: ANode | undefined
+  sourceNode: ANode | undefined
   constructor(options: IOptions) {
-    super()
+    super(options)
     this.targetId = options.targetId
     this.sourceId = options.sourceId
     this.targetNode = options.targetNode
     this.sourceNode = options.sourceNode
     // globalEvent.emit('register:edge', this)
   }
-  hitTest() {
+  hitTest(canvas: Canvas) {
     return false
   }
-  render(parentNode: HTMLElement, canvasCtx: CanvasRenderingContext2D) {
+  render(canvas: Canvas) {
+    const { canvasContext } = canvas
     const { sourceNode, targetNode } = this
     if (sourceNode && targetNode) {
-      canvasCtx.beginPath()
+      canvasContext.beginPath()
       // 画线
-      canvasCtx.moveTo(sourceNode.joinPoint.x, sourceNode.joinPoint.y)
-      canvasCtx.lineTo(targetNode.joinPoint.x, targetNode.joinPoint.y)
-      canvasCtx.stroke()
+      canvasContext.moveTo(sourceNode.joinPoint.x, sourceNode.joinPoint.y)
+      canvasContext.lineTo(targetNode.joinPoint.x, targetNode.joinPoint.y)
+      canvasContext.stroke()
       // 画箭头
       const sourceToTarget = targetNode.joinPoint.substract(sourceNode.joinPoint)
       const arrowStart = targetNode.joinPoint.substract(sourceToTarget.normalize().scale(25))
-      canvasCtx.beginPath()
-      canvasCtx.save()
+      canvasContext.beginPath()
+      canvasContext.save()
       const rotate = sourceToTarget.xAxisAngle()
-      canvasCtx.translate(arrowStart.x, arrowStart.y)
-      canvasCtx.rotate(rotate)
-      canvasCtx.moveTo(0, 0)
-      canvasCtx.lineTo(- 8, + 3)
-      canvasCtx.lineTo(- 8, - 3)
-      canvasCtx.closePath()
-      canvasCtx.fillStyle = 'black'
-      canvasCtx.fill()
-      canvasCtx.restore()
+      canvasContext.translate(arrowStart.x, arrowStart.y)
+      canvasContext.rotate(rotate)
+      canvasContext.moveTo(0, 0)
+      canvasContext.lineTo(- 8, + 3)
+      canvasContext.lineTo(- 8, - 3)
+      canvasContext.closePath()
+      canvasContext.fillStyle = 'black'
+      canvasContext.fill()
+      canvasContext.restore()
     }
   }
 }
