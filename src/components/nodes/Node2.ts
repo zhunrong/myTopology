@@ -16,6 +16,10 @@ export default class Node extends CanvasNode {
     this.text = options.text || ''
     this.draw()
   }
+  get joinPoint() {
+    const { x, y } = this.position
+    return new Vector2d(x + this.width / 2, y + this.height / 2)
+  }
   get vertexes(): Vector2d[] {
     const { x, y } = this.position
     return [

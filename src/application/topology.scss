@@ -10,6 +10,14 @@
       margin: 0 5px;
       border-radius: 3px;
       color: #666;
+
+      &.active {
+        border-style: inset;
+      }
+
+      &:focus {
+        outline: none;
+      }
     }
 
     span {
@@ -23,7 +31,8 @@
       text-align: center;
       color: #666;
       margin: 0 5px;
-      &:hover{
+
+      &:hover {
         background: #ccc;
         color: white;
         border: 1px dashed #fff;

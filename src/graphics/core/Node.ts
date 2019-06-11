@@ -6,6 +6,7 @@ export interface INodeOptions extends IGraphOptions {
 }
 export default abstract class Node extends Graph {
   position: Vector2d
+  abstract get joinPoint(): Vector2d
   constructor(options: INodeOptions) {
     super(options)
     this.position = new Vector2d(options.x, options.y)

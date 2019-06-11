@@ -1,28 +1,42 @@
 import React, { Component } from 'react'
 import Canvas from '../graphics/Canvas'
+import { MODE_DEFAULT, MODE_VIEW, MODE_CREATE_EDGE } from '../graphics/mode/modes'
 // import Node from '../graphics/Circle'
 import Node from '../components/nodes/Node3'
-import Edge from '../graphics/Line'
+import Edge from '../components/edges/Line'
 import Vector2d from '../utils/vector2d'
 import Math2d from '../utils/math2d'
 import { globalEvent } from '../events/eventEmitter'
 import { nodeDatas } from '../data/topoData'
 import "./topology.scss"
 interface IProps { }
+interface IState {
+  mode: string
+}
 
-export default class Topology extends Component<IProps> {
-  nodeDatas: any[] = nodeDatas
+export default class Topology extends Component<IProps, IState> {
+  nodeDatas: any[] = [{
+    text: 'a',
+    id: 1,
+    x: 100,
+    y: 100
+  }, {
+    text: 'b',
+    id: 2,
+    x: 300,
+    y: 300
+  }]
   edgeDatas: any = [{
     targetId: 1,
     sourceId: 2
-  }, {
-    targetId: 2,
-    sourceId: 3
   }]
   nodes: Node[] = []
   edges: Edge[] = []
   containerRef: React.RefObject<HTMLDivElement> = React.createRef()
   canvas: Canvas | undefined
+  state = {
+    mode: MODE_DEFAULT
+  }
   constructor(props: IProps) {
     super(props)
   }
@@ -32,39 +46,39 @@ export default class Topology extends Component<IProps> {
         container: this.containerRef.current
       })
       this.canvas.eventEmitter.on('canvas:mounted', () => {
-        // this.nodes = this.nodeDatas.map((item: any) => {
-        //   const node = new Node({
-        //     text: item.name,
-        //     x: item.x,
-        //     y: item.y,
-        //     // radius: 25,
-        //     // width: 50,
-        //     // height: 50
-        //   })
-        //   if (this.canvas) {
-        //     this.canvas.addNode(node)
-        //   }
-        //   return node
-        // })
-        // this.edges = this.edgeDatas.map((item: any) => {
-        //   const { targetId, sourceId } = item
-        //   const sourceNode = this.nodes.find(node => node.id === sourceId)
-        //   const targetNode = this.nodes.find(node => node.id === targetId)
-        //   const edge = new Edge({
-        //     targetId: targetId,
-        //     sourceId: sourceId,
-        //     sourceNode,
-        //     targetNode
-        //   })
-        //   if (this.canvas) {
-        //     this.canvas.addEdge(edge)
-        //   }
-        //   return edge
-        // })
+        this.nodes = this.nodeDatas.map((item: any) => {
+          const node = new Node({
+            text: item.name,
+            x: item.x,
+            y: item.y,
+            id: item.id
+            // radius: 25,
+            // width: 50,
+            // height: 50
+          })
+          if (this.canvas) {
+            this.canvas.addNode(node)
+          }
+          return node
+        })
+        this.edges = this.edgeDatas.map((item: any) => {
+          const { targetId, sourceId } = item
+          const sourceNode = this.nodes.find(node => node.id === sourceId)
+          const targetNode = this.nodes.find(node => node.id === targetId)
+          const edge = new Edge({
+            sourceNode,
+            targetNode
+          })
+          if (this.canvas) {
+            this.canvas.addEdge(edge)
+          }
+          return edge
+        })
       })
       this.canvas.eventEmitter.on('canvas:drop', (params) => {
         const { coordinate, dataTransfer } = params
         const node = new Node({
+          id: Math.random() * 10000,
           text: '',
           x: coordinate.x - 75,
           y: coordinate.y - 50
@@ -112,12 +126,23 @@ export default class Topology extends Component<IProps> {
     e.dataTransfer.setData('nodeType', 'A')
     e.dataTransfer.setData('id', '123')
   }
+  modeChange(type: string) {
+    this.setState({
+      mode: type
+    })
+    if (this.canvas) {
+      this.canvas.interactionMode = type
+    }
+  }
   render() {
     return (
       <div className="topology">
         <div className="topo-bar">
+          <button onClick={this.modeChange.bind(this, MODE_DEFAULT)} className={`${this.state.mode === MODE_DEFAULT ? 'active' : ''}`}>默认</button>
+          <button onClick={this.modeChange.bind(this, MODE_VIEW)} className={`${this.state.mode === MODE_VIEW ? 'active' : ''}`}>查看</button>
           <button onClick={this.zoomOut}>缩小</button>
           <button onClick={this.zoomIn}>放大</button>
+          <button onClick={this.modeChange.bind(this, MODE_CREATE_EDGE)} className={`${this.state.mode === MODE_CREATE_EDGE ? 'active' : ''}`}>连线</button>
           {/* <button onClick={this.optimize}>优化</button> */}
           {/* <button onClick={this.notOptimize}>取消优化</button> */}
           <span draggable={true} onDragStart={this.handleDragStart}>N</span>

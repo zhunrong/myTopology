@@ -5,15 +5,18 @@ import Math2d from '../../utils/math2d'
 import style from './node3.scss'
 interface IOptions extends IDomNodeOptions {
   text: string
+  id: number
 }
 export default class Node extends DomNode {
   containerEl: HTMLDivElement = document.createElement('div')
   text: string
   width: number = 150
   height: number = 100
+  id: number
   constructor(options: IOptions) {
     super(options)
     this.text = options.text
+    this.id = options.id
     this.containerEl.innerHTML = `
       <div class="title">标题</div>
       <div class="quota">
@@ -26,6 +29,10 @@ export default class Node extends DomNode {
       </div>
     `
     this.containerEl.className = style.node
+  }
+  get joinPoint() {
+    const { x, y } = this.position
+    return new Vector2d(x + this.width / 2, y + this.height / 2)
   }
   get vertexes(): Vector2d[] {
     const { x, y } = this.position

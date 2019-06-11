@@ -1,12 +1,13 @@
 import Graph, { IGraphOptions } from './Graph'
 import Node from './Node'
-interface IEdgeOptions extends IGraphOptions {
-  targetNode: Node
-  sourceNode: Node
+export interface IEdgeOptions extends IGraphOptions {
+  targetNode?: Node
+  sourceNode?: Node
 }
 export default abstract class Edge extends Graph {
-  targetNode: Node
-  sourceNode: Node
+  renderType: string = 'CANVAS'
+  targetNode: Node | undefined
+  sourceNode: Node | undefined
   constructor(options: IEdgeOptions) {
     super(options)
     this.targetNode = options.targetNode
