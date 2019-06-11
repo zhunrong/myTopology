@@ -4,6 +4,9 @@ import ResizeObserver from 'resize-observer-polyfill'
 import { throttle } from '../utils/utils'
 import ANode from './ANode'
 import AEdge from './AEdge'
+import DomNode from './core/DomNode'
+import CanvasNode from './core/CanvasNode'
+import Edge from './core/Edge'
 interface IAPPOptions {
   container: HTMLElement
 }
@@ -14,6 +17,7 @@ export default class Application {
   protected name: string = 'application'
   public eventEmitter: EventEmitter = globalEvent
   public nativeEvent: MouseEvent | null = null
+  public optimize: boolean = true
   // 最外层div
   protected wrapper: HTMLDivElement = document.createElement('div')
   // canvas与div的容器
@@ -28,15 +32,14 @@ export default class Application {
   private mousedownPosition: Vector2d = new Vector2d(0, 0)
   private mouseupPosition: Vector2d = new Vector2d(0, 0)
   private mousemovePosition: Vector2d = new Vector2d(0, 0)
-
   // canvas节点
-  protected canvasNodes: ANode[] = []
+  protected canvasNodes: CanvasNode[] = []
   // dom节点
-  protected domNodes: ANode[] = []
+  protected domNodes: DomNode[] = []
   // 连线
-  protected edges: AEdge[] = []
+  protected edges: Edge[] = []
   // 活动的元素
-  protected activeNodes: ANode[] = []
+  protected activeNodes: (DomNode | CanvasNode)[] = []
   protected activeShapeIds: Set<number> = new Set()
   // resize监听器
   private ro: ResizeObserver
@@ -64,7 +67,7 @@ export default class Application {
         this.containerClientRect = this.container.getBoundingClientRect()
       }
       this.render(this.container)
-      this.renderEdge()
+      // this.renderEdge()
     })
     this.ro.observe(this.container)
     this.nativeEventInit()
@@ -82,22 +85,43 @@ export default class Application {
   private globalEventInit() {
   }
   // 添加节点
-  public addNode(node: ANode) {
-    if (node.renderType === 'canvas') {
+  public addNode(node: (DomNode | CanvasNode)) {
+    if (node instanceof CanvasNode) {
       if (this.canvasNodes.find(item => item === node)) return
-      this.canvasNodes.push(node)
-    } else if (node.renderType === 'dom') {
-      if (this.domNodes.find(item => item === node)) return
-      this.domNodes.push(node)
+      node.visible = node.isInRect(this.canvasVisibleRect)
+      let index = this.canvasNodes.length - 1
+      let current = this.canvasNodes[index]
+      while (current) {
+        if (current.zIndex <= node.zIndex) {
+          this.canvasNodes.splice(index, 0, node)
+          break
+        }
+        index--
+        current = this.canvasNodes[index]
+      }
+      if (!current) {
+        this.canvasNodes.unshift(node)
+      }
     } else {
-      console.log(`不支持的renderType: ${node.renderType}`)
-      return
+      if (this.domNodes.find(item => item === node)) return
+      node.visible = node.isInRect(this.canvasVisibleRect)
+      let index = this.domNodes.length - 1
+      let current = this.domNodes[index]
+      while (current) {
+        if (current.zIndex <= node.zIndex) {
+          this.domNodes.splice(index, 0, node)
+          break
+        }
+        index--
+        current = this.domNodes[index]
+      }
+      if (!current) {
+        this.domNodes.unshift(node)
+      }
     }
-    node.visible = node.isInVisibleRect(this.canvasVisibleRect)
-    node.render(this)
   }
   // 删除节点
-  public removeNode(node: ANode) {
+  public removeNode(node: DomNode | CanvasNode) {
     let index
     if (node.renderType === 'canvas') {
       index = this.canvasNodes.findIndex(item => item === node)
@@ -115,13 +139,13 @@ export default class Application {
   }
 
   // 添加连线
-  public addEdge(edge: AEdge) {
+  public addEdge(edge: Edge) {
     if (this.edges.find(item => item === edge)) return
     edge.render(this)
     this.edges.push(edge)
   }
   // 删除连线
-  public removeEdge(edge: AEdge) {
+  public removeEdge(edge: Edge) {
     const index = this.edges.findIndex(item => item === edge)
     if (index > -1) {
       this.edges.splice(index, 1)
@@ -176,16 +200,21 @@ export default class Application {
     this.canvasWidth = this.viewWidth / this.canvasScale
     this.canvasHeight = this.viewHeight / this.canvasScale
     const offset = newCoordinate.substract(coordinate)
-    this.domNodes.forEach(node => {
+    // this.domNodes.forEach(node => {
+    //   node.position = node.position.add(offset)
+    // })
+    // this.canvasNodes.forEach(node => {
+    //   node.position = node.position.add(offset)
+    // })
+    const nodes: (DomNode | CanvasNode)[] = [...this.domNodes, ...this.canvasNodes]
+    nodes.forEach(node => {
       node.position = node.position.add(offset)
-    })
-    this.canvasNodes.forEach(node => {
-      node.position = node.position.add(offset)
+      node.isUpdate = true
     })
     this.optimizeNode()
     this.render(this.container)
-    this.renderNode()
-    this.renderEdge()
+    // this.renderNode()
+    // this.renderEdge()
   }
 
   /**
@@ -203,16 +232,21 @@ export default class Application {
     this.canvasHeight = this.viewHeight / this.canvasScale
 
     const offset = newCoordinate.substract(coordinate)
-    this.domNodes.forEach(node => {
+    // this.domNodes.forEach(node => {
+    //   node.position = node.position.add(offset)
+    // })
+    // this.canvasNodes.forEach(node => {
+    //   node.position = node.position.add(offset)
+    // })
+    const nodes: (DomNode | CanvasNode)[] = [...this.domNodes, ...this.canvasNodes]
+    nodes.forEach(node => {
       node.position = node.position.add(offset)
-    })
-    this.canvasNodes.forEach(node => {
-      node.position = node.position.add(offset)
+      node.isUpdate = true
     })
     this.optimizeNode()
     this.render(this.container)
-    this.renderNode()
-    this.renderEdge()
+    // this.renderNode()
+    // this.renderEdge()
   }
 
   private handleClick = (e: MouseEvent) => {
@@ -231,22 +265,27 @@ export default class Application {
       this.zoomIn(new Vector2d(clientX, clientY))
     }
   }
+  /**
+   * 鼠标按下
+   */
   private handleMouseDown = (e: MouseEvent) => {
     this.nativeEvent = e
     const target = e.target as HTMLElement
     if (!target) return
     this.updateCanvas = true
 
-    let activeNode: ANode | undefined
-    if (e.target === this.root) {
-      activeNode = this.canvasNodes.find(node => node.hitTest(this))
-    } else {
-      activeNode = this.domNodes.find(node => node.hitTest(this))
-    }
+    // let activeNode: ANode | undefined
+    // if (e.target === this.root) {
+    //   activeNode = this.canvasNodes.find(node => node.hitTest(this))
+    // } else {
+    //   activeNode = this.domNodes.find(node => node.hitTest(this))
+    // }
+    // const activeNode: (DomNode | undefined) = this.graphics.find(graph => graph.isPointIn(this)) as DomNode | undefined
+    let activeNode: DomNode | CanvasNode | undefined = this.domNodes.find(node => node.isPointIn(this))
     if (activeNode) {
       this.activeNodes = [activeNode]
     } else {
-      this.activeNodes = this.domNodes.concat(this.canvasNodes)
+      this.activeNodes = this.domNodes
     }
     this.cachePositions = this.activeNodes.map(node => node.position)
 
@@ -256,21 +295,26 @@ export default class Application {
     document.addEventListener('mousemove', this.handleMouseMove)
     document.addEventListener('mouseup', this.handleMouseUp)
   }
+  /**
+   * 鼠标移动
+   */
   private handleMouseMove = throttle((e: MouseEvent) => {
     if (!this.nativeEvent) return
     this.nativeEvent = e
     // console.log('mousemove', e)
     this.mousemovePosition = new Vector2d(e.clientX, e.clientY)
-    // this.viewportToCanvasCoordinate(new Vector2d(e.clientX, e.clientY))
     this.eventEmitter.emit('mousemove', {})
 
     // 判断节点是否在可视区域
     this.optimizeNode()
     this.activeNodes.forEach((node, index) => {
       node.position = this.cachePositions[index].add(this.mousemovePosition.substract(this.mousedownPosition).scale(1 / this.canvasScale))
-      // node.position = node.position.add(offset)
+      node.isUpdate = true
     })
   })
+  /**
+   * 鼠标按键释放
+   */
   private handleMouseUp = (e: MouseEvent) => {
     this.nativeEvent = e
     // this.stop()
@@ -285,8 +329,10 @@ export default class Application {
    * 优化节点显示
    */
   optimizeNode() {
+    if (!this.optimize) return
+    // const now = Date.now()
     this.domNodes.forEach(node => {
-      node.visible = node.isInVisibleRect(this.canvasVisibleRect)
+      node.visible = node.isInRect(this.canvasVisibleRect)
     })
   }
   render(parentNode: HTMLElement) {
@@ -331,11 +377,15 @@ export default class Application {
   loop() {
     if (!this._running) return
     this._animationFrameId = requestAnimationFrame(() => {
-      if (this.updateCanvas) {
-        this.canvasContext.clearRect(0, 0, this.canvasWidth, this.canvasHeight)
-        this.renderEdge()
-        this.renderNode()
-      }
+      // if (this.updateCanvas) {
+      //   this.canvasContext.clearRect(0, 0, this.canvasWidth, this.canvasHeight)
+      //   this.renderEdge()
+      //   this.renderNode()
+      // }
+      this.canvasContext.clearRect(0, 0, this.canvasWidth, this.canvasHeight)
+      // this.renderEdge()
+      // this.renderNode()
+      this.renderDomNodes()
       this.loop()
     })
   }
@@ -347,15 +397,28 @@ export default class Application {
       edge.render(this)
     })
   }
+  private renderDomNodes() {
+    this.domNodes.forEach(node => {
+      if (node.visible) {
+        node.mount(this)
+        if (node.isUpdate) {
+          node.render(this)
+          node.isUpdate = false
+        }
+      } else {
+        node.unmount(this)
+      }
+    })
+  }
   /**
    * 渲染节点
    */
   private renderNode() {
-    this.canvasNodes.forEach(node => {
-      node.render(this)
-    })
-    this.domNodes.forEach(node => {
-      node.render(this)
-    })
+    // this.canvasNodes.forEach(node => {
+    //   node.render(this)
+    // })
+    // this.domNodes.forEach(node => {
+    //   node.render(this)
+    // })
   }
 }

@@ -16,6 +16,8 @@
   .topo-chart {
     height: calc(100vh - 50px);
     position: relative;
+    overflow: hidden;
+    user-select: none;
     // width: 90%;
     margin: 0 auto;
     box-sizing: border-box;

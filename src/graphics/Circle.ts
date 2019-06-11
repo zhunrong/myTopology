@@ -37,32 +37,36 @@ export default class Node extends Circle {
     }
     return isHit
   }
+  mount(canvas: Canvas) {
+    if (this.mounted) return
+    canvas.root.appendChild(this.containerEl)
+    this.mounted = true
+  }
+  unmount(canvas: Canvas) {
+    if (!this.mounted) return
+    canvas.root.removeChild(this.containerEl)
+    this.mounted = false
+  }
   render(canvas: Canvas) {
-    const { root } = canvas
-    if (!this.mounted) {
-      root.appendChild(this.containerEl)
-      this.mounted = true
+    if (this.visible) {
+      this.mount(canvas)
+    } else {
+      this.unmount(canvas)
     }
-    if (this.isUpdate) {
-      if (this.visible) {
-        Object.assign(this.containerEl.style, {
-          width: '50px',
-          height: '50px',
-          fontSize: '12px',
-          lineHeight: '50px',
-          textAlign: 'center',
-          backgroundColor: 'rgb(204, 204, 204)',
-          borderRadius: '25px',
-          position: 'absolute',
-          display: 'block',
-          transform: `translate3d(${this.position.x}px,${this.position.y}px,0)`
-        })
-      } else {
-        Object.assign(this.containerEl.style, {
-          display: 'none'
-        })
-      }
+    if (this.isUpdate && this.visible) {
       this.isUpdate = false
+      Object.assign(this.containerEl.style, {
+        width: '50px',
+        height: '50px',
+        fontSize: '12px',
+        lineHeight: '50px',
+        textAlign: 'center',
+        backgroundColor: 'rgb(204, 204, 204)',
+        borderRadius: '25px',
+        position: 'absolute',
+        display: 'block',
+        transform: `translate3d(${this.position.x}px,${this.position.y}px,0)`
+      })
     }
   }
 }

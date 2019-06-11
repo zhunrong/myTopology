@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Canvas from '../graphics/Canvas'
 // import Node from '../graphics/Circle'
-import Node from '../graphics/shape/Rect'
+import Node from '../components/nodes/Node3'
 import Edge from '../graphics/Line'
 import Vector2d from '../utils/vector2d'
 import Math2d from '../utils/math2d'
@@ -34,34 +34,33 @@ export default class Topology extends Component<IProps> {
       this.canvas.eventEmitter.on('canvas:mounted', () => {
         this.nodes = this.nodeDatas.map((item: any) => {
           const node = new Node({
-            id: item.id,
-            // name: item.name,
+            text: item.name,
             x: item.x,
             y: item.y,
             // radius: 25,
-            width: 50,
-            height: 50
+            // width: 50,
+            // height: 50
           })
           if (this.canvas) {
             this.canvas.addNode(node)
           }
           return node
         })
-        this.edges = this.edgeDatas.map((item: any) => {
-          const { targetId, sourceId } = item
-          const sourceNode = this.nodes.find(node => node.id === sourceId)
-          const targetNode = this.nodes.find(node => node.id === targetId)
-          const edge = new Edge({
-            targetId: targetId,
-            sourceId: sourceId,
-            sourceNode,
-            targetNode
-          })
-          if (this.canvas) {
-            this.canvas.addEdge(edge)
-          }
-          return edge
-        })
+        // this.edges = this.edgeDatas.map((item: any) => {
+        //   const { targetId, sourceId } = item
+        //   const sourceNode = this.nodes.find(node => node.id === sourceId)
+        //   const targetNode = this.nodes.find(node => node.id === targetId)
+        //   const edge = new Edge({
+        //     targetId: targetId,
+        //     sourceId: sourceId,
+        //     sourceNode,
+        //     targetNode
+        //   })
+        //   if (this.canvas) {
+        //     this.canvas.addEdge(edge)
+        //   }
+        //   return edge
+        // })
       })
       this.canvas.start()
     }
@@ -88,6 +87,16 @@ export default class Topology extends Component<IProps> {
       this.canvas.zoomIn()
     }
   }
+  optimize = () => {
+    if (this.canvas) {
+      this.canvas.optimize = true
+    }
+  }
+  notOptimize = () => {
+    if (this.canvas) {
+      this.canvas.optimize = false
+    }
+  }
   render() {
     return (
       <div className="topology">
@@ -95,6 +104,8 @@ export default class Topology extends Component<IProps> {
           <button onClick={this.addNode}>添加节点</button>
           <button onClick={this.zoomOut}>缩小</button>
           <button onClick={this.zoomIn}>放大</button>
+          <button onClick={this.optimize}>优化</button>
+          <button onClick={this.notOptimize}>取消优化</button>
         </div>
         <div ref={this.containerRef} className="topo-chart" />
       </div>
