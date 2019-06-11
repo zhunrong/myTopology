@@ -32,20 +32,20 @@ export default class Topology extends Component<IProps> {
         container: this.containerRef.current
       })
       this.canvas.eventEmitter.on('canvas:mounted', () => {
-        this.nodes = this.nodeDatas.map((item: any) => {
-          const node = new Node({
-            text: item.name,
-            x: item.x,
-            y: item.y,
-            // radius: 25,
-            // width: 50,
-            // height: 50
-          })
-          if (this.canvas) {
-            this.canvas.addNode(node)
-          }
-          return node
-        })
+        // this.nodes = this.nodeDatas.map((item: any) => {
+        //   const node = new Node({
+        //     text: item.name,
+        //     x: item.x,
+        //     y: item.y,
+        //     // radius: 25,
+        //     // width: 50,
+        //     // height: 50
+        //   })
+        //   if (this.canvas) {
+        //     this.canvas.addNode(node)
+        //   }
+        //   return node
+        // })
         // this.edges = this.edgeDatas.map((item: any) => {
         //   const { targetId, sourceId } = item
         //   const sourceNode = this.nodes.find(node => node.id === sourceId)
@@ -61,6 +61,18 @@ export default class Topology extends Component<IProps> {
         //   }
         //   return edge
         // })
+      })
+      this.canvas.eventEmitter.on('canvas:drop', (params) => {
+        console.log('drop', params)
+        const { coordinate } = params
+        const node = new Node({
+          text: '',
+          x: coordinate.x - 75,
+          y: coordinate.y - 50
+        })
+        if (this.canvas) {
+          this.canvas.addNode(node)
+        }
       })
       this.canvas.start()
     }
@@ -97,15 +109,18 @@ export default class Topology extends Component<IProps> {
       this.canvas.optimize = false
     }
   }
+  handleDragStart = (e: React.DragEvent<HTMLSpanElement>) => {
+    e.dataTransfer.setData('node', 'type 1')
+  }
   render() {
     return (
       <div className="topology">
         <div className="topo-bar">
-          <button onClick={this.addNode}>添加节点</button>
           <button onClick={this.zoomOut}>缩小</button>
           <button onClick={this.zoomIn}>放大</button>
           <button onClick={this.optimize}>优化</button>
           <button onClick={this.notOptimize}>取消优化</button>
+          <span draggable={true} onDragStart={this.handleDragStart}>N</span>
         </div>
         <div ref={this.containerRef} className="topo-chart" />
       </div>

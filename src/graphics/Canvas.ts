@@ -11,7 +11,7 @@ interface IAPPOptions {
   container: HTMLElement
 }
 export default class Application {
-  private _mounted: boolean = false
+  private mounted: boolean = false
   private _running: boolean = false
   private _animationFrameId: number = 0
   protected name: string = 'application'
@@ -66,7 +66,8 @@ export default class Application {
         this.canvasHeight = height / this.canvasScale
         this.containerClientRect = this.container.getBoundingClientRect()
       }
-      this.render(this.container)
+      this.mount()
+      this.render()
       // this.renderEdge()
     })
     this.ro.observe(this.container)
@@ -76,13 +77,25 @@ export default class Application {
   }
   // 原生事件监听
   protected nativeEventInit() {
-    if (!this.wrapper) return
     this.wrapper.addEventListener('click', this.handleClick)
     this.wrapper.addEventListener('mousedown', this.handleMouseDown)
-    this.wrapper.addEventListener('mousewheel', this.handleMouseWheel)
+    this.wrapper.addEventListener('wheel', this.handleWheel)
+    this.wrapper.addEventListener('dragover', this.handleDragOver)
+    this.wrapper.addEventListener('drop', this.handleDrop)
   }
   // 全局事件监听
   private globalEventInit() {
+  }
+  /**
+   * 销毁
+   */
+  public destroy() {
+    this.wrapper.removeEventListener('click', this.handleClick)
+    this.wrapper.removeEventListener('mousedown', this.handleMouseDown)
+    this.wrapper.removeEventListener('wheel', this.handleWheel)
+    this.wrapper.removeEventListener('dragover', this.handleDragOver)
+    this.wrapper.removeEventListener('drop', this.handleDrop)
+    this.unmount()
   }
   // 添加节点
   public addNode(node: (DomNode | CanvasNode)) {
@@ -212,7 +225,7 @@ export default class Application {
       node.isUpdate = true
     })
     this.optimizeNode()
-    this.render(this.container)
+    this.render()
     // this.renderNode()
     // this.renderEdge()
   }
@@ -244,7 +257,7 @@ export default class Application {
       node.isUpdate = true
     })
     this.optimizeNode()
-    this.render(this.container)
+    this.render()
     // this.renderNode()
     // this.renderEdge()
   }
@@ -257,7 +270,7 @@ export default class Application {
   /**
    * 处理鼠标滚轮事件
    */
-  private handleMouseWheel = (e: Event) => {
+  private handleWheel = (e: Event) => {
     const { deltaY, clientX, clientY } = e as WheelEvent
     if (deltaY > 0) {
       this.zoomOut(new Vector2d(clientX, clientY))
@@ -326,6 +339,21 @@ export default class Application {
     document.removeEventListener('mouseup', this.handleMouseUp)
   }
   /**
+   * 拖拽over事件
+   */
+  private handleDragOver = (e: DragEvent) => {
+    e.preventDefault()
+  }
+  /**
+   * 拖拽释放事件
+   */
+  private handleDrop = (e: DragEvent) => {
+    this.eventEmitter.emit('canvas:drop', {
+      coordinate: this.viewPortTopixelCoordinate(new Vector2d(e.clientX, e.clientY)),
+      dataTransfer: e.dataTransfer
+    })
+  }
+  /**
    * 优化节点显示
    */
   optimizeNode() {
@@ -335,7 +363,7 @@ export default class Application {
       node.visible = node.isInRect(this.canvasVisibleRect)
     })
   }
-  render(parentNode: HTMLElement) {
+  render() {
     Object.assign(this.root.style, {
       position: 'absolute',
       width: '100%',
@@ -356,13 +384,19 @@ export default class Application {
     })
     this.canvas.width = this.canvasWidth
     this.canvas.height = this.canvasHeight
-    if (!this._mounted) {
-      parentNode.append(this.wrapper)
-      this.wrapper.appendChild(this.canvas)
-      this.wrapper.appendChild(this.root)
-      this.eventEmitter.emit('canvas:mounted')
-      this._mounted = true
-    }
+  }
+  mount() {
+    if (this.mounted) return
+    this.wrapper.appendChild(this.canvas)
+    this.wrapper.appendChild(this.root)
+    this.container.appendChild(this.wrapper)
+    this.eventEmitter.emit('canvas:mounted')
+    this.mounted = true
+  }
+  unmount() {
+    if (!this.mounted) return
+    this.container.removeChild(this.wrapper)
+    this.mounted = false
   }
   start() {
     if (this._running) return
