@@ -27,13 +27,6 @@ export default class Node extends CanvasNode {
   }
   isInRect(points: Vector2d[]): boolean {
     const vertexes = this.vertexes
-    // for (let i = 0; i < vertexes.length; i++) {
-    //   const P = vertexes[i]
-    //   if (Math2d.isPointInPolygon(P, points)) {
-    //     return true
-    //   }
-    // }
-    // return false
     // 左
     if (points[0].x > vertexes[2].x) return false
     // 右
