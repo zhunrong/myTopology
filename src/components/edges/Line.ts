@@ -22,7 +22,7 @@ export default class Line extends Edge {
       canvasContext.stroke()
       // 画箭头
       const sourceToTarget = targetNode.joinPoint.substract(sourceNode.joinPoint)
-      const arrowStart = targetNode.joinPoint.substract(sourceToTarget.normalize().scale(25))
+      const arrowStart = targetNode.joinPoint.substract(sourceToTarget.normalize().scale(50))
       canvasContext.beginPath()
       canvasContext.save()
       const rotate = sourceToTarget.xAxisAngle()

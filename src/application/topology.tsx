@@ -15,21 +15,8 @@ interface IState {
 }
 
 export default class Topology extends Component<IProps, IState> {
-  nodeDatas: any[] = [{
-    text: 'a',
-    id: 1,
-    x: 100,
-    y: 100
-  }, {
-    text: 'b',
-    id: 2,
-    x: 300,
-    y: 300
-  }]
-  edgeDatas: any = [{
-    targetId: 1,
-    sourceId: 2
-  }]
+  nodeDatas: any[] = nodeDatas
+  edgeDatas: any = []
   nodes: Node[] = []
   edges: Edge[] = []
   containerRef: React.RefObject<HTMLDivElement> = React.createRef()
@@ -131,20 +118,20 @@ export default class Topology extends Component<IProps, IState> {
       mode: type
     })
     if (this.canvas) {
-      this.canvas.interactionMode = type
+      this.canvas.changeMode(type)
     }
   }
   render() {
     return (
       <div className="topology">
         <div className="topo-bar">
-          <button onClick={this.modeChange.bind(this, MODE_DEFAULT)} className={`${this.state.mode === MODE_DEFAULT ? 'active' : ''}`}>默认</button>
-          <button onClick={this.modeChange.bind(this, MODE_VIEW)} className={`${this.state.mode === MODE_VIEW ? 'active' : ''}`}>查看</button>
-          <button onClick={this.zoomOut}>缩小</button>
-          <button onClick={this.zoomIn}>放大</button>
-          <button onClick={this.modeChange.bind(this, MODE_CREATE_EDGE)} className={`${this.state.mode === MODE_CREATE_EDGE ? 'active' : ''}`}>连线</button>
-          {/* <button onClick={this.optimize}>优化</button> */}
-          {/* <button onClick={this.notOptimize}>取消优化</button> */}
+          {/* <button onClick={this.modeChange.bind(this, MODE_DEFAULT)} className={`${this.state.mode === MODE_DEFAULT ? 'active' : ''}`}>默认</button> */}
+          {/* <button onClick={this.modeChange.bind(this, MODE_VIEW)} className={`${this.state.mode === MODE_VIEW ? 'active' : ''}`}>查看</button> */}
+          <img onClick={this.modeChange.bind(this, MODE_DEFAULT)} className={`${this.state.mode === MODE_DEFAULT ? 'active' : ''}`} src={require('../assets/pointer.svg')} title="默认模式" />
+          <img onClick={this.modeChange.bind(this, MODE_VIEW)} className={`${this.state.mode === MODE_VIEW ? 'active' : ''}`} src={require('../assets/view.svg')} title="查看模式" />
+          <img src={require('../assets/zoom_out.svg')} onClick={this.zoomOut} title="缩小" />
+          <img src={require('../assets/zoom_in.svg')} onClick={this.zoomIn} title="放大" />
+          <img onClick={this.modeChange.bind(this, MODE_CREATE_EDGE)} className={`${this.state.mode === MODE_CREATE_EDGE ? 'active' : ''}`} src={require('../assets/line.svg')} title="连线模式" />
           <span draggable={true} onDragStart={this.handleDragStart}>N</span>
         </div>
         <div ref={this.containerRef} className="topo-chart" />

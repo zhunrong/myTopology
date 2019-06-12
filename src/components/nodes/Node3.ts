@@ -64,7 +64,7 @@ export default class Node extends DomNode {
   }
   render(): void {
     Object.assign(this.containerEl.style, {
-
+      borderColor: this.active ? 'red' : '#999',
       transform: `translate3d(${this.position.x}px,${this.position.y}px,0)`
     })
 

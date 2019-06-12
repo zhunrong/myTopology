@@ -1,11 +1,11 @@
 const nodeDatas: any[] = []
 let id = 0
-while (id++ < 300) {
+while (id++ < 200) {
   nodeDatas.push({
-    name: `n-${id}`,
+    text: `n-${id}`,
     id,
-    x: Math.random() * 5600 - 2000,
-    y: Math.random() * 5600 - 2500
+    x: Math.random() * 2600 - 500,
+    y: Math.random() * 2600 - 1000
     // x: -100,
     // y: 0
   })

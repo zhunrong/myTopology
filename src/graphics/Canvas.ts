@@ -17,7 +17,7 @@ export default class Application {
   private _animationFrameId: number = 0
   protected name: string = 'application'
   public eventEmitter: EventEmitter = globalEvent
-  public nativeEvent: MouseEvent | null = null
+  public nativeEvent: Event | null = null
   public optimize: boolean = true
   // 交互模式
   interactionMode: string = MODE_DEFAULT
@@ -31,7 +31,7 @@ export default class Application {
   // 根节点
   public root: HTMLDivElement = document.createElement('div')
   // 辅助节点(不需要实际渲染的)
-  private virtualNode: VirtualNode = new VirtualNode({
+  public virtualNode: VirtualNode = new VirtualNode({
     x: 0,
     y: 0
   })
@@ -85,8 +85,8 @@ export default class Application {
   protected nativeEventInit() {
     this.wrapper.addEventListener('click', this.handleClick)
     this.wrapper.addEventListener('mousedown', this.handleMouseDown)
-    this.wrapper.addEventListener('mousemove', this.handleMouseMove)
-    this.wrapper.addEventListener('mouseup', this.handleMouseUp)
+    document.addEventListener('mousemove', this.handleMouseMove)
+    document.addEventListener('mouseup', this.handleMouseUp)
     this.wrapper.addEventListener('wheel', this.handleWheel)
     this.wrapper.addEventListener('dragover', this.handleDragOver)
     this.wrapper.addEventListener('drop', this.handleDrop)
@@ -99,8 +99,8 @@ export default class Application {
   public destroy() {
     this.wrapper.removeEventListener('click', this.handleClick)
     this.wrapper.removeEventListener('mousedown', this.handleMouseDown)
-    this.wrapper.removeEventListener('mousemove', this.handleMouseMove)
-    this.wrapper.removeEventListener('mouseup', this.handleMouseUp)
+    document.removeEventListener('mousemove', this.handleMouseMove)
+    document.removeEventListener('mouseup', this.handleMouseUp)
     this.wrapper.removeEventListener('wheel', this.handleWheel)
     this.wrapper.removeEventListener('dragover', this.handleDragOver)
     this.wrapper.removeEventListener('drop', this.handleDrop)
@@ -256,9 +256,28 @@ export default class Application {
   }
 
   /**
+   * 切换模式
+   * @param mode 
+   */
+  changeMode(mode: string) {
+    if (!modes[mode]) {
+      console.log(`该模式不存在:${mode}`)
+      return
+    }
+    const interactions = modes[this.interactionMode]
+    if (interactions) {
+      interactions.forEach(action => {
+        action.onModeChange(this)
+      })
+    }
+    this.interactionMode = mode
+  }
+
+  /**
    * 点击事件
    */
   private handleClick = (e: MouseEvent) => {
+    this.nativeEvent = e
     const interactions = modes[this.interactionMode]
     if (interactions) {
       interactions.forEach(action => {

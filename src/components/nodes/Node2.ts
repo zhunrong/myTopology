@@ -43,7 +43,8 @@ export default class Node extends CanvasNode {
   }
   isPointIn(canvas: Canvas) {
     if (!canvas.nativeEvent) return false
-    const viewCoordinate = new Vector2d(canvas.nativeEvent.clientX, canvas.nativeEvent.clientY)
+    const { clientX, clientY } = canvas.nativeEvent as MouseEvent
+    const viewCoordinate = new Vector2d(clientX, clientY)
     const pixelCoordinate = canvas.viewPortTopixelCoordinate(viewCoordinate)
     return Math2d.isPointInPolygon(pixelCoordinate, this.vertexes)
   }

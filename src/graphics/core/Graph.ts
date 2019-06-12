@@ -6,6 +6,7 @@ export interface IGraphOptions {
 }
 let graphId = 1
 export default abstract class Graph {
+  active: boolean = false
   // 是否可见
   visible: boolean
   // 渲染层级
