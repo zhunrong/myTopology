@@ -12,4 +12,5 @@ export default abstract class Node extends Graph {
     super(options)
     this.position = new Vector2d(options.x, options.y)
   }
+  destroy() { }
 }

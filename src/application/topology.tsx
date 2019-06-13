@@ -73,8 +73,6 @@ export default class Topology extends Component<IProps, IState> {
       })
       this.canvas.start()
     }
-    // const menu = new ContextMenu()
-    // menu.show(100, 100)
   }
   zoomOut = () => {
     if (this.canvas) {

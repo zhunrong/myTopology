@@ -11,8 +11,14 @@ export default class Line extends Edge {
   isInRect() {
     return true
   }
-  isPointIn() {
-    return false
+  isPointIn(canvas: Canvas) {
+    if (!canvas.nativeEvent) return false
+    if (!this.sourceNode || !this.targetNode) return false
+    const event = canvas.nativeEvent as MouseEvent
+    const viewCoordinate = new Vector2d(event.clientX, event.clientY)
+    const pixelCoordinate = canvas.viewPortTopixelCoordinate(viewCoordinate)
+    return Math2d.isPointInLineSegment(pixelCoordinate, [this.sourceNode.joinPoint, this.targetNode.joinPoint])
+    // return false
   }
   render(canvas: Canvas) {
     const { canvasContext } = canvas
@@ -38,6 +44,7 @@ export default class Line extends Edge {
       // 画线
       canvasContext.moveTo(sourceNode.joinPoint.x, sourceNode.joinPoint.y)
       canvasContext.lineTo(targetNode.joinPoint.x, targetNode.joinPoint.y)
+      canvasContext.strokeStyle = this.active ? 'red' : 'grey'
       canvasContext.stroke()
       // 画箭头
       canvasContext.beginPath()
@@ -49,7 +56,7 @@ export default class Line extends Edge {
       canvasContext.lineTo(- 8, + 3)
       canvasContext.lineTo(- 8, - 3)
       canvasContext.closePath()
-      canvasContext.fillStyle = 'black'
+      canvasContext.fillStyle = this.active ? 'red' : 'grey'
       canvasContext.fill()
       canvasContext.restore()
     }

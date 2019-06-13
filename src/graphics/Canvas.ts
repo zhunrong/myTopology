@@ -2,16 +2,18 @@ import EventEmitter, { globalEvent } from '../events/eventEmitter'
 import Vector2d from '../utils/vector2d'
 import ResizeObserver from 'resize-observer-polyfill'
 import { throttle } from '../utils/utils'
+import Node from './core/Node'
 import DomNode from './core/DomNode'
 import CanvasNode from './core/CanvasNode'
 import Edge from './core/Edge'
 import VirtualNode from './core/VirtualNode'
+import ContextMenu from './contextMenu/ContextMenu'
 import modes, { MODE_DEFAULT } from './mode/modes'
 
 interface IAPPOptions {
   container: HTMLElement
 }
-export default class Application {
+export default class Canvas {
   private mounted: boolean = false
   private _running: boolean = false
   private _animationFrameId: number = 0
@@ -47,8 +49,8 @@ export default class Application {
   // 连线
   public edges: Edge[] = []
   // 活动的元素
-  protected activeNodes: (DomNode | CanvasNode)[] = []
-  protected activeShapeIds: Set<number> = new Set()
+  public activeNodes: Node[] = []
+  public activeEdges: Edge[] = []
   // resize监听器
   private ro: ResizeObserver
   // 画布
@@ -59,6 +61,8 @@ export default class Application {
   canvasScale: number = 1
   // 重绘
   repaint: boolean = false
+  // menu
+  contextMenu: ContextMenu = new ContextMenu(this)
 
   constructor(options: IAPPOptions) {
     this.container = options.container
@@ -108,7 +112,7 @@ export default class Application {
     this.unmount()
   }
   // 添加节点
-  public addNode(node: (DomNode | CanvasNode)) {
+  public addNode(node: Node) {
     if (node instanceof CanvasNode) {
       if (this.canvasNodes.find(item => item === node)) return
       node.visible = node.isInRect(this.canvasVisibleRect)
@@ -125,7 +129,7 @@ export default class Application {
       if (!current) {
         this.canvasNodes.unshift(node)
       }
-    } else {
+    } else if (node instanceof DomNode) {
       if (this.domNodes.find(item => item === node)) return
       node.visible = node.isInRect(this.canvasVisibleRect)
       let index = this.domNodes.length - 1
@@ -145,21 +149,33 @@ export default class Application {
     this.repaint = true
   }
   // 删除节点
-  public removeNode(node: DomNode | CanvasNode) {
+  public removeNode(node: Node) {
     let index
-    if (node.renderType === 'canvas') {
+    if (node instanceof CanvasNode) {
       index = this.canvasNodes.findIndex(item => item === node)
       if (index > -1) {
         this.canvasNodes.splice(index, 1)
       }
-    } else if (node.renderType === 'dom') {
+    } else if (node instanceof DomNode) {
       index = this.domNodes.findIndex(item => item === node)
       if (index > -1) {
+        node.unmount(this)
         this.domNodes.splice(index, 1)
       }
     } else {
       console.log(`不支持的renderType: ${node.renderType}`)
     }
+    node.destroy()
+    // 把相连的edge也删掉
+    const edges: Edge[] = []
+    this.edges.forEach(edge => {
+      if (edge.targetNode === node || edge.sourceNode) {
+        edges.push(edge)
+      }
+    })
+    edges.forEach(edge => {
+      this.removeEdge(edge)
+    })
     this.repaint = true
   }
 
@@ -346,7 +362,6 @@ export default class Application {
   private handleMouseUp = (e: MouseEvent) => {
     this.nativeEvent = e
     this.mouseupPosition = new Vector2d(e.clientX, e.clientY)
-    this.activeNodes = []
     const interactions = modes[this.interactionMode]
     if (interactions) {
       interactions.forEach(action => {
@@ -378,8 +393,13 @@ export default class Application {
     }
   }
   private handleContextMenu = (e: MouseEvent) => {
-    console.log('contextMent', e)
     e.preventDefault()
+    const interactions = modes[this.interactionMode]
+    if (interactions) {
+      interactions.forEach(action => {
+        action.onContextMenu(this, e)
+      })
+    }
   }
   /**
    * 优化节点显示

@@ -9,5 +9,6 @@ export default abstract class Interaction {
   onDrop = noop
   onDragOver = noop
   onWheel = noop
+  onContextMenu = noop
   onModeChange = noop2
 }
