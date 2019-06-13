@@ -1,0 +1,25 @@
+:local(.menu) {
+  background: white;
+  position: fixed;
+  width: 160px;
+  min-height: 160px;
+  border-radius: 5px;
+  z-index: 9999;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  font-size: 14px;
+  padding: 10px 0;
+  color: #666;
+
+  .item {
+    height: 26px;
+    line-height: 26px;
+    padding: 3px 20px;
+    cursor: pointer;
+
+    &:hover {
+      background: #f6f6f6;
+      color: rgb(7, 150, 233);
+    }
+  }
+}

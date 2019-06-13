@@ -119,4 +119,13 @@ export default class Vector2d {
     const { x, y } = this
     return new Vector2d(x * Math.cos(deg) - y * Math.sin(deg), x * Math.sin(deg) + y * Math.cos(deg))
   }
+
+  /**
+   * 在目标向量上的投影
+   * @param target 
+   */
+  project(target: Vector2d): Vector2d {
+    const magnitude = this.dotProduct(target) / target.magnitude
+    return target.normalize().scale(magnitude)
+  }
 }

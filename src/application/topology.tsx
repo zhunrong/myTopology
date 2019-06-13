@@ -4,18 +4,18 @@ import { MODE_DEFAULT, MODE_VIEW, MODE_CREATE_EDGE } from '../graphics/mode/mode
 // import Node from '../graphics/Circle'
 import Node from '../components/nodes/Node3'
 import Edge from '../components/edges/Line'
-import Vector2d from '../utils/vector2d'
-import Math2d from '../utils/math2d'
-import { globalEvent } from '../events/eventEmitter'
 import { nodeDatas } from '../data/topoData'
+import ContextMenu from '../graphics/contextMenu/ContextMenu'
 import "./topology.scss"
+import Vector2d from '../utils/vector2d';
+import Math2d from '../utils/math2d';
 interface IProps { }
 interface IState {
   mode: string
 }
 
 export default class Topology extends Component<IProps, IState> {
-  nodeDatas: any[] = nodeDatas
+  nodeDatas: any[] = []
   edgeDatas: any = []
   nodes: Node[] = []
   edges: Edge[] = []
@@ -76,6 +76,8 @@ export default class Topology extends Component<IProps, IState> {
       })
       this.canvas.start()
     }
+    // const menu = new ContextMenu()
+    // menu.show(100, 100)
   }
   addNode = () => {
     if (this.canvas) {

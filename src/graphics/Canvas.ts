@@ -90,6 +90,7 @@ export default class Application {
     this.wrapper.addEventListener('wheel', this.handleWheel)
     this.wrapper.addEventListener('dragover', this.handleDragOver)
     this.wrapper.addEventListener('drop', this.handleDrop)
+    this.wrapper.addEventListener('contextmenu', this.handleContextMenu)
   }
   // 全局事件监听
   private globalEventInit() { }
@@ -371,6 +372,10 @@ export default class Application {
         action.onDrop(this, e)
       })
     }
+  }
+  private handleContextMenu = (e: MouseEvent) => {
+    console.log('contextMent', e)
+    e.preventDefault()
   }
   /**
    * 优化节点显示

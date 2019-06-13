@@ -30,4 +30,77 @@ export default class Math2d {
     }
     return false
   }
+  /**
+   * 判断点是否在线段上
+   * @param P 
+   * @param lineSegment 
+   */
+  static isPointInLineSegment(P: Vector2d, lineSegment: [Vector2d, Vector2d]): boolean {
+    const A = lineSegment[0]
+    const B = lineSegment[1]
+    const PA = P.substract(A)
+    const PB = P.substract(B)
+    const AB = A.substract(B)
+    if (PA.magnitude + PB.magnitude - AB.magnitude < 0.01) {
+      return true
+    }
+    return false
+  }
+  /**
+   * 判断两条线是否相交
+   * @param line1 
+   * @param line2 
+   */
+  static isIntersect(line1: [Vector2d, Vector2d], line2: [Vector2d, Vector2d]): boolean {
+    const A = line1[0]
+    const B = line1[1]
+    const C = line2[0]
+    const D = line2[1]
+    if (Math2d.isPointInLineSegment(A, line2)) return true
+    if (Math2d.isPointInLineSegment(B, line2)) return true
+    if (Math2d.isPointInLineSegment(C, line1)) return true
+    if (Math2d.isPointInLineSegment(D, line1)) return true
+    const AC = C.substract(A)
+    const AD = D.substract(A)
+    const BC = C.substract(B)
+    const BD = D.substract(B)
+    const b1 = AC.crossProduct(AD) < 0
+    const b2 = BC.crossProduct(BD) < 0
+    if (b1 === b2) return false
+    const CA = A.substract(C)
+    const CB = B.substract(C)
+    const DA = A.substract(D)
+    const DB = B.substract(D)
+    const b3 = CA.crossProduct(CB) < 0
+    const b4 = DA.crossProduct(DB) < 0
+    if (b3 === b4) return false
+    return true
+  }
+
+  /**
+   * 获取两条相交线段的交点
+   * @param line1 
+   * @param line2 
+   */
+  static getLineIntersect(line1: [Vector2d, Vector2d], line2: [Vector2d, Vector2d]): Vector2d {
+    const A = line1[0]
+    const B = line1[1]
+    const C = line2[0]
+    const D = line2[1]
+    const AB = B.substract(A)
+    const CD = D.substract(C)
+    const perpendicular = CD.perpendicular()
+    // C,A,B 在perpendicular的投影  a----c----->b
+    const c = C.project(perpendicular)
+    const a = A.project(perpendicular)
+    const b = B.project(perpendicular)
+
+    const ac = c.substract(a)
+    const cb = b.substract(c)
+    // 设交点P,则AP的模
+    const magnitude = AB.magnitude * ac.magnitude / (ac.magnitude + cb.magnitude)
+    const AP = AB.normalize().scale(magnitude)
+    const P = AP.add(A)
+    return P
+  }
 }
