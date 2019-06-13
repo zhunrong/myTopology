@@ -58,7 +58,7 @@ export default class Application {
   canvasHeight: number = 0
   canvasScale: number = 1
   // 重绘
-  updateCanvas: boolean = false
+  repaint: boolean = false
 
   constructor(options: IAPPOptions) {
     this.container = options.container
@@ -142,6 +142,7 @@ export default class Application {
         this.domNodes.unshift(node)
       }
     }
+    this.repaint = true
   }
   // 删除节点
   public removeNode(node: DomNode | CanvasNode) {
@@ -159,6 +160,7 @@ export default class Application {
     } else {
       console.log(`不支持的renderType: ${node.renderType}`)
     }
+    this.repaint = true
   }
 
   // 添加连线
@@ -166,6 +168,7 @@ export default class Application {
     if (this.edges.find(item => item === edge)) return
     edge.render(this)
     this.edges.push(edge)
+    this.repaint = true
   }
   // 删除连线
   public removeEdge(edge: Edge) {
@@ -173,6 +176,7 @@ export default class Application {
     if (index > -1) {
       this.edges.splice(index, 1)
     }
+    this.repaint = true
   }
 
   /**
@@ -230,6 +234,7 @@ export default class Application {
     })
     this.optimizeNode()
     this.render()
+    this.repaint = true
   }
 
   /**
@@ -254,6 +259,7 @@ export default class Application {
     })
     this.optimizeNode()
     this.render()
+    this.repaint = true
   }
 
   /**
@@ -305,7 +311,6 @@ export default class Application {
    */
   private handleMouseDown = (e: MouseEvent) => {
     this.nativeEvent = e
-    this.updateCanvas = true
     this.mousedownPosition = new Vector2d(e.clientX, e.clientY)
     const interactions = modes[this.interactionMode]
     if (interactions) {
@@ -340,7 +345,6 @@ export default class Application {
    */
   private handleMouseUp = (e: MouseEvent) => {
     this.nativeEvent = e
-    this.updateCanvas = false
     this.mouseupPosition = new Vector2d(e.clientX, e.clientY)
     this.activeNodes = []
     const interactions = modes[this.interactionMode]
@@ -434,15 +438,14 @@ export default class Application {
   loop() {
     if (!this._running) return
     this._animationFrameId = requestAnimationFrame(() => {
-      // if (this.updateCanvas) {
-      //   this.canvasContext.clearRect(0, 0, this.canvasWidth, this.canvasHeight)
-      //   this.renderEdge()
-      //   this.renderNode()
-      // }
-      this.canvasContext.clearRect(0, 0, this.canvasWidth, this.canvasHeight)
-      // this.renderNode()
+
       this.renderDomNodes()
-      this.renderEdge()
+      // 判断是否需要重绘
+      if (this.repaint) {
+        this.canvasContext.clearRect(0, 0, this.canvasWidth, this.canvasHeight)
+        this.renderEdge()
+        this.repaint = false
+      }
       this.loop()
     })
   }

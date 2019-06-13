@@ -10,37 +10,52 @@ import Line from '../../components/edges/Line'
  * 连线（直线）
  */
 class CreateEdgeInteraction extends Interaction {
+  targetNode: Node | undefined
+  sourceNode: Node | undefined
   edge: Line | undefined
   onClick = (canvas: Canvas) => {
     const nodes: Node[] = [...canvas.domNodes, ...canvas.canvasNodes]
     if (this.edge) {
-      const targetNode = nodes.find(node => node.isPointIn(canvas))
-      if (targetNode) {
-        this.edge.targetNode = targetNode
+      this.targetNode = nodes.find(node => node.isPointIn(canvas))
+      if (this.targetNode) {
+        this.edge.targetNode = this.targetNode
+        this.targetNode.isUpdate = true
         this.edge = undefined
+        this.targetNode = undefined
+        this.sourceNode = undefined
       } else {
         canvas.removeEdge(this.edge)
         this.edge = undefined
+        this.targetNode = undefined
+        this.sourceNode = undefined
       }
     } else {
-      const sourceNode = nodes.find(node => node.isPointIn(canvas))
-      if (sourceNode) {
+      this.sourceNode = nodes.find(node => node.isPointIn(canvas))
+      if (this.sourceNode) {
         this.edge = new Line({
-          sourceNode,
+          sourceNode: this.sourceNode,
           targetNode: canvas.virtualNode
         })
         canvas.addEdge(this.edge)
       }
     }
+    canvas.repaint = true
   }
   onMouseMove = (canvas: Canvas) => {
     canvas.virtualNode.position = canvas.viewPortTopixelCoordinate(canvas.mousemovePosition)
+    if (this.sourceNode) {
+      canvas.virtualNode.isUpdate = true
+    }
+    canvas.repaint = true
   }
   onModeChange = (canvas: Canvas) => {
     if (this.edge) {
       canvas.removeEdge(this.edge)
       this.edge = undefined
+      this.targetNode = undefined
+      this.sourceNode = undefined
     }
+    canvas.repaint = true
   }
 }
 

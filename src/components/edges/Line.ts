@@ -4,6 +4,7 @@ import Math2d from '../../utils/math2d';
 import Vector2d from '../../utils/vector2d';
 export interface ILineOptions extends IEdgeOptions { }
 export default class Line extends Edge {
+  // 缓存canvas(离屏canvas)
   constructor(options: ILineOptions) {
     super(options)
   }
@@ -16,8 +17,8 @@ export default class Line extends Edge {
   render(canvas: Canvas) {
     const { canvasContext } = canvas
     const { sourceNode, targetNode } = this
-    if (sourceNode && targetNode) {
-
+    // 两端节点都存在且至少有一个是可见的
+    if (sourceNode && targetNode && (sourceNode.visible || targetNode.visible)) {
       // 计算箭头顶点位置
       const sourceToTarget = targetNode.joinPoint.substract(sourceNode.joinPoint)
       const targetNodeVertexes = targetNode.vertexes

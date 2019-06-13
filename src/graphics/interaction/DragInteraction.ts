@@ -9,6 +9,7 @@ import Vector2d from '../../utils/vector2d'
 class DragInteraction extends Interaction {
   cachePositions: Vector2d[] = []
   moveNodes: (DomNode | CanvasNode)[] = []
+  mousedown: boolean = false
   onMouseDown = (canvas: Canvas) => {
     const nodes = [...canvas.domNodes, ...canvas.canvasNodes]
     let activeNode: DomNode | CanvasNode | undefined = nodes.find(node => node.isPointIn(canvas))
@@ -18,16 +19,20 @@ class DragInteraction extends Interaction {
       this.moveNodes = nodes
     }
     this.cachePositions = this.moveNodes.map(node => node.position)
+    this.mousedown = true
   }
   onMouseMove = (canvas: Canvas) => {
+    if (!this.mousedown) return
     this.moveNodes.forEach((node, index) => {
       node.position = this.cachePositions[index].add(canvas.mousemovePosition.substract(canvas.mousedownPosition).scale(1 / canvas.canvasScale))
       node.isUpdate = true
     })
+    canvas.repaint = true
   }
   onMouseUp = () => {
     this.moveNodes = []
     this.cachePositions = []
+    this.mousedown = false
   }
 }
 

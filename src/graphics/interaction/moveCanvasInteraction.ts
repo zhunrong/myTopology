@@ -20,6 +20,7 @@ class MoveCanvasInteraction extends Interaction {
       node.position = this.cachePositions[index].add(canvas.mousemovePosition.substract(canvas.mousedownPosition).scale(1 / canvas.canvasScale))
       node.isUpdate = true
     })
+    canvas.repaint = true
   }
   onMouseUp = () => {
     this.moveNodes = []

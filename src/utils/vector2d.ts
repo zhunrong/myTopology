@@ -128,4 +128,12 @@ export default class Vector2d {
     const magnitude = this.dotProduct(target) / target.magnitude
     return target.normalize().scale(magnitude)
   }
+
+  /**
+   * 是否与目标向量相等
+   * @param target 
+   */
+  equal(target: Vector2d): boolean {
+    return this.x === target.x && this.y === target.y
+  }
 }

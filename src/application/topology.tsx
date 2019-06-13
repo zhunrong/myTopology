@@ -15,7 +15,7 @@ interface IState {
 }
 
 export default class Topology extends Component<IProps, IState> {
-  nodeDatas: any[] = []
+  nodeDatas: any[] = nodeDatas
   edgeDatas: any = []
   nodes: Node[] = []
   edges: Edge[] = []
@@ -39,9 +39,6 @@ export default class Topology extends Component<IProps, IState> {
             x: item.x,
             y: item.y,
             id: item.id
-            // radius: 25,
-            // width: 50,
-            // height: 50
           })
           if (this.canvas) {
             this.canvas.addNode(node)
@@ -79,18 +76,6 @@ export default class Topology extends Component<IProps, IState> {
     // const menu = new ContextMenu()
     // menu.show(100, 100)
   }
-  addNode = () => {
-    if (this.canvas) {
-      // const node = new Node({
-      //   // name: 'node-??',
-      //   x: 500,
-      //   y: 500,
-      //   id: 4,
-      //   // radius: 25
-      // })
-      // this.canvas.addNode(node)
-    }
-  }
   zoomOut = () => {
     if (this.canvas) {
       this.canvas.zoomOut()
@@ -99,16 +84,6 @@ export default class Topology extends Component<IProps, IState> {
   zoomIn = () => {
     if (this.canvas) {
       this.canvas.zoomIn()
-    }
-  }
-  optimize = () => {
-    if (this.canvas) {
-      this.canvas.optimize = true
-    }
-  }
-  notOptimize = () => {
-    if (this.canvas) {
-      this.canvas.optimize = false
     }
   }
   handleDragStart = (e: React.DragEvent<HTMLSpanElement>) => {
@@ -127,8 +102,6 @@ export default class Topology extends Component<IProps, IState> {
     return (
       <div className="topology">
         <div className="topo-bar">
-          {/* <button onClick={this.modeChange.bind(this, MODE_DEFAULT)} className={`${this.state.mode === MODE_DEFAULT ? 'active' : ''}`}>默认</button> */}
-          {/* <button onClick={this.modeChange.bind(this, MODE_VIEW)} className={`${this.state.mode === MODE_VIEW ? 'active' : ''}`}>查看</button> */}
           <img onClick={this.modeChange.bind(this, MODE_DEFAULT)} className={`${this.state.mode === MODE_DEFAULT ? 'active' : ''}`} src={require('../assets/pointer.svg')} title="默认模式" />
           <img onClick={this.modeChange.bind(this, MODE_VIEW)} className={`${this.state.mode === MODE_VIEW ? 'active' : ''}`} src={require('../assets/view.svg')} title="查看模式" />
           <img src={require('../assets/zoom_out.svg')} onClick={this.zoomOut} title="缩小" />
