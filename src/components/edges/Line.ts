@@ -2,11 +2,19 @@ import Edge, { IEdgeOptions } from '../../graphics/core/Edge'
 import Canvas from '../../graphics/Canvas'
 import Math2d from '../../utils/math2d';
 import Vector2d from '../../utils/vector2d';
-export interface ILineOptions extends IEdgeOptions { }
+export interface ILineOptions extends IEdgeOptions {
+  // 是否虚线
+  dash?: boolean
+  text?: string
+}
 export default class Line extends Edge {
+  dash: boolean
+  text: string
   // 缓存canvas(离屏canvas)
   constructor(options: ILineOptions) {
     super(options)
+    this.dash = options.dash || false
+    this.text = options.text || 'edge'
   }
   isInRect() {
     return true
@@ -34,7 +42,6 @@ export default class Line extends Edge {
         const B = i === targetNodeVertexes.length - 1 ? targetNodeVertexes[0] : targetNodeVertexes[i + 1]
         const r = Math2d.isIntersect([sourceNode.joinPoint, targetNode.joinPoint], [A, B])
         if (r) {
-          // 法向量
           arrowStart = Math2d.getLineIntersect([A, B], [sourceNode.joinPoint, targetNode.joinPoint])
           break
         }
@@ -45,18 +52,36 @@ export default class Line extends Edge {
       canvasContext.moveTo(sourceNode.joinPoint.x, sourceNode.joinPoint.y)
       canvasContext.lineTo(targetNode.joinPoint.x, targetNode.joinPoint.y)
       canvasContext.strokeStyle = this.active ? 'red' : 'grey'
+      canvasContext.fillStyle = this.active ? 'red' : 'grey'
+      if/* 虚线 */ (this.dash) {
+        canvasContext.setLineDash([4, 4])
+      }
       canvasContext.stroke()
+      const rotate = sourceToTarget.xAxisAngle()
+      if/* 文本 */ (this.text) {
+        canvasContext.save()
+        const lineCenter = sourceNode.joinPoint.add(sourceToTarget.scale(1 / 2))
+        canvasContext.font = '14px sans-serif'
+        canvasContext.textAlign = 'center'
+        canvasContext.textBaseline = 'middle'
+        canvasContext.translate(lineCenter.x, lineCenter.y)
+        if (rotate < Math.PI / 2 && rotate >= -Math.PI / 2) {
+          canvasContext.rotate(rotate)
+        } else {
+          canvasContext.rotate(rotate - Math.PI)
+        }
+        canvasContext.fillText(this.text, 0, -10)
+        canvasContext.restore()
+      }
       // 画箭头
       canvasContext.beginPath()
       canvasContext.save()
-      const rotate = sourceToTarget.xAxisAngle()
       canvasContext.translate(arrowStart.x, arrowStart.y)
       canvasContext.rotate(rotate)
       canvasContext.moveTo(0, 0)
       canvasContext.lineTo(- 8, + 3)
       canvasContext.lineTo(- 8, - 3)
       canvasContext.closePath()
-      canvasContext.fillStyle = this.active ? 'red' : 'grey'
       canvasContext.fill()
       canvasContext.restore()
     }

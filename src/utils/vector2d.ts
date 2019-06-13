@@ -103,7 +103,7 @@ export default class Vector2d {
   }
 
   /**
-   * 与x轴夹角(顺时针为正)
+   * 与x轴夹角(顺时针为正) [-Math.PI,Math.PI]
    */
   xAxisAngle(): number {
     const xAxis = new Vector2d(1, 0)

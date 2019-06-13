@@ -41,7 +41,7 @@ export default class Math2d {
     const PA = P.substract(A)
     const PB = P.substract(B)
     const AB = A.substract(B)
-    if (PA.magnitude + PB.magnitude - AB.magnitude < 0.01) {
+    if (PA.magnitude + PB.magnitude - AB.magnitude < 0.1) {
       return true
     }
     return false
