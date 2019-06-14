@@ -26,7 +26,6 @@ class ClickInteraction extends Interaction {
         edge.active = false
       })
       canvas.activeNodes = [activeNode]
-      console.log(canvas)
     } else {
       canvas.activeNodes = []
       canvas.edges.forEach(edge => {

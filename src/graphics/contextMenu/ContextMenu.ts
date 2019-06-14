@@ -9,9 +9,6 @@ const menu = [{
   label: '缩小',
   command: 'zoomOut',
   active: false
-}, {
-  label: '删除',
-  command: 'delete'
 }]
 export default class ContextMenu {
   mouseX: number = 0
@@ -76,7 +73,15 @@ export default class ContextMenu {
   }
   mount() {
     if (this.mounted) return
-    const html = menu.map(item => {
+    const menuList = [...menu]
+    if (this.canvas.activeNodes.length || this.canvas.activeEdges.length) {
+      menuList.push({
+        label: '删除',
+        command: 'delete',
+        active: false
+      })
+    }
+    const html = menuList.map(item => {
       return `<div class="item" data-command="${item.command}">${item.label}</div>`
     })
     this.container.innerHTML = html.join('')

@@ -78,6 +78,8 @@ export default class Canvas {
       }
       this.mount()
       this.render()
+      this.optimizeNode()
+      this.repaint = true
       // this.renderEdge()
     })
     this.ro.observe(this.container)
@@ -169,7 +171,7 @@ export default class Canvas {
     // 把相连的edge也删掉
     const edges: Edge[] = []
     this.edges.forEach(edge => {
-      if (edge.targetNode === node || edge.sourceNode) {
+      if (edge.targetNode === node || edge.sourceNode === node) {
         edges.push(edge)
       }
     })
