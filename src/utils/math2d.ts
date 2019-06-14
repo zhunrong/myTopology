@@ -1,7 +1,28 @@
 import Vector2d from './vector2d'
 export default class Math2d {
-  static isPointInRect() { }
-  static isPointInCircle() { }
+  /**
+   * 判断点是否在矩形内
+   * @param P 
+   * @param rectPosition 
+   * @param width 
+   * @param height 
+   */
+  static isPointInRect(P: Vector2d, rectPosition: Vector2d, width: number, height: number) {
+    if (P.x < rectPosition.x) return false
+    if (P.y < rectPosition.y) return false
+    if (P.x > rectPosition.x + width) return false
+    if (P.y > rectPosition.y + height) return false
+    return true
+  }
+  /**
+   * 判断点是否在圆内
+   * @param P 
+   * @param C 
+   * @param radius 
+   */
+  static isPointInCircle(P: Vector2d, C: Vector2d, radius: number) {
+    return C.substract(P).magnitude <= radius
+  }
   /**
    * 判断点是否在三角形内
    * @param point 
@@ -34,14 +55,15 @@ export default class Math2d {
    * 判断点是否在线段上
    * @param P 
    * @param lineSegment 
+   * @param deviation 计算偏差 最小为0
    */
-  static isPointInLineSegment(P: Vector2d, lineSegment: [Vector2d, Vector2d]): boolean {
+  static isPointInLineSegment(P: Vector2d, lineSegment: [Vector2d, Vector2d], deviation: number = 0.01): boolean {
     const A = lineSegment[0]
     const B = lineSegment[1]
     const PA = P.substract(A)
     const PB = P.substract(B)
     const AB = A.substract(B)
-    if (PA.magnitude + PB.magnitude - AB.magnitude < 0.1) {
+    if (PA.magnitude + PB.magnitude - AB.magnitude < deviation) {
       return true
     }
     return false
