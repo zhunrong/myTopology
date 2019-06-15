@@ -1,11 +1,9 @@
 import Interaction from './Interaction'
-import Canvas from '../Canvas'
-import Vector2d from '../../utils/vector2d'
-
+import { Canvas, Vector2d } from '../index'
 /**
  * drop
  */
-class DropInteration extends Interaction {
+class DropInteraction extends Interaction {
   onDrop = (canvas: Canvas, e: Event) => {
     const event = e as DragEvent
     canvas.eventEmitter.emit('canvas:drop', {
@@ -18,4 +16,5 @@ class DropInteration extends Interaction {
   }
 }
 
-export default new DropInteration()
+export const dropInteraction=new DropInteraction()
+export default dropInteraction

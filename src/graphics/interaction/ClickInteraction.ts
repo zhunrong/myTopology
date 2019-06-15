@@ -1,7 +1,6 @@
 import Interaction from './Interaction'
-import Canvas from '../Canvas'
-import Node from '../core/Node'
-import Edge from '../core/Edge'
+import Node from '../graph/Node'
+import { Canvas, Edge } from '../index'
 
 class ClickInteraction extends Interaction {
   onMouseDown = (canvas: Canvas) => {
@@ -51,4 +50,5 @@ class ClickInteraction extends Interaction {
   }
 }
 
-export default new ClickInteraction()
+export const clickInteraction=new ClickInteraction()
+export default clickInteraction

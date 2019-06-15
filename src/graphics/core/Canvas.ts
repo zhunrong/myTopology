@@ -1,19 +1,13 @@
-import EventEmitter, { globalEvent } from '../events/eventEmitter'
-import Vector2d from '../utils/vector2d'
+import { globalEvent, EventEmitter, Vector2d, CanvasNode, DomNode, Edge, throttle, ContextMenu } from '../index'
 import ResizeObserver from 'resize-observer-polyfill'
-import { throttle } from '../utils/utils'
-import Node from './core/Node'
-import DomNode from './core/DomNode'
-import CanvasNode from './core/CanvasNode'
-import Edge from './core/Edge'
-import VirtualNode from './core/VirtualNode'
-import ContextMenu from './contextMenu/ContextMenu'
-import modes, { MODE_DEFAULT } from './mode/modes'
+import Node from '../graph/Node'
+import VirtualNode from '../graph/VirtualNode'
+import modes, { MODE_DEFAULT } from '../mode/modes'
 
-interface IAPPOptions {
+interface ICanvasOptions {
   container: HTMLElement
 }
-export default class Canvas {
+export class Canvas {
   private mounted: boolean = false
   private _running: boolean = false
   private _animationFrameId: number = 0
@@ -64,7 +58,7 @@ export default class Canvas {
   // menu
   contextMenu: ContextMenu = new ContextMenu(this)
 
-  constructor(options: IAPPOptions) {
+  constructor(options: ICanvasOptions) {
     this.container = options.container
     this.canvasContext = this.canvas.getContext('2d') as CanvasRenderingContext2D
     this.ro = new ResizeObserver((entries, observer) => {
@@ -148,6 +142,7 @@ export default class Canvas {
         this.domNodes.unshift(node)
       }
     }
+    node.canvas = this
     this.repaint = true
   }
   // 删除节点
@@ -184,8 +179,8 @@ export default class Canvas {
   // 添加连线
   public addEdge(edge: Edge) {
     if (this.edges.find(item => item === edge)) return
-    edge.render(this)
     this.edges.push(edge)
+    edge.canvas = this
     this.repaint = true
   }
   // 删除连线
@@ -501,3 +496,5 @@ export default class Canvas {
     // })
   }
 }
+
+export default Canvas

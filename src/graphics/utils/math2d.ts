@@ -1,5 +1,5 @@
-import Vector2d from './vector2d'
-export default class Math2d {
+import {Vector2d} from './vector2d'
+export class Math2d {
   /**
    * 判断点是否在矩形内
    * @param P 
@@ -126,3 +126,5 @@ export default class Math2d {
     return P
   }
 }
+
+export default Math2d

@@ -1,7 +1,4 @@
-import Edge, { IEdgeOptions } from '../../graphics/core/Edge'
-import Canvas from '../../graphics/Canvas'
-import Math2d from '../../utils/math2d';
-import Vector2d from '../../utils/vector2d';
+import { Edge, IEdgeOptions, Canvas, Math2d, Vector2d } from '../../graphics'
 export interface ILineOptions extends IEdgeOptions {
   // 是否虚线
   dash?: boolean

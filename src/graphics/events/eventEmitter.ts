@@ -5,7 +5,7 @@ export interface IListener {
 export interface IEvents {
   [eventName: string]: IListener[]
 }
-export default class EventEmitter {
+export class EventEmitter {
   readonly events: IEvents = {}
   /**
    * 监听事件
@@ -41,3 +41,5 @@ export default class EventEmitter {
 }
 
 export const globalEvent = new EventEmitter()
+
+export default EventEmitter

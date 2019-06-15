@@ -1,7 +1,7 @@
 import Node, { INodeOptions } from './Node'
-import Vector2d from '../../utils/vector2d';
+import { Vector2d } from '../index'
 export interface IVirtualNodeOptions extends INodeOptions { }
-export default class VirtualNode extends Node {
+export class VirtualNode extends Node {
   renderType: string = 'NONE'
   constructor(options: IVirtualNodeOptions) {
     super(options)
@@ -16,3 +16,4 @@ export default class VirtualNode extends Node {
   isPointIn() { return false }
   render() { }
 }
+export default VirtualNode

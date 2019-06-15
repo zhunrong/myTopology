@@ -1,6 +1,5 @@
 import style from './style.scss'
-import Canvas from '../Canvas'
-import Vector2d from '../../utils/vector2d';
+import { Canvas, Vector2d } from '../index'
 const menu = [{
   label: '放大',
   command: 'zoomIn',
@@ -10,7 +9,7 @@ const menu = [{
   command: 'zoomOut',
   active: false
 }]
-export default class ContextMenu {
+export class ContextMenu {
   mouseX: number = 0
   mouseY: number = 0
   canvas: Canvas
@@ -94,3 +93,5 @@ export default class ContextMenu {
     this.mounted = false
   }
 }
+
+export default ContextMenu

@@ -1,9 +1,5 @@
 import Interaction from './Interaction'
-import Canvas from '../Canvas'
-import DomNode from '../core/DomNode'
-import CanvasNode from '../core/CanvasNode'
-import Vector2d from '../../utils/vector2d'
-
+import { CanvasNode, Vector2d, Canvas, DomNode } from '../index'
 /**
  * 拖动整个画布
  */
@@ -28,4 +24,5 @@ class MoveCanvasInteraction extends Interaction {
   }
 }
 
-export default new MoveCanvasInteraction()
+export const moveCanvasInteraction = new MoveCanvasInteraction()
+export default moveCanvasInteraction

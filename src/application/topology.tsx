@@ -1,14 +1,12 @@
 import React, { Component } from 'react'
-import Canvas from '../graphics/Canvas'
+// import Canvas from '../graphics/core/Canvas'
 import { MODE_DEFAULT, MODE_VIEW, MODE_CREATE_EDGE } from '../graphics/mode/modes'
 // import Node from '../graphics/Circle'
 import Node from '../components/nodes/Node3'
 import Edge from '../components/edges/Line'
 import { nodeDatas } from '../data/topoData'
-import ContextMenu from '../graphics/contextMenu/ContextMenu'
 import "./topology.scss"
-import Vector2d from '../utils/vector2d';
-import Math2d from '../utils/math2d';
+import { Canvas } from '../graphics/index'
 interface IProps { }
 interface IState {
   mode: string

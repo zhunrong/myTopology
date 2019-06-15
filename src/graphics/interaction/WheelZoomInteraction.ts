@@ -1,6 +1,5 @@
 import Interaction from './Interaction'
-import Canvas from '../Canvas'
-import Vector2d from '../../utils/vector2d'
+import { Canvas, Vector2d } from '../index'
 /**
  * 滚轮缩放
  */
@@ -15,4 +14,5 @@ class WheelZoomInteraction extends Interaction {
   }
 }
 
-export default new WheelZoomInteraction()
+const wheelZoomInteraction = new WheelZoomInteraction()
+export default wheelZoomInteraction

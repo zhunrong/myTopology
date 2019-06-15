@@ -1,6 +1,5 @@
 import Interaction from './Interaction'
-import Canvas from '../Canvas'
-
+import { Canvas } from '../index'
 class MenuInteraction extends Interaction {
   onContextMenu = (canvas: Canvas, e: Event) => {
     const event = e as MouseEvent
@@ -9,4 +8,5 @@ class MenuInteraction extends Interaction {
   }
 }
 
-export default new MenuInteraction
+export const menuInteration = new MenuInteraction()
+export default menuInteration

@@ -1,7 +1,4 @@
-import DomNode, { IDomNodeOptions } from '../../graphics/core/DomNode'
-// import Canvas from '../../graphics/Canvas'
-import Vector2d from '../../utils/vector2d'
-import Math2d from '../../utils/math2d'
+import { DomNode, IDomNodeOptions, Vector2d, Math2d } from '../../graphics/index'
 import style from './node3.scss'
 interface IOptions extends IDomNodeOptions {
   text: string

@@ -1,11 +1,11 @@
-import Canvas from '../Canvas'
-import Vector2d from '../../utils/vector2d'
+import { Canvas, Vector2d } from '../index'
 export interface IGraphOptions {
   visible?: boolean
   zIndex?: number
 }
 let graphId = 1
-export default abstract class Graph {
+export abstract class Graph {
+  canvas: Canvas | undefined
   active: boolean = false
   // 是否可见
   visible: boolean
@@ -37,3 +37,5 @@ export default abstract class Graph {
    */
   abstract render(canvas: Canvas): void
 }
+
+export default Graph

@@ -1,9 +1,9 @@
 import Interaction from './Interaction'
-import Canvas from '../Canvas'
-import Node from '../core/Node'
-import DomNode from '../core/DomNode'
-import CanvasNode from '../core/CanvasNode'
-import Vector2d from '../../utils/vector2d'
+import Canvas from '../core/Canvas'
+import Node from '../graph/Node'
+import DomNode from '../graph/DomNode'
+import CanvasNode from '../graph/CanvasNode'
+import Vector2d from '../utils/vector2d'
 import Line from '../../components/edges/Line'
 
 /**
@@ -61,4 +61,5 @@ class CreateEdgeInteraction extends Interaction {
   }
 }
 
-export default new CreateEdgeInteraction()
+export const createEdgeInteraction=new CreateEdgeInteraction()
+export default createEdgeInteraction

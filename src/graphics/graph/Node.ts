@@ -1,10 +1,10 @@
 import Graph, { IGraphOptions } from './Graph'
-import Vector2d from '../../utils/vector2d';
+import { Vector2d } from '../index'
 export interface INodeOptions extends IGraphOptions {
   x: number
   y: number
 }
-export default abstract class Node extends Graph {
+export abstract class Node extends Graph {
   position: Vector2d
   abstract get vertexes(): Vector2d[]
   abstract get joinPoint(): Vector2d
@@ -14,3 +14,5 @@ export default abstract class Node extends Graph {
   }
   destroy() { }
 }
+
+export default Node

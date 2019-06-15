@@ -1,7 +1,7 @@
-import Canvas from '../Canvas'
+import { Canvas } from '../index'
 function noop(canvas: Canvas, e: Event) { }
 function noop2(canvas: Canvas) { }
-export default abstract class Interaction {
+export abstract class Interaction {
   onClick = noop
   onMouseDown = noop
   onMouseMove = noop
@@ -12,3 +12,5 @@ export default abstract class Interaction {
   onContextMenu = noop
   onModeChange = noop2
 }
+
+export default Interaction

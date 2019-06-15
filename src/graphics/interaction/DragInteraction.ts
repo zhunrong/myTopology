@@ -1,8 +1,8 @@
 import Interaction from './Interaction'
-import Canvas from '../Canvas'
-import DomNode from '../core/DomNode'
-import CanvasNode from '../core/CanvasNode'
-import Vector2d from '../../utils/vector2d'
+import Canvas from '../core/Canvas'
+import DomNode from '../graph/DomNode'
+import CanvasNode from '../graph/CanvasNode'
+import Vector2d from '../utils/vector2d'
 /**
  * 可拖拽单个元素或整个画布
  */
@@ -36,4 +36,5 @@ class DragInteraction extends Interaction {
   }
 }
 
-export default new DragInteraction()
+export const dragInteraction = new DragInteraction()
+export default dragInteraction

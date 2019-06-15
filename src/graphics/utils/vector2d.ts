@@ -1,4 +1,4 @@
-export default class Vector2d {
+export class Vector2d {
   x: number
   y: number
   magnitude: number
@@ -137,3 +137,5 @@ export default class Vector2d {
     return this.x === target.x && this.y === target.y
   }
 }
+
+export default Vector2d

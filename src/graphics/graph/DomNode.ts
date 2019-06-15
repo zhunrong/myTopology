@@ -1,8 +1,8 @@
 import Node, { INodeOptions } from './Node'
-import Canvas from '../Canvas'
+import {Canvas} from '../index'
 export interface IDomNodeOptions extends INodeOptions { }
 
-export default abstract class DomNode extends Node {
+export abstract class DomNode extends Node {
   renderType: string = 'DOM'
   mounted: boolean = false
   abstract containerEl: HTMLElement
@@ -40,3 +40,5 @@ export default abstract class DomNode extends Node {
     return isHit
   }
 }
+
+export default DomNode

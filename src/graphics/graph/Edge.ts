@@ -4,7 +4,7 @@ export interface IEdgeOptions extends IGraphOptions {
   targetNode?: Node
   sourceNode?: Node
 }
-export default abstract class Edge extends Graph {
+export abstract class Edge extends Graph {
   renderType: string = 'CANVAS'
   targetNode: Node | undefined
   sourceNode: Node | undefined
@@ -14,3 +14,5 @@ export default abstract class Edge extends Graph {
     this.sourceNode = options.sourceNode
   }
 }
+
+export default Edge
