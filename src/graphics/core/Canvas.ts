@@ -9,8 +9,6 @@ import ResizeObserver from 'resize-observer-polyfill'
 import Node from '../graph/Node'
 import VirtualNode from '../graph/VirtualNode'
 import modes, { MODE_DEFAULT } from '../mode/modes'
-let renderCount: number = 0
-let time: number = 0
 interface ICanvasOptions {
   container: HTMLElement
 }
@@ -415,15 +413,15 @@ export class Canvas {
     })
   }
   render() {
+    // Object.assign(this.root.style, {
+    //   position: 'absolute',
+    //   width: '100%',
+    //   height: '100%',
+    //   top: 0,
+    //   left: 0,
+    //   userSelect: 'none'
+    // })
     Object.assign(this.root.style, {
-      position: 'absolute',
-      width: '100%',
-      height: '100%',
-      top: 0,
-      left: 0,
-      userSelect: 'none'
-    })
-    Object.assign(this.wrapper.style, {
       position: 'absolute',
       width: `${this.canvasWidth}px`,
       height: `${this.canvasHeight}px`,
@@ -433,8 +431,8 @@ export class Canvas {
       transform: `scale(${this.canvasScale})`,
       transformOrigin: 'center center'
     })
-    this.canvas.width = this.canvasWidth
-    this.canvas.height = this.canvasHeight
+    this.canvas.width = this.viewWidth
+    this.canvas.height = this.viewHeight
   }
   mount() {
     if (this.mounted) return
@@ -461,24 +459,17 @@ export class Canvas {
   }
   loop() {
     if (!this._running) return
-    renderCount++
-    if (renderCount % 60 === 0) {
-      console.log(time / 60)
-      time = 0
-    }
     this._animationFrameId = requestAnimationFrame(() => {
       this.renderDomNodes()
       // 判断是否需要重绘
-      const now = Date.now()
       if (this.repaint) {
-        this.canvasContext.clearRect(0, 0, this.canvasWidth, this.canvasHeight)
+        this.canvasContext.clearRect(0, 0, this.viewWidth, this.viewHeight)
         this.canvasContext.save()
         this.canvasContext.scale(this.canvasScale, this.canvasScale)
         this.renderEdge()
         this.canvasContext.restore()
         this.repaint = false
       }
-      time += Date.now() - now
       this.loop()
     })
   }
