@@ -1,5 +1,5 @@
 import Interaction from './Interaction'
-import { Canvas } from '../index'
+import { Canvas } from '../core/Canvas'
 class MenuInteraction extends Interaction {
   onContextMenu = (canvas: Canvas, e: Event) => {
     const event = e as MouseEvent

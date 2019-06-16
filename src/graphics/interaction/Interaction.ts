@@ -1,4 +1,4 @@
-import { Canvas } from '../index'
+import { Canvas } from '../core/Canvas'
 function noop(canvas: Canvas, e: Event) { }
 function noop2(canvas: Canvas) { }
 export abstract class Interaction {

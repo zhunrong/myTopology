@@ -1,5 +1,8 @@
 import Interaction from './Interaction'
-import { CanvasNode, Vector2d, Canvas, DomNode } from '../index'
+import { DomNode } from '../graph/DomNode'
+import { Canvas } from '../core/Canvas'
+import { CanvasNode } from '../graph/CanvasNode'
+import { Vector2d } from '../utils/vector2d'
 /**
  * 拖动整个画布
  */

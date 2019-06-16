@@ -1,5 +1,5 @@
 import Node, { INodeOptions } from './Node'
-import { Vector2d } from '../index'
+import { Vector2d } from '../utils/vector2d'
 export interface IVirtualNodeOptions extends INodeOptions { }
 export class VirtualNode extends Node {
   renderType: string = 'NONE'

@@ -61,6 +61,22 @@ module.exports = NODE_ENV => ({
         ]
       },
       {
+        test: /\.less$/,
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              modules: 'global', // 开启css模块化，但是需要使用:local
+              localIdentName: '[name]-[hash:base64:5]'
+              // namedExport:true
+            }
+          },
+          'postcss-loader',
+          'less-loader'
+        ]
+      },
+      {
         test: /\.(png|svg|jpg|gif|jpeg)$/,
         use: [
           {

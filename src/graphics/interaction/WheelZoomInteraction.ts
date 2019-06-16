@@ -1,5 +1,6 @@
 import Interaction from './Interaction'
-import { Canvas, Vector2d } from '../index'
+import { Canvas } from '../core/Canvas'
+import { Vector2d } from '../utils/vector2d'
 /**
  * 滚轮缩放
  */

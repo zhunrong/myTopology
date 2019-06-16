@@ -1,5 +1,6 @@
 import Interaction from './Interaction'
-import { Canvas, Vector2d } from '../index'
+import { Canvas } from '../core/Canvas'
+import { Vector2d } from '../utils/vector2d'
 /**
  * drop
  */
@@ -16,5 +17,5 @@ class DropInteraction extends Interaction {
   }
 }
 
-export const dropInteraction=new DropInteraction()
+export const dropInteraction = new DropInteraction()
 export default dropInteraction

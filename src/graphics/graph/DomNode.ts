@@ -1,5 +1,5 @@
 import Node, { INodeOptions } from './Node'
-import {Canvas} from '../index'
+import { Canvas } from '../core/Canvas'
 export interface IDomNodeOptions extends INodeOptions { }
 
 export abstract class DomNode extends Node {

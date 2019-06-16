@@ -1,5 +1,6 @@
-import style from './style.scss'
-import { Canvas, Vector2d } from '../index'
+import style from './style.less'
+import { Vector2d } from '../utils/vector2d'
+import { Canvas } from '../core/Canvas'
 const menu = [{
   label: '放大',
   command: 'zoomIn',
@@ -77,6 +78,13 @@ export class ContextMenu {
       menuList.push({
         label: '删除',
         command: 'delete',
+        active: false
+      })
+    }
+    if (this.canvas.activeNodes.length + this.canvas.activeEdges.length === 1) {
+      menuList.push({
+        label: '重命名',
+        command: 'rename',
         active: false
       })
     }

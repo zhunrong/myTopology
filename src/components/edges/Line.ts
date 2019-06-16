@@ -78,8 +78,8 @@ export default class Line extends Edge {
       // 画线
       canvasContext.moveTo(sourceNode.joinPoint.x, sourceNode.joinPoint.y)
       canvasContext.lineTo(targetNode.joinPoint.x, targetNode.joinPoint.y)
-      canvasContext.strokeStyle = this.active ? 'red' : 'grey'
-      canvasContext.fillStyle = this.active ? 'red' : 'grey'
+      canvasContext.strokeStyle = this.active ? '#e96160' : '#29c1f8'
+      canvasContext.fillStyle = this.active ? '#e96160' : '#29c1f8'
       if/* 虚线 */ (this.dash) {
         canvasContext.setLineDash([4, 4])
       }

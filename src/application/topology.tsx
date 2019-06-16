@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 // import Canvas from '../graphics/core/Canvas'
 import { MODE_DEFAULT, MODE_VIEW, MODE_CREATE_EDGE } from '../graphics/mode/modes'
 // import Node from '../graphics/Circle'
-import Node from '../components/nodes/Node3'
+import Node from '../components/nodes/Node'
 import Edge from '../components/edges/Line'
 import { nodeDatas } from '../data/topoData'
 import "./topology.scss"
@@ -33,7 +33,7 @@ export default class Topology extends Component<IProps, IState> {
       this.canvas.eventEmitter.on('canvas:mounted', () => {
         this.nodes = this.nodeDatas.map((item: any) => {
           const node = new Node({
-            text: item.name,
+            text: item.text,
             x: item.x,
             y: item.y,
             id: item.id
@@ -67,6 +67,33 @@ export default class Topology extends Component<IProps, IState> {
         })
         if (this.canvas) {
           this.canvas.addNode(node)
+        }
+      })
+      this.canvas.eventEmitter.on('canvas:menu', (command) => {
+        if (this.canvas) {
+          if (this.canvas.activeEdges.length) {
+            const edge = this.canvas.activeEdges[0] as Edge
+            setTimeout(() => {
+              const result = prompt('请输入新名称', edge.text)
+              if (result && this.canvas) {
+                edge.text = result
+                this.canvas.repaint = true
+              }
+            }, 100)
+            return
+          }
+          if (this.canvas.activeNodes.length) {
+            const node = this.canvas.activeNodes[0] as Node
+            setTimeout(() => {
+              const result = prompt('请输入新名称', node.text)
+              if (result && this.canvas) {
+                node.text = result
+                node.isUpdate = true
+                this.canvas.repaint = true
+              }
+            }, 100)
+            return
+          }
         }
       })
       this.canvas.start()

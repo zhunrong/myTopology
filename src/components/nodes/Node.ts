@@ -1,5 +1,5 @@
 import { DomNode, IDomNodeOptions, Vector2d, Math2d } from '../../graphics/index'
-import style from './node3.scss'
+import style from './node.less'
 interface IOptions extends IDomNodeOptions {
   text: string
   id: number
@@ -7,25 +7,15 @@ interface IOptions extends IDomNodeOptions {
 export default class Node extends DomNode {
   containerEl: HTMLDivElement = document.createElement('div')
   text: string
-  width: number = 150
-  height: number = 100
+  width: number = 80
+  height: number = 80
   id: number
   constructor(options: IOptions) {
     super(options)
     this.text = options.text
     this.id = options.id
-    this.containerEl.innerHTML = `
-      <div class="title">标题</div>
-      <div class="quota">
-        <span>指标1</span>
-        <span>指标2</span>
-        <span>指标3</span>
-        <span>指标4</span>
-        <span>指标5</span>
-        <span>指标6</span>
-      </div>
-    `
     this.containerEl.className = style.node
+    this.containerEl.innerHTML = this.text
   }
   get joinPoint() {
     const { x, y } = this.position
@@ -60,8 +50,9 @@ export default class Node extends DomNode {
     return true
   }
   render(): void {
+    // this.containerEl.innerHTML = this.text
     Object.assign(this.containerEl.style, {
-      borderColor: this.active ? 'red' : '#999',
+      // borderColor: this.active ? '#e96160' : '#29c1f8',
       transform: `translate3d(${this.position.x}px,${this.position.y}px,0)`
     })
 

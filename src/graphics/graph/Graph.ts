@@ -1,4 +1,5 @@
-import { Canvas, Vector2d } from '../index'
+import { Vector2d } from '../utils/vector2d'
+import { Canvas } from '../core/Canvas'
 export interface IGraphOptions {
   visible?: boolean
   zIndex?: number
@@ -17,6 +18,8 @@ export abstract class Graph {
   graphId: number = graphId++
   // 渲染类型
   abstract renderType: string
+  // 携带的数据
+  data: any
   constructor(options: IGraphOptions) {
     this.visible = options.visible || true
     this.zIndex = options.zIndex || 0

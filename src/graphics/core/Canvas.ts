@@ -1,9 +1,16 @@
-import { globalEvent, EventEmitter, Vector2d, CanvasNode, DomNode, Edge, throttle, ContextMenu } from '../index'
+import { ContextMenu } from '../contextMenu/ContextMenu'
+import { globalEvent, EventEmitter } from '../events/eventEmitter'
+import { Vector2d } from '../utils/vector2d'
+import { CanvasNode } from '../graph/CanvasNode'
+import { DomNode } from '../graph/DomNode'
+import { Edge } from '../graph/Edge'
+import { throttle } from '../utils/utils'
 import ResizeObserver from 'resize-observer-polyfill'
 import Node from '../graph/Node'
 import VirtualNode from '../graph/VirtualNode'
 import modes, { MODE_DEFAULT } from '../mode/modes'
-
+let renderCount: number = 0
+let time: number = 0
 interface ICanvasOptions {
   container: HTMLElement
 }
@@ -454,15 +461,24 @@ export class Canvas {
   }
   loop() {
     if (!this._running) return
+    renderCount++
+    if (renderCount % 60 === 0) {
+      console.log(time / 60)
+      time = 0
+    }
     this._animationFrameId = requestAnimationFrame(() => {
-
       this.renderDomNodes()
       // 判断是否需要重绘
+      const now = Date.now()
       if (this.repaint) {
         this.canvasContext.clearRect(0, 0, this.canvasWidth, this.canvasHeight)
+        this.canvasContext.save()
+        this.canvasContext.scale(this.canvasScale, this.canvasScale)
         this.renderEdge()
+        this.canvasContext.restore()
         this.repaint = false
       }
+      time += Date.now() - now
       this.loop()
     })
   }
