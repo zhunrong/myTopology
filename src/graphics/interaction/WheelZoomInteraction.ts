@@ -15,5 +15,5 @@ class WheelZoomInteraction extends Interaction {
   }
 }
 
-const wheelZoomInteraction = new WheelZoomInteraction()
+export const wheelZoomInteraction = new WheelZoomInteraction()
 export default wheelZoomInteraction

@@ -1,10 +1,7 @@
 import Interaction from './Interaction'
 import Canvas from '../core/Canvas'
 import Node from '../graph/Node'
-import DomNode from '../graph/DomNode'
-import CanvasNode from '../graph/CanvasNode'
-import Vector2d from '../utils/vector2d'
-import Line from '../../components/edges/Line'
+import Line from '../shape/Line'
 
 /**
  * 连线（直线）
@@ -36,7 +33,7 @@ class CreateEdgeInteraction extends Interaction {
           sourceNode: this.sourceNode,
           targetNode: canvas.virtualNode,
           arrow: true,
-          text: 'line'
+          text: ''
         })
         canvas.addEdge(this.edge)
       }
@@ -61,5 +58,5 @@ class CreateEdgeInteraction extends Interaction {
   }
 }
 
-export const createEdgeInteraction=new CreateEdgeInteraction()
+export const createEdgeInteraction = new CreateEdgeInteraction()
 export default createEdgeInteraction

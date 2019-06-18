@@ -84,7 +84,6 @@ export class Canvas {
     this.ro.observe(this.container)
     this.nativeEventInit()
     this.globalEventInit()
-    console.log(this)
   }
   // 原生事件监听
   protected nativeEventInit() {
@@ -110,7 +109,10 @@ export class Canvas {
     this.wrapper.removeEventListener('wheel', this.handleWheel)
     this.wrapper.removeEventListener('dragover', this.handleDragOver)
     this.wrapper.removeEventListener('drop', this.handleDrop)
+    this.ro.unobserve(this.container)
+    this.ro.disconnect()
     this.unmount()
+    this.removeAllNode()
   }
   // 添加节点
   public addNode(node: Node) {
@@ -156,12 +158,14 @@ export class Canvas {
     if (node instanceof CanvasNode) {
       index = this.canvasNodes.findIndex(item => item === node)
       if (index > -1) {
+        node.destroy()
         this.canvasNodes.splice(index, 1)
       }
     } else if (node instanceof DomNode) {
       index = this.domNodes.findIndex(item => item === node)
       if (index > -1) {
         node.unmount(this)
+        node.destroy()
         this.domNodes.splice(index, 1)
       }
     } else {
@@ -179,6 +183,16 @@ export class Canvas {
       this.removeEdge(edge)
     })
     this.repaint = true
+  }
+
+  /**
+   * 删除所有节点
+   */
+  public removeAllNode() {
+    const nodes: Node[] = [...this.canvasNodes, ...this.domNodes]
+    nodes.forEach(node => {
+      this.removeNode(node)
+    })
   }
 
   // 添加连线

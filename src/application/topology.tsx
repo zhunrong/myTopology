@@ -97,6 +97,7 @@ export default class Topology extends Component<IProps, IState> {
         }
       })
       this.canvas.start()
+      console.log(this.canvas)
     }
   }
   zoomOut = () => {

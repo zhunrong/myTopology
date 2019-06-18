@@ -3,19 +3,22 @@ import { Vector2d } from '../utils/vector2d'
 import { Canvas } from '../core/Canvas'
 const menu = [{
   label: '放大',
-  command: 'zoomIn',
-  active: false
+  command: 'zoomIn'
 }, {
   label: '缩小',
-  command: 'zoomOut',
-  active: false
+  command: 'zoomOut'
 }]
+interface IMenu {
+  label: string
+  command: string
+}
 export class ContextMenu {
   mouseX: number = 0
   mouseY: number = 0
   canvas: Canvas
   mounted: boolean = false
   container: HTMLDivElement = document.createElement('div')
+  menu: IMenu[] = menu
   constructor(canvas: Canvas) {
     this.canvas = canvas
     this.container.className = style.menu
@@ -38,16 +41,6 @@ export class ContextMenu {
         break
       case 'zoomOut':
         this.canvas.zoomOut(new Vector2d(this.mouseX, this.mouseY))
-        break
-      case 'delete':
-        this.canvas.activeNodes.forEach(node => {
-          this.canvas.removeNode(node)
-        })
-        this.canvas.activeEdges.forEach(edge => {
-          this.canvas.removeEdge(edge)
-        })
-        this.canvas.activeNodes = []
-        this.canvas.activeEdges = []
         break
       default:
         this.canvas.eventEmitter.emit('canvas:menu', command)
@@ -73,21 +66,7 @@ export class ContextMenu {
   }
   mount() {
     if (this.mounted) return
-    const menuList = [...menu]
-    if (this.canvas.activeNodes.length || this.canvas.activeEdges.length) {
-      menuList.push({
-        label: '删除',
-        command: 'delete',
-        active: false
-      })
-    }
-    if (this.canvas.activeNodes.length + this.canvas.activeEdges.length === 1) {
-      menuList.push({
-        label: '重命名',
-        command: 'rename',
-        active: false
-      })
-    }
+    const menuList = [...this.menu]
     const html = menuList.map(item => {
       return `<div class="item" data-command="${item.command}">${item.label}</div>`
     })
