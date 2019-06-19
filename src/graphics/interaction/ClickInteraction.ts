@@ -13,6 +13,7 @@ class ClickInteraction extends Interaction {
         node.active = false
       } else {
         if (node.isPointIn(canvas)) {
+          canvas.setNodeTop(node)
           node.active = true
           activeNode = node
         } else {

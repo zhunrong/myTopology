@@ -53,6 +53,7 @@ export default class Node extends DomNode {
     // this.containerEl.innerHTML = this.text
     Object.assign(this.containerEl.style, {
       // borderColor: this.active ? '#e96160' : '#29c1f8',
+      zIndex: this.zIndex,
       transform: `translate3d(${this.position.x}px,${this.position.y}px,0)`
     })
 

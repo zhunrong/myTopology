@@ -152,6 +152,42 @@ export class Canvas {
     node.canvas = this
     this.repaint = true
   }
+  /**
+   * 将节点置顶显示
+   * @param node 
+   */
+  public setNodeTop(node: Node) {
+    if (node instanceof CanvasNode) {
+      const length = this.canvasNodes.length
+      if (length) {
+        const index = this.canvasNodes.findIndex(item => item === node)
+        if (index === -1 || length - 1 === index) return
+        const lastNode = this.canvasNodes[length - 1]
+        node.zIndex = lastNode.zIndex
+        // 放到队列最后
+        this.canvasNodes.splice(index, 1)
+        this.canvasNodes.push(node)
+        this.repaint = true
+      }
+      return
+    }
+    if (node instanceof DomNode) {
+      const length = this.domNodes.length
+      if (length) {
+        const index = this.domNodes.findIndex(item => item === node)
+        if (index === -1 || length - 1 === index) return
+        const lastNode = this.domNodes[length - 1]
+        node.zIndex = lastNode.zIndex
+        // 放到队列最后
+        this.domNodes.splice(index, 1)
+        this.domNodes.push(node)
+        node.isUpdate = true
+        node.unmount(this)
+        node.mount(this)
+        this.repaint = true
+      }
+    }
+  }
   // 删除节点
   public removeNode(node: Node) {
     let index
