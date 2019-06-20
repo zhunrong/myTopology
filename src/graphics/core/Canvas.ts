@@ -14,6 +14,7 @@ interface ICanvasOptions {
   container: HTMLElement
   maxScale?: number
   minScale?: number
+  mode?: string
 }
 export class Canvas {
   private mounted: boolean = false
@@ -24,11 +25,11 @@ export class Canvas {
   public nativeEvent: Event | null = null
   public optimize: boolean = true
   // 交互模式
-  interactionMode: string = MODE_DEFAULT
+  interactionMode: string = ''
   // 最外层div
   protected container: HTMLElement
   // canvas与div的容器
-  protected wrapper: HTMLDivElement = document.createElement('div')
+  public wrapper: HTMLDivElement = document.createElement('div')
   public containerClientRect: ClientRect | undefined
   // 主画布(用于绘制图形) 位于图层最底层
   protected graphCanvas: HTMLCanvasElement = document.createElement('canvas')
@@ -36,7 +37,7 @@ export class Canvas {
   // dom节点画布(用于渲染dom节点) 位于图层中间层
   public domCanvas: HTMLDivElement = document.createElement('div')
   // 交互画布(交互时用到的辅助画布) 位于图层最顶层
-  protected topCanvas: HTMLCanvasElement = document.createElement('canvas')
+  public topCanvas: HTMLCanvasElement = document.createElement('canvas')
   public topCanvasCtx: CanvasRenderingContext2D
   // 辅助节点(不需要实际渲染的)
   public virtualNode: VirtualNode = new VirtualNode({
@@ -96,6 +97,7 @@ export class Canvas {
     this.ro.observe(this.container)
     this.nativeEventInit()
     this.globalEventInit()
+    this.setMode(options.mode || MODE_DEFAULT)
   }
   // 原生事件监听
   protected nativeEventInit() {
@@ -347,21 +349,27 @@ export class Canvas {
   }
 
   /**
-   * 切换模式
+   * 设置模式
    * @param mode 
    */
-  changeMode(mode: string) {
+  setMode(mode: string) {
     if (!modes[mode]) {
       console.log(`该模式不存在:${mode}`)
       return
     }
-    const interactions = modes[this.interactionMode]
+    let interactions = modes[this.interactionMode]
     if (interactions) {
       interactions.forEach(action => {
-        action.onModeChange(this)
+        action.onUninstall(this)
       })
     }
     this.interactionMode = mode
+    interactions = modes[mode]
+    if (interactions) {
+      interactions.forEach(action => {
+        action.onInstall(this)
+      })
+    }
   }
 
   /**

@@ -47,7 +47,7 @@ class CreateEdgeInteraction extends Interaction {
     }
     canvas.repaint = true
   }
-  onModeChange = (canvas: Canvas) => {
+  onUninstall = (canvas: Canvas) => {
     if (this.edge) {
       canvas.removeEdge(this.edge)
       this.edge = undefined

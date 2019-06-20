@@ -7,16 +7,24 @@ import { Vector2d } from '../utils/vector2d'
  * 拖动整个画布
  */
 class MoveCanvasInteraction extends Interaction {
+  // 最小拖动距离
+  minDragDistance: number = 5
   cachePositions: Vector2d[] = []
   moveNodes: (DomNode | CanvasNode)[] = []
+  mouseDown: boolean = false
   onMouseDown = (canvas: Canvas) => {
+    this.mouseDown = true
     const nodes = [...canvas.domNodes, ...canvas.canvasNodes]
     this.moveNodes = nodes
     this.cachePositions = this.moveNodes.map(node => node.position)
   }
   onMouseMove = (canvas: Canvas) => {
+    if (!this.mouseDown) return
+    const offset = canvas.mousemovePosition.substract(canvas.mousedownPosition)
+    if (offset.magnitude < this.minDragDistance) return
+    const pixelOffset = offset.scale(1 / canvas.canvasScale)
     this.moveNodes.forEach((node, index) => {
-      node.position = this.cachePositions[index].add(canvas.mousemovePosition.substract(canvas.mousedownPosition).scale(1 / canvas.canvasScale))
+      node.position = this.cachePositions[index].add(pixelOffset)
       node.isUpdate = true
     })
     canvas.repaint = true
@@ -24,6 +32,7 @@ class MoveCanvasInteraction extends Interaction {
   onMouseUp = () => {
     this.moveNodes = []
     this.cachePositions = []
+    this.mouseDown = false
   }
 }
 

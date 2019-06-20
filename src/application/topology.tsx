@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 // import Canvas from '../graphics/core/Canvas'
-import { MODE_DEFAULT, MODE_VIEW, MODE_CREATE_EDGE } from '../graphics/mode/modes'
+import { MODE_DEFAULT, MODE_VIEW, MODE_CREATE_EDGE, MODE_AREA_PICK } from '../graphics/mode/modes'
 // import Node from '../graphics/Circle'
 import Node from '../components/nodes/Node'
 import Edge from '../components/edges/Line'
@@ -119,7 +119,7 @@ export default class Topology extends Component<IProps, IState> {
       mode: type
     })
     if (this.canvas) {
-      this.canvas.changeMode(type)
+      this.canvas.setMode(type)
     }
   }
   render() {
@@ -128,7 +128,7 @@ export default class Topology extends Component<IProps, IState> {
         <div className="topo-bar">
           <img onClick={this.modeChange.bind(this, MODE_DEFAULT)} className={`${this.state.mode === MODE_DEFAULT ? 'active' : ''}`} src={require('../assets/pointer.svg')} title="默认模式" />
           <img onClick={this.modeChange.bind(this, MODE_VIEW)} className={`${this.state.mode === MODE_VIEW ? 'active' : ''}`} src={require('../assets/move.svg')} title="浏览模式" />
-          <img src={require('../assets/area_pick.svg')} title="框选模式"/>
+          <img onClick={this.modeChange.bind(this, MODE_AREA_PICK)} className={`${this.state.mode === MODE_AREA_PICK ? 'active' : ''}`} src={require('../assets/area_pick.svg')} title="框选模式" />
           <img src={require('../assets/zoom_out.svg')} onClick={this.zoomOut} title="缩小" />
           <img src={require('../assets/zoom_in.svg')} onClick={this.zoomIn} title="放大" />
           <img onClick={this.modeChange.bind(this, MODE_CREATE_EDGE)} className={`${this.state.mode === MODE_CREATE_EDGE ? 'active' : ''}`} src={require('../assets/line.svg')} title="连线模式" />

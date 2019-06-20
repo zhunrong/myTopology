@@ -10,7 +10,10 @@ export abstract class Interaction {
   onDragOver = noop
   onWheel = noop
   onContextMenu = noop
-  onModeChange = noop2
+  // 模式安装
+  onInstall = noop2
+  // 模式卸载
+  onUninstall = noop2
 }
 
 export default Interaction

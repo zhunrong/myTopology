@@ -3,7 +3,7 @@ import Node from '../graph/Node'
 import { Canvas } from '../core/Canvas'
 import { Edge } from '../graph/Edge'
 
-class ClickInteraction extends Interaction {
+class SelectInteraction extends Interaction {
   onMouseDown = (canvas: Canvas) => {
     const nodes: Node[] = [...canvas.domNodes, ...canvas.canvasNodes]
     let activeNode: Node | undefined
@@ -52,5 +52,5 @@ class ClickInteraction extends Interaction {
   }
 }
 
-export const clickInteraction = new ClickInteraction()
-export default clickInteraction
+export const selectInteraction = new SelectInteraction()
+export default selectInteraction
