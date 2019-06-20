@@ -16,7 +16,7 @@ export abstract class DomNode extends Node {
   mount(canvas: Canvas): void {
     if (this.mounted) return
     this.mounted = true
-    canvas.root.appendChild(this.containerEl)
+    canvas.domCanvas.appendChild(this.containerEl)
   }
   /**
    * 卸载
@@ -25,7 +25,7 @@ export abstract class DomNode extends Node {
   unmount(canvas: Canvas): void {
     if (!this.mounted) return
     this.mounted = false
-    canvas.root.removeChild(this.containerEl)
+    canvas.domCanvas.removeChild(this.containerEl)
   }
   isPointIn(canvas: Canvas): boolean {
     if (!canvas.nativeEvent) return false

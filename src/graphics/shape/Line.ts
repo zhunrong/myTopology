@@ -44,17 +44,17 @@ export class Line extends Edge {
     }
     // 判断是否在文字上
     if (this.text) {
-      const { canvasContext } = canvas
-      canvasContext.save()
-      canvasContext.font = '14px sans-serif'
-      canvasContext.textAlign = 'center'
-      canvasContext.textBaseline = 'middle'
-      const textRectWidth = canvasContext.measureText(this.text).width
+      const { graphCanvasCtx } = canvas
+      graphCanvasCtx.save()
+      graphCanvasCtx.font = '14px sans-serif'
+      graphCanvasCtx.textAlign = 'center'
+      graphCanvasCtx.textBaseline = 'middle'
+      const textRectWidth = graphCanvasCtx.measureText(this.text).width
       const sourceToTarget = this.targetNode.joinPoint.substract(this.sourceNode.joinPoint)
       const lineNormal = sourceToTarget.normalize()
       const lineCenter = this.sourceNode.joinPoint.add(sourceToTarget.scale(1 / 2))
       const perpendicular = sourceToTarget.perpendicular().normalize()
-      canvasContext.restore()
+      graphCanvasCtx.restore()
       if (this.rotate < Math.PI / 2 && this.rotate >= -Math.PI / 2) {
         const p0 = lineCenter.substract(lineNormal.scale(textRectWidth / 2)).add(perpendicular.scale(17))
         const p1 = p0.add(lineNormal.scale(textRectWidth))
@@ -72,37 +72,37 @@ export class Line extends Edge {
     return false
   }
   render(canvas: Canvas) {
-    const { canvasContext } = canvas
+    const { graphCanvasCtx } = canvas
     const { sourceNode, targetNode } = this
     // 两端节点都存在且至少有一个是可见的
     if (sourceNode && targetNode && (sourceNode.visible || targetNode.visible)) {
       const sourceToTarget = targetNode.joinPoint.substract(sourceNode.joinPoint)
 
-      canvasContext.beginPath()
+      graphCanvasCtx.beginPath()
       // 画线
-      canvasContext.moveTo(sourceNode.joinPoint.x, sourceNode.joinPoint.y)
-      canvasContext.lineTo(targetNode.joinPoint.x, targetNode.joinPoint.y)
-      canvasContext.strokeStyle = this.active ? '#e96160' : '#29c1f8'
-      canvasContext.fillStyle = this.active ? '#e96160' : '#29c1f8'
+      graphCanvasCtx.moveTo(sourceNode.joinPoint.x, sourceNode.joinPoint.y)
+      graphCanvasCtx.lineTo(targetNode.joinPoint.x, targetNode.joinPoint.y)
+      graphCanvasCtx.strokeStyle = this.active ? '#e96160' : '#29c1f8'
+      graphCanvasCtx.fillStyle = this.active ? '#e96160' : '#29c1f8'
       if/* 虚线 */ (this.dash) {
-        canvasContext.setLineDash([4, 4])
+        graphCanvasCtx.setLineDash([4, 4])
       }
-      canvasContext.stroke()
+      graphCanvasCtx.stroke()
       this.rotate = sourceToTarget.xAxisAngle()
       if/* 文本 */ (this.text) {
-        canvasContext.save()
+        graphCanvasCtx.save()
         const lineCenter = sourceNode.joinPoint.add(sourceToTarget.scale(1 / 2))
-        canvasContext.font = '14px sans-serif'
-        canvasContext.textAlign = 'center'
-        canvasContext.textBaseline = 'middle'
-        canvasContext.translate(lineCenter.x, lineCenter.y)
+        graphCanvasCtx.font = '14px sans-serif'
+        graphCanvasCtx.textAlign = 'center'
+        graphCanvasCtx.textBaseline = 'middle'
+        graphCanvasCtx.translate(lineCenter.x, lineCenter.y)
         if (this.rotate < Math.PI / 2 && this.rotate >= -Math.PI / 2) {
-          canvasContext.rotate(this.rotate)
+          graphCanvasCtx.rotate(this.rotate)
         } else {
-          canvasContext.rotate(this.rotate - Math.PI)
+          graphCanvasCtx.rotate(this.rotate - Math.PI)
         }
-        canvasContext.fillText(this.text, 0, -10)
-        canvasContext.restore()
+        graphCanvasCtx.fillText(this.text, 0, -10)
+        graphCanvasCtx.restore()
       }
       if/**箭头 */ (this.arrow) {
         // 计算箭头顶点位置
@@ -118,16 +118,16 @@ export class Line extends Edge {
         }
         if (!this.arrowStart) return
         // 画箭头
-        canvasContext.beginPath()
-        canvasContext.save()
-        canvasContext.translate(this.arrowStart.x, this.arrowStart.y)
-        canvasContext.rotate(this.rotate)
-        canvasContext.moveTo(0, 0)
-        canvasContext.lineTo(- 10, + 4)
-        canvasContext.lineTo(- 10, - 4)
-        canvasContext.closePath()
-        canvasContext.fill()
-        canvasContext.restore()
+        graphCanvasCtx.beginPath()
+        graphCanvasCtx.save()
+        graphCanvasCtx.translate(this.arrowStart.x, this.arrowStart.y)
+        graphCanvasCtx.rotate(this.rotate)
+        graphCanvasCtx.moveTo(0, 0)
+        graphCanvasCtx.lineTo(- 10, + 4)
+        graphCanvasCtx.lineTo(- 10, - 4)
+        graphCanvasCtx.closePath()
+        graphCanvasCtx.fill()
+        graphCanvasCtx.restore()
       }
     }
   }

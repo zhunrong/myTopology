@@ -10,7 +10,7 @@ class CreateEdgeInteraction extends Interaction {
   targetNode: Node | undefined
   sourceNode: Node | undefined
   edge: Line | undefined
-  onClick = (canvas: Canvas) => {
+  onMouseUp = (canvas: Canvas) => {
     const nodes: Node[] = [...canvas.domNodes, ...canvas.canvasNodes]
     if (this.edge) {
       this.targetNode = nodes.find(node => node.isPointIn(canvas))

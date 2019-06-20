@@ -127,7 +127,8 @@ export default class Topology extends Component<IProps, IState> {
       <div className="topology">
         <div className="topo-bar">
           <img onClick={this.modeChange.bind(this, MODE_DEFAULT)} className={`${this.state.mode === MODE_DEFAULT ? 'active' : ''}`} src={require('../assets/pointer.svg')} title="默认模式" />
-          <img onClick={this.modeChange.bind(this, MODE_VIEW)} className={`${this.state.mode === MODE_VIEW ? 'active' : ''}`} src={require('../assets/view.svg')} title="查看模式" />
+          <img onClick={this.modeChange.bind(this, MODE_VIEW)} className={`${this.state.mode === MODE_VIEW ? 'active' : ''}`} src={require('../assets/move.svg')} title="浏览模式" />
+          <img src={require('../assets/area_pick.svg')} title="框选模式"/>
           <img src={require('../assets/zoom_out.svg')} onClick={this.zoomOut} title="缩小" />
           <img src={require('../assets/zoom_in.svg')} onClick={this.zoomIn} title="放大" />
           <img onClick={this.modeChange.bind(this, MODE_CREATE_EDGE)} className={`${this.state.mode === MODE_CREATE_EDGE ? 'active' : ''}`} src={require('../assets/line.svg')} title="连线模式" />
@@ -135,7 +136,6 @@ export default class Topology extends Component<IProps, IState> {
         </div>
         <div ref={this.containerRef} className="topo-chart" />
       </div>
-
     )
   }
 }

@@ -9,8 +9,11 @@ import ResizeObserver from 'resize-observer-polyfill'
 import Node from '../graph/Node'
 import VirtualNode from '../graph/VirtualNode'
 import modes, { MODE_DEFAULT } from '../mode/modes'
+import style from './canvas.less'
 interface ICanvasOptions {
   container: HTMLElement
+  maxScale?: number
+  minScale?: number
 }
 export class Canvas {
   private mounted: boolean = false
@@ -27,17 +30,20 @@ export class Canvas {
   // canvas与div的容器
   protected wrapper: HTMLDivElement = document.createElement('div')
   public containerClientRect: ClientRect | undefined
-  // canvas
-  protected canvas: HTMLCanvasElement = document.createElement('canvas')
-  // 根节点
-  public root: HTMLDivElement = document.createElement('div')
+  // 主画布(用于绘制图形) 位于图层最底层
+  protected graphCanvas: HTMLCanvasElement = document.createElement('canvas')
+  public graphCanvasCtx: CanvasRenderingContext2D
+  // dom节点画布(用于渲染dom节点) 位于图层中间层
+  public domCanvas: HTMLDivElement = document.createElement('div')
+  // 交互画布(交互时用到的辅助画布) 位于图层最顶层
+  protected topCanvas: HTMLCanvasElement = document.createElement('canvas')
+  public topCanvasCtx: CanvasRenderingContext2D
   // 辅助节点(不需要实际渲染的)
   public virtualNode: VirtualNode = new VirtualNode({
     x: 0,
     y: 0
   })
 
-  public canvasContext: CanvasRenderingContext2D
   public mousedownPosition: Vector2d = new Vector2d(0, 0)
   public mouseupPosition: Vector2d = new Vector2d(0, 0)
   public mousemovePosition: Vector2d = new Vector2d(0, 0)
@@ -58,6 +64,8 @@ export class Canvas {
   canvasWidth: number = 0
   canvasHeight: number = 0
   canvasScale: number = 1
+  maxScale: number
+  minScale: number
   // 重绘
   repaint: boolean = false
   // menu
@@ -65,10 +73,14 @@ export class Canvas {
 
   constructor(options: ICanvasOptions) {
     this.container = options.container
-    this.canvasContext = this.canvas.getContext('2d') as CanvasRenderingContext2D
+    this.wrapper.className = style.topology
+    this.graphCanvasCtx = this.graphCanvas.getContext('2d') as CanvasRenderingContext2D
+    this.topCanvasCtx = this.topCanvas.getContext('2d') as CanvasRenderingContext2D
+    this.maxScale = options.maxScale || 5
+    this.minScale = options.minScale || 0.1
     this.ro = new ResizeObserver((entries, observer) => {
       for (const entry of entries) {
-        const { width, height } = entry.contentRect;
+        const { width, height } = entry.contentRect
         this.viewWidth = width
         this.viewHeight = height
         this.canvasWidth = width / this.canvasScale
@@ -290,10 +302,13 @@ export class Canvas {
   zoomIn(focus?: Vector2d) {
     focus = focus ? this.viewportToCanvasCoordinate(focus) : new Vector2d(this.viewWidth / 2, this.viewHeight / 2)
     const coordinate = this.canvasToPixelCoordinate(focus)
-    this.canvasScale += 0.1
+    this.canvasScale += 0.15
+    this.canvasScale = this.canvasScale > this.maxScale ? this.maxScale : this.canvasScale
     const newCoordinate = this.canvasToPixelCoordinate(focus)
+
     this.canvasWidth = this.viewWidth / this.canvasScale
     this.canvasHeight = this.viewHeight / this.canvasScale
+
     const offset = newCoordinate.substract(coordinate)
     const nodes: (DomNode | CanvasNode)[] = [...this.domNodes, ...this.canvasNodes]
     nodes.forEach(node => {
@@ -313,7 +328,8 @@ export class Canvas {
     // 默认:画布中心
     focus = focus ? this.viewportToCanvasCoordinate(focus) : new Vector2d(this.viewWidth / 2, this.viewHeight / 2)
     const coordinate = this.canvasToPixelCoordinate(focus)
-    this.canvasScale *= 0.9
+    this.canvasScale -= 0.15
+    this.canvasScale = this.canvasScale < this.minScale ? this.minScale : this.canvasScale
     const newCoordinate = this.canvasToPixelCoordinate(focus)
 
     this.canvasWidth = this.viewWidth / this.canvasScale
@@ -463,31 +479,20 @@ export class Canvas {
     })
   }
   render() {
-    // Object.assign(this.root.style, {
-    //   position: 'absolute',
-    //   width: '100%',
-    //   height: '100%',
-    //   top: 0,
-    //   left: 0,
-    //   userSelect: 'none'
-    // })
-    Object.assign(this.root.style, {
-      position: 'absolute',
+    Object.assign(this.domCanvas.style, {
       width: `${this.canvasWidth}px`,
       height: `${this.canvasHeight}px`,
-      overflow: 'hidden',
       left: `${(this.viewWidth - this.canvasWidth) / 2}px`,
       top: `${(this.viewHeight - this.canvasHeight) / 2}px`,
-      transform: `scale(${this.canvasScale})`,
-      transformOrigin: 'center center'
+      transform: `scale(${this.canvasScale})`
     })
-    this.canvas.width = this.viewWidth
-    this.canvas.height = this.viewHeight
+    this.graphCanvas.width = this.topCanvas.width = this.viewWidth
+    this.graphCanvas.height = this.topCanvas.height = this.viewHeight
   }
   mount() {
     if (this.mounted) return
-    this.wrapper.appendChild(this.canvas)
-    this.wrapper.appendChild(this.root)
+    this.wrapper.appendChild(this.graphCanvas)
+    this.wrapper.appendChild(this.domCanvas)
     this.container.appendChild(this.wrapper)
     this.eventEmitter.emit('canvas:mounted')
     this.mounted = true
@@ -513,11 +518,11 @@ export class Canvas {
       this.renderDomNodes()
       // 判断是否需要重绘
       if (this.repaint) {
-        this.canvasContext.clearRect(0, 0, this.viewWidth, this.viewHeight)
-        this.canvasContext.save()
-        this.canvasContext.scale(this.canvasScale, this.canvasScale)
+        this.graphCanvasCtx.clearRect(0, 0, this.viewWidth, this.viewHeight)
+        this.graphCanvasCtx.save()
+        this.graphCanvasCtx.scale(this.canvasScale, this.canvasScale)
         this.renderEdge()
-        this.canvasContext.restore()
+        this.graphCanvasCtx.restore()
         this.repaint = false
       }
       this.loop()
