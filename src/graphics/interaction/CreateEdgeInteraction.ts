@@ -14,7 +14,7 @@ class CreateEdgeInteraction extends Interaction {
     const nodes: Node[] = [...canvas.domNodes, ...canvas.canvasNodes]
     if (this.edge) {
       this.targetNode = nodes.find(node => node.isPointIn(canvas))
-      if (this.targetNode) {
+      if (this.targetNode && this.targetNode !== this.sourceNode) {
         this.edge.targetNode = this.targetNode
         this.targetNode.isUpdate = true
         this.edge = undefined
