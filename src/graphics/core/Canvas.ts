@@ -10,6 +10,7 @@ import Node from '../graph/Node'
 import VirtualNode from '../graph/VirtualNode'
 import modes, { MODE_DEFAULT } from '../mode/modes'
 import style from './canvas.less'
+let renderCount = 0
 interface ICanvasOptions {
   container: HTMLElement
   maxScale?: number
@@ -417,9 +418,7 @@ export class Canvas {
    * 鼠标移动
    */
   private handleMouseMove = throttle((e: MouseEvent) => {
-    if (!this.nativeEvent) return
     this.nativeEvent = e
-    // console.log('mousemove', e)
     this.mousemovePosition = new Vector2d(e.clientX, e.clientY)
 
     const interactions = modes[this.interactionMode]
@@ -428,7 +427,6 @@ export class Canvas {
         action.onMouseMove(this, e)
       })
     }
-    // 判断节点是否在可视区域
     this.optimizeNode()
     this.eventEmitter.emit('canvas:mousemove', e)
   })
@@ -482,8 +480,13 @@ export class Canvas {
    */
   optimizeNode() {
     if (!this.optimize) return
+    // 优化：缓存画布可视矩形
+    const canvasRect = this.canvasVisibleRect
     this.domNodes.forEach(node => {
-      node.visible = node.isInRect(this.canvasVisibleRect)
+      node.visible = node.isInRect(canvasRect)
+    })
+    this.canvasNodes.forEach(node => {
+      node.visible = node.isInRect(canvasRect)
     })
   }
   render() {
@@ -522,6 +525,7 @@ export class Canvas {
   }
   loop() {
     if (!this._running) return
+    renderCount++
     this._animationFrameId = requestAnimationFrame(() => {
       this.renderDomNodes()
       // 判断是否需要重绘
@@ -530,6 +534,7 @@ export class Canvas {
         this.graphCanvasCtx.save()
         this.graphCanvasCtx.scale(this.canvasScale, this.canvasScale)
         this.renderEdge()
+        this.renderCanvasNodes()
         this.graphCanvasCtx.restore()
         this.repaint = false
       }
@@ -560,10 +565,12 @@ export class Canvas {
   /**
    * 渲染节点
    */
-  private renderNode() {
-    // this.canvasNodes.forEach(node => {
-    //   node.render(this)
-    // })
+  private renderCanvasNodes() {
+    this.canvasNodes.forEach(node => {
+      if (node.visible) {
+        node.render(this)
+      }
+    })
   }
 }
 

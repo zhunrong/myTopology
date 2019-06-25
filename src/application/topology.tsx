@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
-// import Canvas from '../graphics/core/Canvas'
 import { MODE_DEFAULT, MODE_VIEW, MODE_CREATE_EDGE, MODE_AREA_PICK } from '../graphics/mode/modes'
-// import Node from '../graphics/Circle'
 import Node from '../components/nodes/Node'
+// import Node from '../graphics/shape/Rect'
 import Edge from '../components/edges/Line'
 import { nodeDatas } from '../data/topoData'
 import "./topology.scss"
@@ -14,7 +13,7 @@ interface IState {
 
 export default class Topology extends Component<IProps, IState> {
   nodeDatas: any[] = nodeDatas
-  edgeDatas: any = []
+  edgeDatas: any[] = []
   nodes: Node[] = []
   edges: Edge[] = []
   containerRef: React.RefObject<HTMLDivElement> = React.createRef()
@@ -97,7 +96,6 @@ export default class Topology extends Component<IProps, IState> {
         }
       })
       this.canvas.start()
-      console.log(this.canvas)
     }
   }
   zoomOut = () => {

@@ -13,3 +13,20 @@ export function throttle(func: (...params: any[]) => void) {
     })
   }
 }
+
+/**
+ * 图片加载器
+ * @param src 
+ */
+export function imgLoad(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.src = src
+    img.onload = () => {
+      resolve(img)
+    }
+    img.onerror = () => {
+      reject()
+    }
+  })
+}

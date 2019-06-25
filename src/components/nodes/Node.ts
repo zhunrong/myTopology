@@ -7,8 +7,8 @@ interface IOptions extends IDomNodeOptions {
 export default class Node extends DomNode {
   containerEl: HTMLDivElement = document.createElement('div')
   text: string
-  width: number = 80
-  height: number = 80
+  width: number = 146
+  height: number = 53
   id: number
   constructor(options: IOptions) {
     super(options)
