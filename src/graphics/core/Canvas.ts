@@ -10,7 +10,6 @@ import Node from '../graph/Node'
 import VirtualNode from '../graph/VirtualNode'
 import modes, { MODE_DEFAULT } from '../mode/modes'
 import style from './canvas.less'
-let renderCount = 0
 interface ICanvasOptions {
   container: HTMLElement
   scale?: number
@@ -334,6 +333,7 @@ export class Canvas {
     this.optimizeNode()
     this.render()
     this.repaint = true
+    this.eventEmitter.emit('canvas:zoom')
   }
 
   /**
@@ -360,6 +360,7 @@ export class Canvas {
     this.optimizeNode()
     this.render()
     this.repaint = true
+    this.eventEmitter.emit('canvas:zoom')
   }
 
   /**
@@ -538,7 +539,6 @@ export class Canvas {
   }
   loop() {
     if (!this._running) return
-    renderCount++
     this._animationFrameId = requestAnimationFrame(() => {
       this.renderDomNodes()
       // 判断是否需要重绘

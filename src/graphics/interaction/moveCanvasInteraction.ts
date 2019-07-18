@@ -12,6 +12,7 @@ class MoveCanvasInteraction extends Interaction {
   cachePositions: Vector2d[] = []
   moveNodes: (DomNode | CanvasNode)[] = []
   mouseDown: boolean = false
+  move: boolean = false
   onMouseDown = (canvas: Canvas) => {
     this.mouseDown = true
     const nodes = [...canvas.domNodes, ...canvas.canvasNodes]
@@ -22,6 +23,7 @@ class MoveCanvasInteraction extends Interaction {
     if (!this.mouseDown) return
     const offset = canvas.mousemovePosition.substract(canvas.mousedownPosition)
     if (offset.magnitude < this.minDragDistance) return
+    this.move = true
     const pixelOffset = offset.scale(1 / canvas.canvasScale)
     this.moveNodes.forEach((node, index) => {
       node.position = this.cachePositions[index].add(pixelOffset)
@@ -29,10 +31,14 @@ class MoveCanvasInteraction extends Interaction {
     })
     canvas.repaint = true
   }
-  onMouseUp = () => {
+  onMouseUp = (canvas:Canvas) => {
     this.moveNodes = []
     this.cachePositions = []
     this.mouseDown = false
+    if(this.move){
+      canvas.eventEmitter.emit('interaction:canvasMoveEnd')
+    }
+    this.move = false
   }
 }
 
