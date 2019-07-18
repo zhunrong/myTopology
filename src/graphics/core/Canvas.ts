@@ -13,6 +13,7 @@ import style from './canvas.less'
 let renderCount = 0
 interface ICanvasOptions {
   container: HTMLElement
+  scale?: number
   maxScale?: number
   minScale?: number
   mode?: string
@@ -65,7 +66,7 @@ export class Canvas {
   viewHeight: number = 0
   canvasWidth: number = 0
   canvasHeight: number = 0
-  canvasScale: number = 1
+  canvasScale: number
   maxScale: number
   minScale: number
   // 重绘
@@ -78,6 +79,7 @@ export class Canvas {
     this.wrapper.className = style.topology
     this.graphCanvasCtx = this.graphCanvas.getContext('2d') as CanvasRenderingContext2D
     this.topCanvasCtx = this.topCanvas.getContext('2d') as CanvasRenderingContext2D
+    this.canvasScale = options.scale || 1
     this.maxScale = options.maxScale || 5
     this.minScale = options.minScale || 0.1
     this.ro = new ResizeObserver((entries, observer) => {
@@ -93,12 +95,23 @@ export class Canvas {
       this.render()
       this.optimizeNode()
       this.repaint = true
-      // this.renderEdge()
     })
     this.ro.observe(this.container)
     this.nativeEventInit()
     this.globalEventInit()
     this.setMode(options.mode || MODE_DEFAULT)
+  }
+  /**
+   * 设置缩放
+   * @param scale 
+   */
+  public setZoom(scale:number){
+    this.canvasScale=scale
+    this.canvasWidth=this.viewWidth/this.canvasScale
+    this.canvasHeight=this.viewHeight/this.canvasScale
+    this.render()
+    this.optimizeNode()
+    this.repaint=true
   }
   // 原生事件监听
   protected nativeEventInit() {
@@ -549,6 +562,9 @@ export class Canvas {
       edge.render(this)
     })
   }
+  /**
+   * 渲染DOM节点
+   */
   private renderDomNodes() {
     this.domNodes.forEach(node => {
       if (node.visible) {
@@ -563,7 +579,7 @@ export class Canvas {
     })
   }
   /**
-   * 渲染节点
+   * 渲染Canvas节点
    */
   private renderCanvasNodes() {
     this.canvasNodes.forEach(node => {

@@ -6,6 +6,7 @@ import Edge from '../components/edges/Line'
 import { nodeDatas } from '../data/topoData'
 import "./topology.scss"
 import { Canvas } from '../graphics/index'
+import "./treeTest"
 interface IProps { }
 interface IState {
   mode: string
@@ -27,7 +28,8 @@ export default class Topology extends Component<IProps, IState> {
   componentDidMount() {
     if (this.containerRef.current) {
       this.canvas = new Canvas({
-        container: this.containerRef.current
+        container: this.containerRef.current,
+        scale: 1
       })
       this.canvas.eventEmitter.on('canvas:mounted', () => {
         this.nodes = this.nodeDatas.map((item: any) => {

@@ -3,6 +3,7 @@ import { Canvas } from '../core/Canvas'
 export interface IGraphOptions {
   visible?: boolean
   zIndex?: number
+  data?: any
 }
 let graphId = 1
 export abstract class Graph {
@@ -23,6 +24,7 @@ export abstract class Graph {
   constructor(options: IGraphOptions) {
     this.visible = options.visible || true
     this.zIndex = options.zIndex || 0
+    this.data = options.data
   }
   /**
    * 判断点是否在图形内
