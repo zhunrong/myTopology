@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
-import { MODE_DEFAULT, MODE_VIEW, MODE_CREATE_EDGE, MODE_AREA_PICK } from '../graphics/mode/modes'
+import { MODE_DEFAULT, MODE_VIEW, MODE_CREATE_EDGE, MODE_AREA_PICK, MODE_CREATE_L } from '../graphics'
 import Node from '../components/nodes/Node'
 // import Node from '../graphics/shape/Rect'
 import Edge from '../components/edges/Line'
 import { nodeDatas } from '../data/topoData'
 import "./topology.scss"
 import { Canvas } from '../graphics/index'
-import "./treeTest"
+// import "./treeTest"
 interface IProps { }
 interface IState {
   mode: string
@@ -131,7 +131,8 @@ export default class Topology extends Component<IProps, IState> {
           <img onClick={this.modeChange.bind(this, MODE_AREA_PICK)} className={`${this.state.mode === MODE_AREA_PICK ? 'active' : ''}`} src={require('../assets/area_pick.svg')} title="框选模式" />
           <img src={require('../assets/zoom_out.svg')} onClick={this.zoomOut} title="缩小" />
           <img src={require('../assets/zoom_in.svg')} onClick={this.zoomIn} title="放大" />
-          <img onClick={this.modeChange.bind(this, MODE_CREATE_EDGE)} className={`${this.state.mode === MODE_CREATE_EDGE ? 'active' : ''}`} src={require('../assets/line.svg')} title="连线模式" />
+          <img onClick={this.modeChange.bind(this, MODE_CREATE_EDGE)} className={`${this.state.mode === MODE_CREATE_EDGE ? 'active' : ''}`} src={require('../assets/line_2.svg')} title="创建连线" />
+          <img onClick={this.modeChange.bind(this, MODE_CREATE_L)} className={`${this.state.mode === MODE_CREATE_L ? 'active' : ''}`} src={require('../assets/L_line.svg')} title="创建L连线" />
           <span draggable={true} onDragStart={this.handleDragStart}>N</span>
         </div>
         <div ref={this.containerRef} className="topo-chart" />

@@ -1,6 +1,6 @@
 /**
  * 节流函数
- * @param func 
+ * @param func
  */
 export function throttle(func: (...params: any[]) => void) {
   let running: boolean = false
@@ -16,7 +16,7 @@ export function throttle(func: (...params: any[]) => void) {
 
 /**
  * 图片加载器
- * @param src 
+ * @param src
  */
 export function imgLoad(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
@@ -28,5 +28,18 @@ export function imgLoad(src: string): Promise<HTMLImageElement> {
     img.onerror = () => {
       reject()
     }
+  })
+}
+
+/**
+ * 原型混入
+ * @param derivedCtor 获得混入属性的构造函数
+ * @param baseCtors 提供混入属性的构造函数列表
+ */
+export function applyMixins(derivedCtor: any, baseCtors: any[]) {
+  baseCtors.forEach(baseCtor => {
+    Object.getOwnPropertyNames(baseCtor.prototype).forEach(name => {
+      derivedCtor.prototype[name] = baseCtor.prototype[name]
+    })
   })
 }

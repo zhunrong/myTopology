@@ -136,6 +136,14 @@ export class Vector2d {
   equal(target: Vector2d): boolean {
     return this.x === target.x && this.y === target.y
   }
+
+  /**
+   * 与目标向量的距离
+   * @param target 
+   */
+  distance(target:Vector2d):number{
+    return this.substract(target).magnitude
+  }
 }
 
 export default Vector2d

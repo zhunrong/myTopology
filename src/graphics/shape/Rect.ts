@@ -1,4 +1,5 @@
 import CanvasNode, { ICanvasNodeOptions } from '../graph/CanvasNode'
+import { BoundingRect } from '../graph/Node'
 import Canvas from '../core/Canvas';
 import Vector2d from '../utils/vector2d';
 import { imgLoad } from '../utils/utils'
@@ -31,6 +32,25 @@ export class Rect extends CanvasNode {
       new Vector2d(x + this.width, y),
       new Vector2d(x + this.width, y + this.height),
       new Vector2d(x, y + this.height)
+    ]
+  }
+  get boundingRect(): BoundingRect {
+    const { x, y } = this.position
+    return [
+      this.position,
+      new Vector2d(x + this.width, y),
+      new Vector2d(x + this.width, y + this.height),
+      new Vector2d(x, y + this.height)
+    ]
+  }
+  get boundingJoinPoints(): Vector2d[] {
+    const { x, y } = this.position
+    const { width, height } = this
+    return [
+      new Vector2d(x + width / 2, y),
+      new Vector2d(x + width, y + height / 2),
+      new Vector2d(x + width / 2, y + height),
+      new Vector2d(x, y + height / 2)
     ]
   }
   isInRect(points: Vector2d[]): boolean {

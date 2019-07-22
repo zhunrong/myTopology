@@ -1,4 +1,4 @@
-import { DomNode, IDomNodeOptions, Vector2d, Math2d } from '../../graphics/index'
+import { DomNode, IDomNodeOptions, Vector2d, BoundingRect } from '../../graphics/index'
 import style from './node.less'
 interface IOptions extends IDomNodeOptions {
   text: string
@@ -28,6 +28,25 @@ export default class Node extends DomNode {
       new Vector2d(x + this.width, y),
       new Vector2d(x + this.width, y + this.height),
       new Vector2d(x, y + this.height)
+    ]
+  }
+  get boundingRect(): BoundingRect {
+    const { x, y } = this.position
+    return [
+      this.position,
+      new Vector2d(x + this.width, y),
+      new Vector2d(x + this.width, y + this.height),
+      new Vector2d(x, y + this.height)
+    ]
+  }
+  get boundingJoinPoints(): Vector2d[] {
+    const { x, y } = this.position
+    const { width, height } = this
+    return [
+      new Vector2d(x + width / 2, y),
+      new Vector2d(x + width, y + height / 2),
+      new Vector2d(x + width / 2, y + height),
+      new Vector2d(x, y + height / 2)
     ]
   }
   isInRect(points: Vector2d[]): boolean {

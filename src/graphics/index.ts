@@ -8,11 +8,13 @@ export * from './graph/CanvasNode'
 export * from './graph/DomNode'
 export * from './graph/Edge'
 export * from './shape/Line'
+export * from './graph/Node'
 // 模式
 export * from './mode/modes'
 // 交互
 export * from './interaction/selectInteraction'
 export * from './interaction/createEdgeInteraction'
+export * from './interaction/CreateLInteraction'
 export * from './interaction/dragInteraction'
 export * from './interaction/dropInteraction'
 export * from './interaction/menuInteraction'
