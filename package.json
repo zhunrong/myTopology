@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npm run dev",
     "dev": "webpack-dev-server --config ./build/index.js --env.NODE_ENV=development",
-    "build": "webpack --config ./build/index.js --env.NODE_ENV=production"
+    "build": "webpack --config ./build/index.js --env.NODE_ENV=production",
+    "lib": "webpack --config ./build/index.js --env.NODE_ENV=lib"
   },
   "repository": {
     "type": "git",
