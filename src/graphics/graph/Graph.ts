@@ -7,7 +7,7 @@ export interface IGraphOptions {
 }
 let graphId = 1
 export abstract class Graph {
-  canvas: Canvas | undefined
+  canvas!: Canvas
   active: boolean = false
   // 是否可见
   visible: boolean
@@ -38,9 +38,8 @@ export abstract class Graph {
   abstract isInRect(points: Vector2d[]): boolean
   /**
    * 渲染到主画布上
-   * @param canvas 
    */
-  abstract render(canvas: Canvas): void
+  abstract render(): void
 }
 
 export default Graph

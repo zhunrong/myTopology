@@ -22,3 +22,6 @@ export * from './interaction/moveCanvasInteraction'
 export * from './interaction/wheelZoomInteraction'
 export * from './interaction/Interaction'
 export * from './interaction/areaPickInteraction'
+// node
+export * from './node/RectDomNode'
+export * from './node/RectCanvasNode'

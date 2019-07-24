@@ -20,7 +20,7 @@ export default class Line extends Edge {
     this.text = options.text || ''
     this.arrow = options.arrow || false
   }
-  isInRect() {
+  isInRect = () => {
     return true
   }
   isPointIn(canvas: Canvas) {
@@ -30,7 +30,7 @@ export default class Line extends Edge {
     const viewCoordinate = new Vector2d(event.clientX, event.clientY)
     const pixelCoordinate = canvas.viewPortTopixelCoordinate(viewCoordinate)
     // 判断点是否在线上
-    if (Math2d.isPointInLineSegment(pixelCoordinate, [this.sourceNode.joinPoint, this.targetNode.joinPoint], 0.1)) return true
+    if (Math2d.isPointInLineSegment(pixelCoordinate, [this.sourceNode.centerPoint, this.targetNode.centerPoint], 0.1)) return true
     // 判断点是否在箭头上
     if (this.arrow && this.arrowStart) {
       const p0 = new Vector2d(0, 0).rotate(this.rotate)
@@ -46,9 +46,9 @@ export default class Line extends Edge {
       graphCanvasCtx.textAlign = 'center'
       graphCanvasCtx.textBaseline = 'middle'
       const textRectWidth = graphCanvasCtx.measureText(this.text).width
-      const sourceToTarget = this.targetNode.joinPoint.substract(this.sourceNode.joinPoint)
+      const sourceToTarget = this.targetNode.centerPoint.substract(this.sourceNode.centerPoint)
       const lineNormal = sourceToTarget.normalize()
-      const lineCenter = this.sourceNode.joinPoint.add(sourceToTarget.scale(1 / 2))
+      const lineCenter = this.sourceNode.centerPoint.add(sourceToTarget.scale(1 / 2))
       const perpendicular = sourceToTarget.perpendicular().normalize()
       graphCanvasCtx.restore()
       if (this.rotate < Math.PI / 2 && this.rotate >= -Math.PI / 2) {
@@ -67,17 +67,17 @@ export default class Line extends Edge {
     }
     return false
   }
-  render(canvas: Canvas) {
-    const { graphCanvasCtx } = canvas
+  render() {
+    const { graphCanvasCtx } = this.canvas
     const { sourceNode, targetNode } = this
     // 两端节点都存在且至少有一个是可见的
     if (sourceNode && targetNode && (sourceNode.visible || targetNode.visible)) {
-      const sourceToTarget = targetNode.joinPoint.substract(sourceNode.joinPoint)
+      const sourceToTarget = targetNode.centerPoint.substract(sourceNode.centerPoint)
 
       graphCanvasCtx.beginPath()
       // 画线
-      graphCanvasCtx.moveTo(sourceNode.joinPoint.x, sourceNode.joinPoint.y)
-      graphCanvasCtx.lineTo(targetNode.joinPoint.x, targetNode.joinPoint.y)
+      graphCanvasCtx.moveTo(sourceNode.centerPoint.x, sourceNode.centerPoint.y)
+      graphCanvasCtx.lineTo(targetNode.centerPoint.x, targetNode.centerPoint.y)
       graphCanvasCtx.strokeStyle = this.active ? '#e96160' : '#29c1f8'
       graphCanvasCtx.fillStyle = this.active ? '#e96160' : '#29c1f8'
       if/* 虚线 */ (this.dash) {
@@ -87,7 +87,7 @@ export default class Line extends Edge {
       this.rotate = sourceToTarget.xAxisAngle()
       if/* 文本 */ (this.text) {
         graphCanvasCtx.save()
-        const lineCenter = sourceNode.joinPoint.add(sourceToTarget.scale(1 / 2))
+        const lineCenter = sourceNode.centerPoint.add(sourceToTarget.scale(1 / 2))
         graphCanvasCtx.font = '14px sans-serif'
         graphCanvasCtx.textAlign = 'center'
         graphCanvasCtx.textBaseline = 'middle'
@@ -106,9 +106,9 @@ export default class Line extends Edge {
         for (let i = 0; i < targetNodeVertexes.length; i++) {
           const A = targetNodeVertexes[i]
           const B = i === targetNodeVertexes.length - 1 ? targetNodeVertexes[0] : targetNodeVertexes[i + 1]
-          const r = Math2d.isIntersect([sourceNode.joinPoint, targetNode.joinPoint], [A, B])
+          const r = Math2d.isIntersect([sourceNode.centerPoint, targetNode.centerPoint], [A, B])
           if (r) {
-            this.arrowStart = Math2d.getLineIntersect([A, B], [sourceNode.joinPoint, targetNode.joinPoint])
+            this.arrowStart = Math2d.getLineIntersect([A, B], [sourceNode.centerPoint, targetNode.centerPoint])
             break
           }
         }

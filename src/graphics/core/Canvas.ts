@@ -177,6 +177,7 @@ export class Canvas {
       }
     }
     node.canvas = this
+    node.render()
     this.repaint = true
   }
   /**
@@ -559,7 +560,7 @@ export class Canvas {
    */
   private renderEdge() {
     this.edges.forEach(edge => {
-      edge.render(this)
+      edge.render()
     })
   }
   /**
@@ -570,7 +571,8 @@ export class Canvas {
       if (node.visible) {
         node.mount(this)
         if (node.isUpdate) {
-          node.render(this)
+          // node.render(this)
+          node.updatePosition()
           node.isUpdate = false
         }
       } else {
@@ -584,7 +586,8 @@ export class Canvas {
   private renderCanvasNodes() {
     this.canvasNodes.forEach(node => {
       if (node.visible) {
-        node.render(this)
+        // node.render()
+        node.updatePosition()
       }
     })
   }

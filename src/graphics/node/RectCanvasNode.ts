@@ -1,8 +1,8 @@
 import CanvasNode, { ICanvasNodeOptions } from '../graph/CanvasNode'
-import { BoundingRect } from '../graph/Node'
+import RectShape from '../shape/RectShape'
 import Canvas from '../core/Canvas';
 import Vector2d from '../utils/vector2d';
-import { imgLoad } from '../utils/utils'
+import { imgLoad, applyMixins } from '../utils/utils'
 import Math2d from '../utils/math2d'
 
 interface IRectOptions extends ICanvasNodeOptions {
@@ -11,7 +11,7 @@ interface IRectOptions extends ICanvasNodeOptions {
   text?: string
   id: number
 }
-export class Rect extends CanvasNode {
+export class RectCanvasNode extends CanvasNode implements RectShape {
   width: number
   height: number
   id: number
@@ -23,37 +23,30 @@ export class Rect extends CanvasNode {
     this.height = options.height || 53
     this.id = options.id
     this.text = options.text || ''
-    this.draw()
+    // this.draw()
+  }
+  getBoundingJoinPoints(): Vector2d[] {
+    return []
+  }
+  getBoundingRect(): Vector2d[] {
+    return []
+  }
+  getCenterPoint(): Vector2d {
+    return new Vector2d(0, 0)
   }
   get vertexes(): Vector2d[] {
-    const { x, y } = this.position
-    return [
-      this.position,
-      new Vector2d(x + this.width, y),
-      new Vector2d(x + this.width, y + this.height),
-      new Vector2d(x, y + this.height)
-    ]
+    return this.getBoundingRect()
   }
-  get boundingRect(): BoundingRect {
-    const { x, y } = this.position
-    return [
-      this.position,
-      new Vector2d(x + this.width, y),
-      new Vector2d(x + this.width, y + this.height),
-      new Vector2d(x, y + this.height)
-    ]
+  get boundingRect() {
+    return this.getBoundingRect()
   }
-  get boundingJoinPoints(): Vector2d[] {
-    const { x, y } = this.position
-    const { width, height } = this
-    return [
-      new Vector2d(x + width / 2, y),
-      new Vector2d(x + width, y + height / 2),
-      new Vector2d(x + width / 2, y + height),
-      new Vector2d(x, y + height / 2)
-    ]
+  get boundingJoinPoints() {
+    return this.getBoundingJoinPoints()
   }
-  isInRect = (points: Vector2d[]) => {
+  get centerPoint() {
+    return this.getCenterPoint()
+  }
+  isInRect(points: Vector2d[]): boolean {
     const vertexes = this.vertexes
     // 左
     if (points[0].x > vertexes[2].x) return false
@@ -96,14 +89,29 @@ export class Rect extends CanvasNode {
     }
     this.init = true
   }
-  render() {
-    const { graphCanvasCtx } = this.canvas
-    if (this.init) {
-      graphCanvasCtx.drawImage(this.cacheCanvas, this.position.x, this.position.y)
-    }
+  async render() {
+    const ctx = this.cacheCanvas.getContext('2d') as CanvasRenderingContext2D
+    this.cacheCanvas.width = this.width
+    this.cacheCanvas.height = this.height
+
+    ctx.rect(0, 0, this.width, this.height)
+    ctx.fillStyle = '#ccc'
+    ctx.fill()
+    ctx.textBaseline = 'middle'
+    ctx.textAlign = 'center'
+    ctx.font = "14px serif"
+    ctx.fillStyle = '#fff'
+    ctx.fillText(this.text, this.width / 2, this.height / 2)
+
+    this.canvas.repaint = true
   }
-  updatePosition() { }
+  updatePosition() {
+    const { graphCanvasCtx } = this.canvas
+    graphCanvasCtx.drawImage(this.cacheCanvas, this.position.x, this.position.y)
+  }
   updateRender() { }
 }
 
-export default Rect
+applyMixins(RectCanvasNode, [RectShape])
+
+export default RectCanvasNode

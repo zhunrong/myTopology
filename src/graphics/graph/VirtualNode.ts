@@ -18,8 +18,14 @@ export class VirtualNode extends Node {
   get joinPoint() {
     return this.position
   }
+  get centerPoint() {
+    return this.position
+  }
+
   isInRect() { return false }
   isPointIn() { return false }
   render() { }
+  updatePosition() { }
+  updateRender() { }
 }
 export default VirtualNode

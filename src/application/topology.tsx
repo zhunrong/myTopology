@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import { MODE_DEFAULT, MODE_VIEW, MODE_CREATE_EDGE, MODE_AREA_PICK, MODE_CREATE_L } from '../graphics'
-import Node from '../components/nodes/Node'
-// import Node from '../graphics/shape/Rect'
+// import Node from '../components/nodes/Node'
+import { RectCanvasNode as Node } from '../graphics'
 import Edge from '../components/edges/Line'
 import { nodeDatas } from '../data/topoData'
 import "./topology.scss"
 import { Canvas } from '../graphics/index'
+import RectDomNode from '../graphics/node/RectDomNode'
 // import "./treeTest"
 interface IProps { }
 interface IState {
@@ -37,7 +38,9 @@ export default class Topology extends Component<IProps, IState> {
             text: item.text,
             x: item.x,
             y: item.y,
-            id: item.id
+            id: item.id,
+            width: 146,
+            height: 53
           })
           if (this.canvas) {
             this.canvas.addNode(node)
@@ -63,8 +66,10 @@ export default class Topology extends Component<IProps, IState> {
         const node = new Node({
           id: Math.random() * 10000,
           text: '',
-          x: coordinate.x - 75,
-          y: coordinate.y - 50
+          x: coordinate.x - 73,
+          y: coordinate.y - 26.5,
+          width: 146,
+          height: 53
         })
         if (this.canvas) {
           this.canvas.addNode(node)
@@ -89,7 +94,8 @@ export default class Topology extends Component<IProps, IState> {
               const result = prompt('请输入新名称', node.text)
               if (result && this.canvas) {
                 node.text = result
-                node.isUpdate = true
+                // node.isUpdate = true
+                node.render()
                 this.canvas.repaint = true
               }
             }, 100)
@@ -98,6 +104,7 @@ export default class Topology extends Component<IProps, IState> {
         }
       })
       this.canvas.start()
+      console.log(this.canvas)
     }
   }
   zoomOut = () => {

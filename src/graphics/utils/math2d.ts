@@ -1,4 +1,4 @@
-import {Vector2d} from './vector2d'
+import { Vector2d } from './vector2d'
 export class Math2d {
   /**
    * 判断点是否在矩形内
@@ -65,6 +65,20 @@ export class Math2d {
     const AB = A.substract(B)
     if (PA.magnitude + PB.magnitude - AB.magnitude < deviation) {
       return true
+    }
+    return false
+  }
+  /**
+   * 判断点是否在多线段上
+   * @param P 
+   * @param polyline 
+   * @param deviation 
+   */
+  static isPointInPolyline(P: Vector2d, polyline: Vector2d[], deviation: number = 0.01): boolean {
+    const len = polyline.length
+    if (len < 2) return false
+    for (let i = 1; i < len; i++) {
+      if (Math2d.isPointInLineSegment(P, [polyline[i - 1], polyline[i]], deviation)) return true
     }
     return false
   }

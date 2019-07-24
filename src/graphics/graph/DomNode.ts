@@ -5,7 +5,7 @@ export interface IDomNodeOptions extends INodeOptions { }
 export abstract class DomNode extends Node {
   renderType: string = 'DOM'
   mounted: boolean = false
-  abstract containerEl: HTMLElement
+  $el: HTMLDivElement = document.createElement('div')
   constructor(options: IDomNodeOptions) {
     super(options)
   }
@@ -16,7 +16,7 @@ export abstract class DomNode extends Node {
   mount(canvas: Canvas): void {
     if (this.mounted) return
     this.mounted = true
-    canvas.domCanvas.appendChild(this.containerEl)
+    canvas.domCanvas.appendChild(this.$el)
   }
   /**
    * 卸载
@@ -25,19 +25,26 @@ export abstract class DomNode extends Node {
   unmount(canvas: Canvas): void {
     if (!this.mounted) return
     this.mounted = false
-    canvas.domCanvas.removeChild(this.containerEl)
+    canvas.domCanvas.removeChild(this.$el)
   }
   isPointIn(canvas: Canvas): boolean {
     if (!canvas.nativeEvent) return false
     let el = canvas.nativeEvent.target as HTMLElement
     let isHit = false
     while (el && !isHit) {
-      if (el === this.containerEl) {
+      if (el === this.$el) {
         isHit = true
       }
       el = el.parentElement as HTMLElement
     }
     return isHit
+  }
+  /**
+   * 更新节点位置
+   */
+  updatePosition() {
+    const { x, y } = this.position
+    this.$el.style.transform = `translate3d(${x}px,${y}px,0)`
   }
 }
 

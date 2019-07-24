@@ -1,21 +1,19 @@
-import { DomNode, IDomNodeOptions, Vector2d, BoundingRect } from '../../graphics/index'
+import { Vector2d, RectDomNode, IRectDomNodeOptions } from '../../graphics/index'
 import style from './node.less'
-interface IOptions extends IDomNodeOptions {
+interface IOptions extends IRectDomNodeOptions {
   text: string
   id: number
 }
-export default class Node extends DomNode {
-  containerEl: HTMLDivElement = document.createElement('div')
+export default class Node extends RectDomNode {
   text: string
+  cacheText: string
   width: number = 146
   height: number = 53
   id: number
   constructor(options: IOptions) {
     super(options)
-    this.text = options.text
+    this.cacheText = this.text = options.text
     this.id = options.id
-    this.containerEl.className = style.node
-    this.containerEl.innerHTML = this.text
   }
   get joinPoint() {
     const { x, y } = this.position
@@ -30,51 +28,18 @@ export default class Node extends DomNode {
       new Vector2d(x, y + this.height)
     ]
   }
-  get boundingRect(): BoundingRect {
-    const { x, y } = this.position
-    return [
-      this.position,
-      new Vector2d(x + this.width, y),
-      new Vector2d(x + this.width, y + this.height),
-      new Vector2d(x, y + this.height)
-    ]
-  }
-  get boundingJoinPoints(): Vector2d[] {
-    const { x, y } = this.position
-    const { width, height } = this
-    return [
-      new Vector2d(x + width / 2, y),
-      new Vector2d(x + width, y + height / 2),
-      new Vector2d(x + width / 2, y + height),
-      new Vector2d(x, y + height / 2)
-    ]
-  }
-  isInRect(points: Vector2d[]): boolean {
-    const vertexes = this.vertexes
-    // for (let i = 0; i < vertexes.length; i++) {
-    //   const P = vertexes[i]
-    //   if (Math2d.isPointInPolygon(P, points)) {
-    //     return true
-    //   }
-    // }
-    // return false
-    // 左
-    if (points[0].x > vertexes[2].x) return false
-    // 右
-    if (points[2].x < vertexes[0].x) return false
-    // 上
-    if (points[0].y > vertexes[2].y) return false
-    // 下
-    if (points[2].y < vertexes[0].y) return false
-    return true
-  }
   render(): void {
-    // this.containerEl.innerHTML = this.text
-    Object.assign(this.containerEl.style, {
-      // borderColor: this.active ? '#e96160' : '#29c1f8',
-      zIndex: this.zIndex,
-      transform: `translate3d(${this.position.x}px,${this.position.y}px,0)`
-    })
-
+    // if (this.cacheText !== this.text) {
+    //   this.cacheText = this.text
+    //   this.$el.innerHTML = this.text
+    // }
+    // Object.assign(this.$el.style, {
+    //   // borderColor: this.active ? '#e96160' : '#29c1f8',
+    //   zIndex: this.zIndex,
+    //   transform: `translate3d(${this.position.x}px,${this.position.y}px,0)`
+    // })
+    this.$el.innerHTML = this.text
+    this.$el.className = style.node
   }
+  updateRender() { }
 }

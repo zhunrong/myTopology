@@ -16,6 +16,7 @@ class CreateLInteraction extends Interaction {
       this.targetNode = nodes.find(node => node.isPointIn(canvas))
       if (this.targetNode && this.targetNode !== this.sourceNode) {
         this.edge.targetNode = this.targetNode
+        this.edge.arrow = true
         this.targetNode.isUpdate = true
         this.edge = undefined
         this.targetNode = undefined
@@ -32,7 +33,8 @@ class CreateLInteraction extends Interaction {
         this.edge = new L({
           sourceNode: this.sourceNode,
           targetNode: canvas.virtualNode,
-          arrow: true,
+          dash: true,
+          arrow: false,
           text: ''
         })
         canvas.addEdge(this.edge)
