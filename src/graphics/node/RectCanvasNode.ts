@@ -16,14 +16,12 @@ export class RectCanvasNode extends CanvasNode implements RectShape {
   height: number
   id: number
   text: string
-  init: boolean = false
   constructor(options: IRectOptions) {
     super(options)
     this.width = options.width || 146
     this.height = options.height || 53
     this.id = options.id
     this.text = options.text || ''
-    // this.draw()
   }
   getBoundingJoinPoints(): Vector2d[] {
     return []
@@ -68,46 +66,29 @@ export class RectCanvasNode extends CanvasNode implements RectShape {
     const { x, y } = this.position
     return new Vector2d(x + this.width / 2, y + this.height / 2)
   }
-  async draw() {
-    const img = await imgLoad(require('../../assets/node_bg.png'))
-    const ctx = this.cacheCanvas.getContext('2d')
-    this.cacheCanvas.width = this.width
-    this.cacheCanvas.height = this.height
-    if (ctx) {
-      // ctx.clearRect(0, 0, this.width, this.height)
-      ctx.rect(3, 3, this.width - 6, this.height - 6)
-      ctx.fillStyle = '#fff'
-      ctx.fill()
-      ctx.drawImage(img, 0, 0)
-      ctx.textBaseline = 'middle'
-      ctx.textAlign = 'center'
-      ctx.font = "14px serif"
-      ctx.fillText(this.text, this.width / 2, this.height / 2)
-    }
-    if (this.canvas) {
-      this.canvas.repaint = true
-    }
-    this.init = true
-  }
   async render() {
     const ctx = this.cacheCanvas.getContext('2d') as CanvasRenderingContext2D
     this.cacheCanvas.width = this.width
     this.cacheCanvas.height = this.height
 
     ctx.rect(0, 0, this.width, this.height)
-    ctx.fillStyle = '#ccc'
+    ctx.strokeStyle = '#29c1f8'
+    ctx.fillStyle = '#fff'
+    ctx.lineWidth = 2
     ctx.fill()
+    ctx.stroke()
     ctx.textBaseline = 'middle'
     ctx.textAlign = 'center'
     ctx.font = "14px serif"
-    ctx.fillStyle = '#fff'
+    ctx.fillStyle = '#29c1f8'
     ctx.fillText(this.text, this.width / 2, this.height / 2)
 
     this.canvas.repaint = true
   }
   updatePosition() {
     const { graphCanvasCtx } = this.canvas
-    graphCanvasCtx.drawImage(this.cacheCanvas, this.position.x, this.position.y)
+    const { x, y } = this.position
+    graphCanvasCtx.drawImage(this.cacheCanvas, x, y)
   }
   updateRender() { }
 }

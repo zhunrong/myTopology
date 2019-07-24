@@ -103,8 +103,8 @@ export class L extends Edge {
       if (!this.sourceJoinPoint || !this.targetJoinPoint) return
       const sourceJoinPoint = this.sourceJoinPoint as Vector2d
       const targetJoinPoint = this.targetJoinPoint as Vector2d
-      const outDirection = sourceJoinPoint.substract(sourceNode.joinPoint).normalize()
-      const inDirection = targetNode.joinPoint.substract(targetJoinPoint).normalize()
+      const outDirection = sourceJoinPoint.substract(sourceNode.centerPoint).normalize()
+      const inDirection = targetNode.centerPoint.substract(targetJoinPoint).normalize()
 
       if (outDirection.x === 1 || outDirection.x === -1) {
         if (inDirection.x === 1 || inDirection.x === -1) {

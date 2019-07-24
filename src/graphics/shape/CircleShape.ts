@@ -5,7 +5,7 @@ export class CircleShape {
   /**
    * 边界矩形坐标数组
    */
-  get boundingRect(): Vector2d[] {
+  getBoundingRect(): Vector2d[] {
     const { radius, position: { x, y } } = this
     const diameter = 2 * radius
     return [
@@ -18,7 +18,7 @@ export class CircleShape {
   /**
    * 边界矩形上的连接点坐标数组
    */
-  get boundingJoinPoints(): Vector2d[] {
+  getBoundingJoinPoints(): Vector2d[] {
     const { radius, position: { x, y } } = this
     const diameter = 2 * radius
     return [
@@ -31,7 +31,7 @@ export class CircleShape {
   /**
    * 几何中点坐标
    */
-  get centerPoint(): Vector2d {
+  getCenterPoint(): Vector2d {
     const { position: { x, y }, radius } = this
     return new Vector2d(x + radius, y + radius)
   }

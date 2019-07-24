@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { MODE_DEFAULT, MODE_VIEW, MODE_CREATE_EDGE, MODE_AREA_PICK, MODE_CREATE_L } from '../graphics'
 // import Node from '../components/nodes/Node'
-import { RectCanvasNode as Node } from '../graphics'
+import { CircleCanvasNode as Node } from '../graphics'
 import Edge from '../components/edges/Line'
 import { nodeDatas } from '../data/topoData'
 import "./topology.scss"
@@ -39,8 +39,9 @@ export default class Topology extends Component<IProps, IState> {
             x: item.x,
             y: item.y,
             id: item.id,
-            width: 146,
-            height: 53
+            // width: 80,
+            // height: 80
+            radius: 40
           })
           if (this.canvas) {
             this.canvas.addNode(node)
@@ -65,11 +66,12 @@ export default class Topology extends Component<IProps, IState> {
         const { coordinate, dataTransfer } = params
         const node = new Node({
           id: Math.random() * 10000,
-          text: '',
-          x: coordinate.x - 73,
-          y: coordinate.y - 26.5,
-          width: 146,
-          height: 53
+          text: 'new',
+          x: coordinate.x - 40,
+          y: coordinate.y - 40,
+          // width: 80,
+          // height: 80
+          radius: 40
         })
         if (this.canvas) {
           this.canvas.addNode(node)
