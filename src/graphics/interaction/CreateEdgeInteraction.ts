@@ -1,7 +1,7 @@
 import Interaction from './Interaction'
 import Canvas from '../core/Canvas'
 import Node from '../graph/Node'
-import Line from '../shape/Line'
+import Line from '../edge/Line'
 
 /**
  * 连线（直线）

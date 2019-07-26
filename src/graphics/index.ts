@@ -7,7 +7,6 @@ export * from './events/eventEmitter'
 export * from './graph/CanvasNode'
 export * from './graph/DomNode'
 export * from './graph/Edge'
-export * from './shape/Line'
 export * from './graph/Node'
 // 模式
 export * from './mode/modes'
@@ -27,3 +26,5 @@ export * from './node/RectDomNode'
 export * from './node/RectCanvasNode'
 export * from './node/CircleCanvasNode'
 // edge
+export * from './edge/Line'
+export * from './edge/L'

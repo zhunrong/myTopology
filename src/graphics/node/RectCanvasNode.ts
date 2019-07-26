@@ -85,11 +85,17 @@ export class RectCanvasNode extends CanvasNode implements RectShape {
 
     this.canvas.repaint = true
   }
+
   updatePosition() {
     const { graphCanvasCtx } = this.canvas
     const { x, y } = this.position
+    if (this.active) {
+      graphCanvasCtx.shadowBlur = 5
+      graphCanvasCtx.shadowColor = 'rgba(255,0,0,0.8)'
+    }
     graphCanvasCtx.drawImage(this.cacheCanvas, x, y)
   }
+  
   updateRender() { }
 }
 

@@ -1,7 +1,7 @@
 import Interaction from './Interaction'
 import Canvas from '../core/Canvas'
 import Node from '../graph/Node'
-import L from '../shape/L'
+import L from '../edge/L'
 
 /**
  * 连线（L型）

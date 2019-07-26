@@ -93,7 +93,7 @@ export class L extends Edge {
       sourceJoinPoints.forEach(point1 => {
         targetJoinPoints.forEach(point2 => {
           const distance = point1.distance(point2)
-          if (minDistance >= distance || !this.sourceJoinPoint || !this.targetJoinPoint) {
+          if (minDistance > distance || !this.sourceJoinPoint || !this.targetJoinPoint) {
             minDistance = distance
             this.sourceJoinPoint = point1
             this.targetJoinPoint = point2

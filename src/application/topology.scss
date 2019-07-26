@@ -26,7 +26,8 @@
     }
 
     img,
-    span {
+    span,
+    .nodes {
       display: inline-block;
       border-radius: 3px;
       border: 1px dashed #ccc;
@@ -52,6 +53,13 @@
         border: 1px dashed #fff;
       }
     }
+
+    .nodes {
+      ul {
+        display: none;
+      }
+    }
+
 
     img {
       padding: 8px;

@@ -19,7 +19,7 @@ export default class Topology extends Component<IProps, IState> {
   nodes: Node[] = []
   edges: Edge[] = []
   containerRef: React.RefObject<HTMLDivElement> = React.createRef()
-  canvas: Canvas | undefined
+  canvas!: Canvas
   state = {
     mode: MODE_DEFAULT
   }
@@ -78,31 +78,45 @@ export default class Topology extends Component<IProps, IState> {
         }
       })
       this.canvas.eventEmitter.on('canvas:menu', (command) => {
-        if (this.canvas) {
-          if (this.canvas.activeEdges.length) {
-            const edge = this.canvas.activeEdges[0] as Edge
-            setTimeout(() => {
-              const result = prompt('请输入新名称', edge.text)
-              if (result && this.canvas) {
-                edge.text = result
-                this.canvas.repaint = true
-              }
-            }, 100)
-            return
-          }
-          if (this.canvas.activeNodes.length) {
-            const node = this.canvas.activeNodes[0] as Node
-            setTimeout(() => {
-              const result = prompt('请输入新名称', node.text)
-              if (result && this.canvas) {
-                node.text = result
-                // node.isUpdate = true
-                node.render()
-                this.canvas.repaint = true
-              }
-            }, 100)
-            return
-          }
+        switch (command) {
+          case 'rename':
+            if (this.canvas.activeEdges.length) {
+              const edge = this.canvas.activeEdges[0] as Edge
+              setTimeout(() => {
+                const result = prompt('请输入新名称', edge.text)
+                if (result && this.canvas) {
+                  edge.text = result
+                  this.canvas.repaint = true
+                }
+              }, 100)
+              return
+            }
+            if (this.canvas.activeNodes.length) {
+              const node = this.canvas.activeNodes[0] as Node
+              setTimeout(() => {
+                const result = prompt('请输入新名称', node.text)
+                if (result && this.canvas) {
+                  node.text = result
+                  // node.isUpdate = true
+                  node.render()
+                  this.canvas.repaint = true
+                }
+              }, 100)
+              return
+            }
+            break
+          case 'remove':
+            if (this.canvas.activeEdges.length) {
+              const edge = this.canvas.activeEdges[0] as Edge
+              this.canvas.removeEdge(edge)
+              return
+            }
+            if (this.canvas.activeNodes.length) {
+              const node = this.canvas.activeNodes[0] as Node
+              this.canvas.removeNode(node)
+              return
+            }
+            break
         }
       })
       this.canvas.start()
@@ -142,7 +156,12 @@ export default class Topology extends Component<IProps, IState> {
           <img src={require('../assets/zoom_in.svg')} onClick={this.zoomIn} title="放大" />
           <img onClick={this.modeChange.bind(this, MODE_CREATE_EDGE)} className={`${this.state.mode === MODE_CREATE_EDGE ? 'active' : ''}`} src={require('../assets/line_2.svg')} title="创建连线" />
           <img onClick={this.modeChange.bind(this, MODE_CREATE_L)} className={`${this.state.mode === MODE_CREATE_L ? 'active' : ''}`} src={require('../assets/L_line.svg')} title="创建L连线" />
-          <span draggable={true} onDragStart={this.handleDragStart}>N</span>
+          <div className="nodes" draggable={true} onDragStart={this.handleDragStart}>N
+            <ul>
+              <li>Circle</li>
+              <li>Rect</li>
+            </ul>
+          </div>
         </div>
         <div ref={this.containerRef} className="topo-chart" />
       </div>

@@ -4,12 +4,22 @@ class MenuInteraction extends Interaction {
   onContextMenu = (canvas: Canvas, e: Event) => {
     const event = e as MouseEvent
     canvas.contextMenu.hide()
-    if(canvas.activeNodes.length){
+    if (canvas.activeNodes.length) {
       canvas.contextMenu.menu = [{
         label: '重命名',
         command: 'rename'
+      }, {
+        label: '删除',
+        command: 'remove'
       }]
-    }else{
+    } else if (canvas.activeEdges.length) {
+      canvas.contextMenu.menu = [
+        {
+          label: '删除',
+          command: 'remove'
+        }
+      ]
+    } else {
       canvas.contextMenu.menu = [{
         label: '放大',
         command: 'zoomIn'

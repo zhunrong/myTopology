@@ -52,13 +52,14 @@ export class CircleCanvasNode extends CanvasNode implements CircleShape {
     return Math2d.isPointInCircle(point, centerPoint, radius)
   }
   render() {
-    const { radius, canvas } = this
+    const { radius, canvas, active } = this
     const diameter = 2 * radius
     this.cacheCanvas.width = diameter + 2
     this.cacheCanvas.height = diameter + 2
     const ctx = this.cacheCanvas.getContext('2d') as CanvasRenderingContext2D
 
     ctx.beginPath()
+
     ctx.arc(radius + 1, radius + 1, radius, 0, 2 * Math.PI)
     ctx.strokeStyle = '#29c1f8'
     ctx.fillStyle = '#fff'
@@ -77,6 +78,10 @@ export class CircleCanvasNode extends CanvasNode implements CircleShape {
   updatePosition() {
     const { graphCanvasCtx } = this.canvas
     const { x, y } = this.position
+    if (this.active) {
+      graphCanvasCtx.shadowBlur = 5
+      graphCanvasCtx.shadowColor = 'rgba(255,0,0,0.8)'
+    }
     graphCanvasCtx.drawImage(this.cacheCanvas, x, y)
   }
 
