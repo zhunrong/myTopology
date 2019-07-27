@@ -62,11 +62,12 @@ export class RectDomNode extends DomNode implements RectShape {
    */
   updatePosition() {
     const { x, y } = this.position
-    const { width, height } = this
+    const { width, height, active } = this
     Object.assign(this.$el.style, {
       transform: `translate3d(${x}px,${y}px,0)`,
       width: `${width}px`,
-      height: `${height}px`
+      height: `${height}px`,
+      boxShadow: active ? '0 0 5px 0 rgba(255,0,0,0.8)' : 'none'
     })
   }
 }

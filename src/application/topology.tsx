@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { MODE_DEFAULT, MODE_VIEW, MODE_CREATE_EDGE, MODE_AREA_PICK, MODE_CREATE_L } from '../graphics'
 // import Node from '../components/nodes/Node'
 import { CircleCanvasNode, RectCanvasNode, RectDomNode } from '../graphics'
+import CustomNode from '../components/nodes/Node'
 import Edge from '../components/edges/Line'
 import { nodeDatas } from '../data/topoData'
 import "./topology.scss"
@@ -12,7 +13,7 @@ interface IState {
   mode: string
 }
 
-type Node = CircleCanvasNode | RectCanvasNode | RectDomNode
+type Node = CircleCanvasNode | RectCanvasNode | RectDomNode | CustomNode
 
 export default class Topology extends Component<IProps, IState> {
   nodeDatas: any[] = nodeDatas
@@ -69,11 +70,11 @@ export default class Topology extends Component<IProps, IState> {
         let node: Node | undefined
         switch (dataTransfer.getData('nodeType')) {
           case 'rect':
-            node = new RectCanvasNode({
-              width: 60,
-              height: 60,
-              x: coordinate.x - 30,
-              y: coordinate.y - 30,
+            node = new CustomNode({
+              width: 146,
+              height: 53,
+              x: coordinate.x - 73,
+              y: coordinate.y - 26.5,
               id: Math.random() * 10000,
               text: 'new Rect'
             })
