@@ -13,7 +13,7 @@ export * from './mode/modes'
 // 交互
 export * from './interaction/selectInteraction'
 export * from './interaction/createEdgeInteraction'
-export * from './interaction/CreateLInteraction'
+export * from './interaction/createLInteraction'
 export * from './interaction/dragInteraction'
 export * from './interaction/dropInteraction'
 export * from './interaction/menuInteraction'
