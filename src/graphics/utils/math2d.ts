@@ -75,9 +75,9 @@ export class Math2d {
    * @param deviation 
    */
   static isPointInPolyline(P: Vector2d, polyline: Vector2d[], deviation: number = 0.01): boolean {
-    const len = polyline.length
-    if (len < 2) return false
-    for (let i = 1; i < len; i++) {
+    const length = polyline.length
+    if (length < 2) return false
+    for (let i = 1; i < length; i++) {
       if (Math2d.isPointInLineSegment(P, [polyline[i - 1], polyline[i]], deviation)) return true
     }
     return false
@@ -138,6 +138,42 @@ export class Math2d {
     const AP = AB.normalize().scale(magnitude)
     const P = AP.add(A)
     return P
+  }
+
+  /**
+   * 根据ratio,获取线段上点的坐标,起点为0,终点为1
+   * @param line 
+   * @param ratio 
+   */
+  static getLinePoint(line: Vector2d[], ratio: number): Vector2d | null {
+    const len = line.length
+    if (len < 2) return null
+    if (ratio > 1) ratio = 1
+    if (ratio < 0) ratio = 0
+    const length = Math2d.getPolyLineLength(line) * ratio
+    let sum = 0
+    for (let i = 1; i < len; i++) {
+      sum += line[i].distance(line[i - 1])
+      if (sum >= length) {
+        const diff = sum - length
+        return line[i].add(line[i - 1].substract(line[i]).normalize().scale(diff))
+      }
+    }
+    return new Vector2d(0, 0)
+  }
+
+  /**
+   * 获取多线段的长度
+   * @param line 
+   */
+  static getPolyLineLength(line: Vector2d[]): number {
+    const length = line.length
+    if (length < 2) return 0
+    let sum = 0
+    for (let i = 1; i < length; i++) {
+      sum += line[i].distance(line[i - 1])
+    }
+    return sum
   }
 }
 

@@ -26,11 +26,10 @@
     }
 
     img,
-    span,
-    .nodes {
+    span {
       display: inline-block;
       border-radius: 3px;
-      border: 1px dashed #ccc;
+      border: 1px dashed hsl(0, 0%, 80%);
       width: 40px;
       height: 40px;
       box-sizing: border-box;
@@ -54,10 +53,8 @@
       }
     }
 
-    .nodes {
-      ul {
-        display: none;
-      }
+    .node{
+      font-size: 12px;
     }
 
 

@@ -35,7 +35,7 @@ class CreateLInteraction extends Interaction {
           targetNode: canvas.virtualNode,
           dash: true,
           arrow: false,
-          text: ''
+          text: 'line'
         })
         canvas.addEdge(this.edge)
       }

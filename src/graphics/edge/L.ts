@@ -22,6 +22,7 @@ export class L extends Edge {
   arrowStart: Vector2d | undefined
   rotate: number = 0
   middlePoints: Vector2d[] = []
+  centerPoint: Vector2d | null = null
   sourceJoinPoint: Vector2d | undefined
   targetJoinPoint: Vector2d | undefined
   // 缓存canvas(离屏canvas)
@@ -50,31 +51,19 @@ export class L extends Edge {
       if (Math2d.isPointInTriangle(pixelCoordinate.substract(this.arrowStart), p0, p1, p2)) return true
     }
     // 判断是否在文字上
-    if (this.text) {
-      // const { graphCanvasCtx } = canvas
-      // graphCanvasCtx.save()
-      // graphCanvasCtx.font = '14px sans-serif'
-      // graphCanvasCtx.textAlign = 'center'
-      // graphCanvasCtx.textBaseline = 'middle'
-      // const textRectWidth = graphCanvasCtx.measureText(this.text).width
-      // const sourceToTarget = this.targetNode.joinPoint.substract(this.sourceNode.joinPoint)
-      // const lineNormal = sourceToTarget.normalize()
-      // const lineCenter = this.sourceNode.joinPoint.add(sourceToTarget.scale(1 / 2))
-      // const perpendicular = sourceToTarget.perpendicular().normalize()
-      // graphCanvasCtx.restore()
-      // if (this.rotate < Math.PI / 2 && this.rotate >= -Math.PI / 2) {
-      //   const p0 = lineCenter.substract(lineNormal.scale(textRectWidth / 2)).add(perpendicular.scale(17))
-      //   const p1 = p0.add(lineNormal.scale(textRectWidth))
-      //   const p2 = p1.substract(perpendicular.scale(14))
-      //   const p3 = p2.substract(lineNormal.scale(textRectWidth))
-      //   if (Math2d.isPointInPolygon(pixelCoordinate, [p0, p1, p2, p3])) return true
-      // } else {
-      //   const p0 = lineCenter.substract(lineNormal.scale(textRectWidth / 2)).add(perpendicular.scale(-17))
-      //   const p1 = p0.add(lineNormal.scale(textRectWidth))
-      //   const p2 = p1.substract(perpendicular.scale(-14))
-      //   const p3 = p2.substract(lineNormal.scale(textRectWidth))
-      //   if (Math2d.isPointInPolygon(pixelCoordinate, [p0, p1, p2, p3])) return true
-      // }
+    if (this.text && this.centerPoint) {
+      const { graphCanvasCtx } = this.canvas
+      graphCanvasCtx.font = '14px sans-serif'
+      const textRectWidth = graphCanvasCtx.measureText(this.text).width
+      const textLeft = this.centerPoint.x - textRectWidth / 2
+      const textTop = this.centerPoint.y - 7
+      const textRect = [
+        new Vector2d(textLeft, textTop),
+        new Vector2d(textLeft + textRectWidth, textTop),
+        new Vector2d(textLeft + textRectWidth, textTop + 14),
+        new Vector2d(textLeft, textTop + 14)
+      ]
+      if (Math2d.isPointInPolygon(pixelCoordinate, textRect)) return true
     }
     return false
   }
@@ -133,12 +122,25 @@ export class L extends Edge {
       })
       graphCanvasCtx.lineTo(targetJoinPoint.x, targetJoinPoint.y)
       graphCanvasCtx.strokeStyle = this.active ? '#e96160' : '#29c1f8'
-      graphCanvasCtx.fillStyle = this.active ? '#e96160' : '#29c1f8'
       graphCanvasCtx.stroke()
 
 
       if/* 文本 */ (this.text) {
-
+        this.centerPoint = Math2d.getLinePoint([sourceJoinPoint, ...this.middlePoints, targetJoinPoint], 0.5)
+        if (this.centerPoint) {
+          graphCanvasCtx.beginPath()
+          graphCanvasCtx.font = '14px sans-serif'
+          // graphCanvasCtx.textAlign = 'center'
+          graphCanvasCtx.textBaseline = 'top'
+          const textRectWidth = graphCanvasCtx.measureText(this.text).width
+          const textLeft = this.centerPoint.x - textRectWidth / 2
+          const textTop = this.centerPoint.y - 7
+          graphCanvasCtx.rect(textLeft, textTop, textRectWidth, 14)
+          graphCanvasCtx.fillStyle = '#fff'
+          graphCanvasCtx.fill()
+          graphCanvasCtx.fillStyle = this.active ? '#e96160' : '#29c1f8'
+          graphCanvasCtx.fillText(this.text, textLeft, textTop)
+        }
       }
       if/**箭头 */ (this.arrow) {
         this.arrowStart = targetJoinPoint

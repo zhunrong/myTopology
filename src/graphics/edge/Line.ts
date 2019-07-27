@@ -47,8 +47,8 @@ export class Line extends Edge {
       const { graphCanvasCtx } = canvas
       graphCanvasCtx.save()
       graphCanvasCtx.font = '14px sans-serif'
-      graphCanvasCtx.textAlign = 'center'
-      graphCanvasCtx.textBaseline = 'middle'
+      // graphCanvasCtx.textAlign = 'center'
+      // graphCanvasCtx.textBaseline = 'middle'
       const textRectWidth = graphCanvasCtx.measureText(this.text).width
       const sourceToTarget = this.targetNode.centerPoint.substract(this.sourceNode.centerPoint)
       const lineNormal = sourceToTarget.normalize()

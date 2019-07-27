@@ -33,7 +33,7 @@ class CreateEdgeInteraction extends Interaction {
           sourceNode: this.sourceNode,
           targetNode: canvas.virtualNode,
           arrow: true,
-          text: ''
+          text: 'line'
         })
         canvas.addEdge(this.edge)
       }

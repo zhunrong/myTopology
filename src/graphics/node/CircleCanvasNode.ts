@@ -63,14 +63,18 @@ export class CircleCanvasNode extends CanvasNode implements CircleShape {
     ctx.arc(radius + 1, radius + 1, radius, 0, 2 * Math.PI)
     ctx.strokeStyle = '#29c1f8'
     ctx.fillStyle = '#fff'
+    ctx.lineWidth = 2
     ctx.stroke()
     ctx.fill()
 
-    ctx.textBaseline = 'middle'
-    ctx.textAlign = 'center'
-    ctx.font = "14px serif"
-    ctx.fillStyle = '#29c1f8'
-    ctx.fillText(this.text, radius + 1, radius + 1)
+    if (this.text) {
+      ctx.textBaseline = 'middle'
+      ctx.textAlign = 'center'
+      ctx.font = "14px serif"
+      ctx.fillStyle = '#29c1f8'
+      ctx.fillText(this.text, radius + 1, radius + 1)
+    }
+
 
     canvas.repaint = true
   }
@@ -82,7 +86,7 @@ export class CircleCanvasNode extends CanvasNode implements CircleShape {
       graphCanvasCtx.shadowBlur = 5
       graphCanvasCtx.shadowColor = 'rgba(255,0,0,0.8)'
     }
-    graphCanvasCtx.drawImage(this.cacheCanvas, x, y)
+    graphCanvasCtx.drawImage(this.cacheCanvas, x-1, y-1)
   }
 
   // CircleShape mixins

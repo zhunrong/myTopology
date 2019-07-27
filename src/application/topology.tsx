@@ -1,17 +1,18 @@
 import React, { Component } from 'react'
 import { MODE_DEFAULT, MODE_VIEW, MODE_CREATE_EDGE, MODE_AREA_PICK, MODE_CREATE_L } from '../graphics'
 // import Node from '../components/nodes/Node'
-import { CircleCanvasNode as Node } from '../graphics'
+import { CircleCanvasNode, RectCanvasNode, RectDomNode } from '../graphics'
 import Edge from '../components/edges/Line'
 import { nodeDatas } from '../data/topoData'
 import "./topology.scss"
 import { Canvas } from '../graphics/index'
-import RectDomNode from '../graphics/node/RectDomNode'
 // import "./treeTest"
 interface IProps { }
 interface IState {
   mode: string
 }
+
+type Node = CircleCanvasNode | RectCanvasNode | RectDomNode
 
 export default class Topology extends Component<IProps, IState> {
   nodeDatas: any[] = nodeDatas
@@ -34,8 +35,8 @@ export default class Topology extends Component<IProps, IState> {
       })
       this.canvas.eventEmitter.on('canvas:mounted', () => {
         this.nodes = this.nodeDatas.map((item: any) => {
-          const node = new Node({
-            text: item.text,
+          const node = new CircleCanvasNode({
+            text: '',
             x: item.x,
             y: item.y,
             id: item.id,
@@ -64,16 +65,31 @@ export default class Topology extends Component<IProps, IState> {
       })
       this.canvas.eventEmitter.on('canvas:drop', (params) => {
         const { coordinate, dataTransfer } = params
-        const node = new Node({
-          id: Math.random() * 10000,
-          text: 'new',
-          x: coordinate.x - 40,
-          y: coordinate.y - 40,
-          // width: 80,
-          // height: 80
-          radius: 40
-        })
-        if (this.canvas) {
+
+        let node: Node | undefined
+        switch (dataTransfer.getData('nodeType')) {
+          case 'rect':
+            node = new RectCanvasNode({
+              width: 60,
+              height: 60,
+              x: coordinate.x - 30,
+              y: coordinate.y - 30,
+              id: Math.random() * 10000,
+              text: 'new Rect'
+            })
+            break
+          case 'circle':
+          default:
+            node = new CircleCanvasNode({
+              id: Math.random() * 10000,
+              text: 'new Circle',
+              x: coordinate.x - 40,
+              y: coordinate.y - 40,
+              radius: 40
+            })
+        }
+
+        if (node) {
           this.canvas.addNode(node)
         }
       })
@@ -133,9 +149,8 @@ export default class Topology extends Component<IProps, IState> {
       this.canvas.zoomIn()
     }
   }
-  handleDragStart = (e: React.DragEvent<HTMLSpanElement>) => {
-    e.dataTransfer.setData('nodeType', 'A')
-    e.dataTransfer.setData('id', '123')
+  handleDragStart = (e: React.DragEvent<HTMLSpanElement>, type: string) => {
+    e.dataTransfer.setData('nodeType', type)
   }
   modeChange(type: string) {
     this.setState({
@@ -156,12 +171,8 @@ export default class Topology extends Component<IProps, IState> {
           <img src={require('../assets/zoom_in.svg')} onClick={this.zoomIn} title="放大" />
           <img onClick={this.modeChange.bind(this, MODE_CREATE_EDGE)} className={`${this.state.mode === MODE_CREATE_EDGE ? 'active' : ''}`} src={require('../assets/line_2.svg')} title="创建连线" />
           <img onClick={this.modeChange.bind(this, MODE_CREATE_L)} className={`${this.state.mode === MODE_CREATE_L ? 'active' : ''}`} src={require('../assets/L_line.svg')} title="创建L连线" />
-          <div className="nodes" draggable={true} onDragStart={this.handleDragStart}>N
-            <ul>
-              <li>Circle</li>
-              <li>Rect</li>
-            </ul>
-          </div>
+          <span className="node" draggable={true} onDragStart={e => this.handleDragStart(e, 'rect')}>Rect</span>
+          <span className="node" draggable={true} onDragStart={e => this.handleDragStart(e, 'circle')}>Circle</span>
         </div>
         <div ref={this.containerRef} className="topo-chart" />
       </div>
