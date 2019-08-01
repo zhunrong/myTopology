@@ -45,18 +45,10 @@ export class RectCanvasNode extends CanvasNode implements RectShape {
     return this.getCenterPoint()
   }
   isInRect(points: Vector2d[]): boolean {
-    const vertexes = this.vertexes
-    // 左
-    if (points[0].x > vertexes[2].x) return false
-    // 右
-    if (points[2].x < vertexes[0].x) return false
-    // 上
-    if (points[0].y > vertexes[2].y) return false
-    // 下
-    if (points[2].y < vertexes[0].y) return false
-    return true
+    return false
   }
-  isPointIn(canvas: Canvas) {
+  isPointIn() {
+    const {canvas} = this
     if (!canvas.nativeEvent) return false
     const event = canvas.nativeEvent as MouseEvent
     const point = canvas.viewPortTopixelCoordinate(new Vector2d(event.clientX, event.clientY))

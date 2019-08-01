@@ -30,12 +30,14 @@ export abstract class Graph {
    * 判断点是否在图形内
    * @param canvas 
    */
-  abstract isPointIn(canvas: Canvas): boolean
+  abstract isPointIn(): boolean
   /**
    * 是否在一个矩形内
    * @param points 
    */
-  abstract isInRect(points: Vector2d[]): boolean
+  isInRect(points: Vector2d[]): boolean {
+    return false
+  }
   /**
    * 渲染到主画布上
    */

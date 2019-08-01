@@ -35,7 +35,8 @@ export class L extends Edge {
   isInRect = () => {
     return true
   }
-  isPointIn(canvas: Canvas) {
+  isPointIn() {
+    const {canvas} = this
     if (!canvas.nativeEvent) return false
     if (!this.sourceJoinPoint || !this.targetJoinPoint) return false
     const event = canvas.nativeEvent as MouseEvent

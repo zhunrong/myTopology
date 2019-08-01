@@ -1,12 +1,9 @@
 import React, { Component } from 'react'
 import { MODE_DEFAULT, MODE_VIEW, MODE_CREATE_EDGE, MODE_AREA_PICK, MODE_CREATE_L } from '../graphics'
-// import Node from '../components/nodes/Node'
-import { CircleCanvasNode, RectCanvasNode, RectDomNode } from '../graphics'
+import { Canvas, CircleCanvasNode, RectCanvasNode, RectDomNode, Line as Edge } from '../graphics'
 import CustomNode from '../components/nodes/Node'
-import Edge from '../components/edges/Line'
 import { nodeDatas } from '../data/topoData'
 import "./topology.scss"
-import { Canvas } from '../graphics/index'
 // import "./treeTest"
 interface IProps { }
 interface IState {
@@ -165,13 +162,13 @@ export default class Topology extends Component<IProps, IState> {
     return (
       <div className="topology">
         <div className="topo-bar">
-          <img onClick={this.modeChange.bind(this, MODE_DEFAULT)} className={`${this.state.mode === MODE_DEFAULT ? 'active' : ''}`} src={require('../assets/pointer.svg')} title="默认模式" />
-          <img onClick={this.modeChange.bind(this, MODE_VIEW)} className={`${this.state.mode === MODE_VIEW ? 'active' : ''}`} src={require('../assets/move.svg')} title="浏览模式" />
-          <img onClick={this.modeChange.bind(this, MODE_AREA_PICK)} className={`${this.state.mode === MODE_AREA_PICK ? 'active' : ''}`} src={require('../assets/area_pick.svg')} title="框选模式" />
-          <img src={require('../assets/zoom_out.svg')} onClick={this.zoomOut} title="缩小" />
-          <img src={require('../assets/zoom_in.svg')} onClick={this.zoomIn} title="放大" />
-          <img onClick={this.modeChange.bind(this, MODE_CREATE_EDGE)} className={`${this.state.mode === MODE_CREATE_EDGE ? 'active' : ''}`} src={require('../assets/line_2.svg')} title="创建连线" />
-          <img onClick={this.modeChange.bind(this, MODE_CREATE_L)} className={`${this.state.mode === MODE_CREATE_L ? 'active' : ''}`} src={require('../assets/L_line.svg')} title="创建L连线" />
+          <img draggable={false} onClick={this.modeChange.bind(this, MODE_DEFAULT)} className={`${this.state.mode === MODE_DEFAULT ? 'active' : ''}`} src={require('../assets/pointer.svg')} title="默认模式" />
+          <img draggable={false} onClick={this.modeChange.bind(this, MODE_VIEW)} className={`${this.state.mode === MODE_VIEW ? 'active' : ''}`} src={require('../assets/move.svg')} title="浏览模式" />
+          <img draggable={false} onClick={this.modeChange.bind(this, MODE_AREA_PICK)} className={`${this.state.mode === MODE_AREA_PICK ? 'active' : ''}`} src={require('../assets/area_pick.svg')} title="框选模式" />
+          <img draggable={false} src={require('../assets/zoom_out.svg')} onClick={this.zoomOut} title="缩小" />
+          <img draggable={false} src={require('../assets/zoom_in.svg')} onClick={this.zoomIn} title="放大" />
+          <img draggable={false} onClick={this.modeChange.bind(this, MODE_CREATE_EDGE)} className={`${this.state.mode === MODE_CREATE_EDGE ? 'active' : ''}`} src={require('../assets/line_2.svg')} title="创建连线" />
+          <img draggable={false} onClick={this.modeChange.bind(this, MODE_CREATE_L)} className={`${this.state.mode === MODE_CREATE_L ? 'active' : ''}`} src={require('../assets/L_line.svg')} title="创建L连线" />
           <span className="node" draggable={true} onDragStart={e => this.handleDragStart(e, 'rect')}>Rect</span>
           <span className="node" draggable={true} onDragStart={e => this.handleDragStart(e, 'circle')}>Circle</span>
         </div>

@@ -35,6 +35,18 @@ export class CircleShape {
     const { position: { x, y }, radius } = this
     return new Vector2d(x + radius, y + radius)
   }
+  isInRect(points: Vector2d[]): boolean {
+    const vertexes = this.getBoundingRect()
+    // 左
+    if (points[0].x > vertexes[2].x) return false
+    // 右
+    if (points[2].x < vertexes[0].x) return false
+    // 上
+    if (points[0].y > vertexes[2].y) return false
+    // 下
+    if (points[2].y < vertexes[0].y) return false
+    return true
+  }
 }
 
 export default CircleShape

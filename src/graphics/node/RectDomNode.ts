@@ -1,5 +1,4 @@
 import DomNode, { IDomNodeOptions } from '../graph/DomNode'
-import { BoundingRect } from '../graph/Node'
 import RectShape from '../shape/RectShape'
 import Vector2d from '../utils/vector2d'
 import { applyMixins } from '../utils/utils'
@@ -25,9 +24,6 @@ export class RectDomNode extends DomNode implements RectShape {
   }
   getCenterPoint() {
     return new Vector2d(0, 0)
-  }
-  isInRect(points: Vector2d[]) {
-    return false
   }
   get vertexes() {
     return this.getBoundingRect()

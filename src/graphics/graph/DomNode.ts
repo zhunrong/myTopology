@@ -27,7 +27,8 @@ export abstract class DomNode extends Node {
     this.mounted = false
     canvas.domCanvas.removeChild(this.$el)
   }
-  isPointIn(canvas: Canvas): boolean {
+  isPointIn(): boolean {
+    const {canvas} = this
     if (!canvas.nativeEvent) return false
     let el = canvas.nativeEvent.target as HTMLElement
     let isHit = false

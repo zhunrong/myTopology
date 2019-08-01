@@ -32,18 +32,6 @@ export class CircleCanvasNode extends CanvasNode implements CircleShape {
     this.id = options.id
     this.text = options.text || ''
   }
-  isInRect(points: Vector2d[]): boolean {
-    const vertexes = this.boundingRect
-    // 左
-    if (points[0].x > vertexes[2].x) return false
-    // 右
-    if (points[2].x < vertexes[0].x) return false
-    // 上
-    if (points[0].y > vertexes[2].y) return false
-    // 下
-    if (points[2].y < vertexes[0].y) return false
-    return true
-  }
   isPointIn() {
     const { canvas, centerPoint, radius } = this
     if (!canvas.nativeEvent) return false

@@ -27,7 +27,8 @@ export class Line extends Edge {
   isInRect() {
     return true
   }
-  isPointIn(canvas: Canvas) {
+  isPointIn() {
+    const {canvas} = this
     if (!canvas.nativeEvent) return false
     if (!this.sourceNode || !this.targetNode) return false
     const event = canvas.nativeEvent as MouseEvent
