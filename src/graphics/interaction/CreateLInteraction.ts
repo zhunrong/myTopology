@@ -13,7 +13,7 @@ class CreateLInteraction extends Interaction {
   onMouseUp = (canvas: Canvas) => {
     const nodes: Node[] = [...canvas.domNodes, ...canvas.canvasNodes]
     if (this.edge) {
-      this.targetNode = nodes.find(node => node.isPointIn(canvas))
+      this.targetNode = nodes.find(node => node.isPointIn())
       if (this.targetNode && this.targetNode !== this.sourceNode) {
         this.edge.targetNode = this.targetNode
         this.edge.arrow = true
@@ -28,14 +28,14 @@ class CreateLInteraction extends Interaction {
         this.sourceNode = undefined
       }
     } else {
-      this.sourceNode = nodes.find(node => node.isPointIn(canvas))
+      this.sourceNode = nodes.find(node => node.isPointIn())
       if (this.sourceNode) {
         this.edge = new L({
           sourceNode: this.sourceNode,
           targetNode: canvas.virtualNode,
           dash: true,
           arrow: false,
-          text: 'line'
+          text: ''
         })
         canvas.addEdge(this.edge)
       }

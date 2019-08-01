@@ -6,12 +6,10 @@ class AreaPickInteraction extends Interaction {
   minDragDistance: number = 5
   mouseDown: boolean = false
   onInstall = (canvas: Canvas) => {
-    console.log('install', canvas)
     // 显示交互画布
     canvas.wrapper.appendChild(canvas.topCanvas)
   }
   onUninstall = (canvas: Canvas) => {
-    console.log('uninstall', canvas)
     // 移除交互画布
     canvas.wrapper.removeChild(canvas.topCanvas)
   }
@@ -23,7 +21,7 @@ class AreaPickInteraction extends Interaction {
     canvas.topCanvasCtx.strokeStyle = 'rgb(41, 193, 248)'
   }
   onMouseMove = (canvas: Canvas, e: Event) => {
-    const { mousedownPosition, mousemovePosition, topCanvasCtx, viewWidth, viewHeight } = canvas
+    const { mousedownPosition, mousemovePosition, topCanvasCtx, viewWidth, viewHeight, graphCanvasCtx } = canvas
     if (!this.mouseDown) return
     const offset = mousemovePosition.substract(mousedownPosition)
     if (offset.magnitude < this.minDragDistance) return
@@ -41,6 +39,49 @@ class AreaPickInteraction extends Interaction {
     topCanvasCtx.closePath()
     topCanvasCtx.fill()
     topCanvasCtx.stroke()
+
+    let v0!: Vector2d
+    let v1!: Vector2d
+    let v2!: Vector2d
+    let v3!: Vector2d
+
+    if (mousedownPosition.x > mousemovePosition.x) {
+      if (mousedownPosition.y > mousemovePosition.y) {
+        v0 = canvas.viewPortTopixelCoordinate(mousemovePosition)
+        v2 = canvas.viewPortTopixelCoordinate(mousedownPosition)
+        v1 = new Vector2d(v2.x, v0.y)
+        v3 = new Vector2d(v0.x, v2.y)
+      } else {
+        v1 = canvas.viewPortTopixelCoordinate(mousedownPosition)
+        v3 = canvas.viewPortTopixelCoordinate(mousemovePosition)
+        v0 = new Vector2d(v3.x, v1.y)
+        v2 = new Vector2d(v1.x, v3.y)
+      }
+    } else {
+      if (mousedownPosition.y > mousemovePosition.y) {
+        v1 = canvas.viewPortTopixelCoordinate(mousemovePosition)
+        v3 = canvas.viewPortTopixelCoordinate(mousedownPosition)
+        v0 = new Vector2d(v3.x, v1.y)
+        v2 = new Vector2d(v1.x, v3.y)
+      } else {
+        v0 = canvas.viewPortTopixelCoordinate(mousedownPosition)
+        v2 = canvas.viewPortTopixelCoordinate(mousemovePosition)
+        v1 = new Vector2d(v2.x, v0.y)
+        v3 = new Vector2d(v0.x, v2.y)
+      }
+    }
+
+    const rect: Vector2d[] = [v0, v1, v2, v3]
+    const nodes = [...canvas.canvasNodes, ...canvas.domNodes]
+    nodes.forEach(node => {
+      if (node.isWrappedInRect(rect)) {
+        node.active = true
+        node.isUpdate = true
+      } else {
+        node.active = false
+      }
+    })
+    canvas.repaint = true
   }
   onMouseUp = (canvas: Canvas, e: Event) => {
     if (!this.mouseDown) return

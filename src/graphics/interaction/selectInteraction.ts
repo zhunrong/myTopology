@@ -12,7 +12,7 @@ class SelectInteraction extends Interaction {
       if (activeNode) {
         node.active = false
       } else {
-        if (node.isPointIn(canvas)) {
+        if (node.isPointIn()) {
           canvas.setNodeTop(node)
           node.active = true
           activeNode = node
@@ -33,7 +33,7 @@ class SelectInteraction extends Interaction {
         if (activeEdge) {
           edge.active = false
         } else {
-          if (edge.isPointIn(canvas)) {
+          if (edge.isPointIn()) {
             edge.active = true
             activeEdge = edge
             canvas.activeEdges = [edge]

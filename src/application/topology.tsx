@@ -34,7 +34,7 @@ export default class Topology extends Component<IProps, IState> {
       this.canvas.eventEmitter.on('canvas:mounted', () => {
         this.nodes = this.nodeDatas.map((item: any) => {
           const node = new CircleCanvasNode({
-            text: '',
+            text: item.text,
             x: item.x,
             y: item.y,
             id: item.id,

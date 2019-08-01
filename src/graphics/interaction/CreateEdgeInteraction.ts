@@ -13,7 +13,7 @@ class CreateEdgeInteraction extends Interaction {
   onMouseUp = (canvas: Canvas) => {
     const nodes: Node[] = [...canvas.domNodes, ...canvas.canvasNodes]
     if (this.edge) {
-      this.targetNode = nodes.find(node => node.isPointIn(canvas))
+      this.targetNode = nodes.find(node => node.isPointIn())
       if (this.targetNode && this.targetNode !== this.sourceNode) {
         this.edge.targetNode = this.targetNode
         this.targetNode.isUpdate = true
@@ -27,13 +27,13 @@ class CreateEdgeInteraction extends Interaction {
         this.sourceNode = undefined
       }
     } else {
-      this.sourceNode = nodes.find(node => node.isPointIn(canvas))
+      this.sourceNode = nodes.find(node => node.isPointIn())
       if (this.sourceNode) {
         this.edge = new Line({
           sourceNode: this.sourceNode,
           targetNode: canvas.virtualNode,
           arrow: true,
-          text: 'line'
+          text: ''
         })
         canvas.addEdge(this.edge)
       }

@@ -39,6 +39,11 @@ export abstract class Graph {
     return false
   }
   /**
+   * 是否被某矩形包围
+   * @param rect 
+   */
+  isWrappedInRect(rect: Vector2d[]): boolean { return false }
+  /**
    * 渲染到主画布上
    */
   abstract render(): void

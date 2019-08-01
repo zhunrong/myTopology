@@ -52,6 +52,14 @@ export class RectShape {
     if (points[2].y < vertexes[0].y) return false
     return true
   }
+  /**
+   * 是否包含于某矩形
+   * @param rect 
+   */
+  isWrappedInRect(rect: Vector2d[]): boolean {
+    const vertexes = this.getBoundingRect()
+    return rect[0].x <= vertexes[0].x && rect[0].y <= vertexes[0].y && rect[2].x >= vertexes[2].x && rect[2].y >= vertexes[2].y
+  }
 }
 
 export default RectShape
