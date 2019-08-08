@@ -1,11 +1,13 @@
 export class Vector2d {
   x: number
   y: number
-  magnitude: number
-  constructor(x: number, y: number) {
+  constructor(x: number = 0, y: number = 0) {
     this.x = x;
     this.y = y;
-    this.magnitude = this.getMagnitude();
+  }
+
+  get magnitude():number{
+    return this.getMagnitude()
   }
 
   /**
@@ -141,7 +143,7 @@ export class Vector2d {
    * 与目标向量的距离
    * @param target 
    */
-  distance(target:Vector2d):number{
+  distance(target: Vector2d): number {
     return this.substract(target).magnitude
   }
 }

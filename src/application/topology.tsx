@@ -4,7 +4,7 @@ import { Canvas, CircleCanvasNode, RectCanvasNode, RectDomNode, Line as Edge } f
 import CustomNode from '../components/nodes/Node'
 import { nodeDatas } from '../data/topoData'
 import "./topology.scss"
-// import "./treeTest"
+import "./treeTest"
 interface IProps { }
 interface IState {
   mode: string

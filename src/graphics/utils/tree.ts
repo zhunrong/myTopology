@@ -3,63 +3,27 @@ interface ITreeNode {
   data?: any
   children?: ITreeNode[],
 }
-export class Tree {
-  root: ITreeNode
-  constructor(root?: ITreeNode) {
-    this.root = root || {
-      children: [],
-      id: 'root'
-    }
-  }
-  /**
-   * 获取树的深度
-   */
-  getDepth() {
 
-  }
-  /**
-   * 获取宽度
-   */
-  getWidth() {
-    console.log(this)
-  }
-}
+type handler<T> = (node: TreeNode<T>) => void | true
 
 export class TreeNode<T> {
   id: string | number
   data: T | undefined
-  private _parent: TreeNode<T> | undefined
-  private _children: TreeNode<T>[] | undefined
+  children: TreeNode<T>[] = []
+  parent: TreeNode<T> | undefined
   constructor(id: string | number, data?: T, parent?: TreeNode<T>) {
     this.id = id
     this.data = data
-    // this.parent = parent
     if (parent) {
-      this._parent = parent
       parent.addChild(this)
     }
-  }
-  get parent(): TreeNode<T> | undefined {
-    return this._parent
-  }
-  // set parent(parent: TreeNode<T> | undefined) {
-  //   if (parent) {
-  //     this._parent = parent
-  //     parent.addChild(this)
-  //   }
-  // }
-  get children(): TreeNode<T>[] | undefined {
-    return this._children
   }
   /**
    * 在最后追加子节点
    * @param child 
    */
   addChild(child: TreeNode<T>) {
-    if (this._children === undefined) {
-      this._children = []
-    }
-    return this.addChildAt(child, this._children.length)
+    return this.addChildAt(child, this.children.length)
   }
   /**
    * 在指定位置追加子节点
@@ -67,17 +31,57 @@ export class TreeNode<T> {
    * @param index 
    */
   addChildAt(child: TreeNode<T>, index: number) {
-    if (this._children === undefined) {
-      this._children = []
-    }
-    if (index >= 0 && index <= this._children.length) {
-      child._parent = this
-      this._children.splice(index, 0, child)
+    if (index >= 0 && index <= this.children.length) {
+      child.parent = this
+      this.children.splice(index, 0, child)
       return child
     } else {
       return undefined
     }
   }
+  /**
+   * 根据id获取子节点
+   * @param id 
+   */
+  getChildById(id: string | number): TreeNode<T> | undefined {
+    return this.children.find(child => child.id === id)
+  }
+
+  /**
+   * 遍历子孙节点，深度优先
+   * @param handler 
+   */
+  getDescendantDF(handler?: handler<T>): TreeNode<T>[] {
+    const descendants: TreeNode<T>[] = []
+    const stack: TreeNode<T>[] = [...this.children]
+    while (stack.length) {
+      const last = stack.pop() as TreeNode<T>
+      descendants.push(last)
+      stack.push(...last.children)
+      if (handler && handler(last)) {
+        break
+      }
+    }
+    return descendants
+  }
+
+  /**
+   * 遍历子孙节点，广度优先
+   */
+  getDescendantBF(handler?: handler<T>): TreeNode<T>[] {
+    const descendants: TreeNode<T>[] = []
+    const queue: TreeNode<T>[] = [...this.children]
+    while (queue.length) {
+      const first = queue.shift() as TreeNode<T>
+      descendants.push(first)
+      queue.push(...first.children)
+      if (handler && handler(first)) {
+        break
+      }
+    }
+    return descendants
+  }
+
   /**
    * 获取根节点
    */
@@ -104,20 +108,14 @@ export class TreeNode<T> {
    * 获取第一个子节点
    */
   get firstChild(): TreeNode<T> | undefined {
-    if (this._children === undefined) {
-      return undefined
-    }
-    return this._children[0]
+    return this.children[0]
   }
   /**
    * 获取最后一个子节点
    */
   get lastChild(): TreeNode<T> | undefined {
-    if (this._children === undefined) {
-      return undefined
-    }
-    return this._children[this._children.length - 1]
+    return this.children[this.children.length - 1]
   }
 }
 
-export default Tree
+export default TreeNode
