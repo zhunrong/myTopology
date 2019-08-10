@@ -34,6 +34,14 @@ export abstract class Node extends Graph {
    */
   abstract get boundingRect(): Vector2d[]
   /**
+   * 渲染类型
+   */
+  abstract renderType: string
+  /**
+   * 形状
+   */
+  abstract shapeType: string
+  /**
    * 子节点
    */
   children: Node[] = []

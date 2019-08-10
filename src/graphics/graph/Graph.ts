@@ -20,8 +20,6 @@ export abstract class Graph {
   isUpdate: boolean = true
   // 图元id
   graphId: number = graphId++
-  // 渲染类型
-  abstract renderType: string
   // 携带的数据
   data: any
   constructor(options: IGraphOptions<any>) {

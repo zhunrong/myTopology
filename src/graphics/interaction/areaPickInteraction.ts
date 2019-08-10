@@ -73,13 +73,15 @@ class AreaPickInteraction extends Interaction {
     }
 
     const rect: Vector2d[] = [v0, v1, v2, v3]
-    const nodes = canvas.rootNode.getDescendantBF() as Node[]
-    nodes.forEach(node => {
+    canvas.rootNode.getDescendantBF(node => {
+      const status = node.active
       if (node.isWrappedInRect(rect)) {
         node.active = true
-        node.isUpdate = true
       } else {
         node.active = false
+      }
+      if (status !== node.active) {
+        node.isUpdate = true
       }
     })
     canvas.repaint = true

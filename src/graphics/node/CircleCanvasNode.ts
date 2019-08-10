@@ -11,6 +11,7 @@ export interface ICircleCanvasNodeOptions extends ICanvasNodeOptions {
 }
 
 export class CircleCanvasNode extends CanvasNode implements CircleShape {
+  shapeType = 'circle'
   radius: number
   id: number
   text: string
@@ -73,10 +74,10 @@ export class CircleCanvasNode extends CanvasNode implements CircleShape {
     if (this.active) {
       graphCanvasCtx.shadowBlur = 5
       graphCanvasCtx.shadowColor = 'rgba(255,0,0,0.8)'
-    }else{
+    } else {
       graphCanvasCtx.shadowColor = 'rgba(0, 0, 0, 0)'
     }
-    graphCanvasCtx.drawImage(this.cacheCanvas, x-1, y-1)
+    graphCanvasCtx.drawImage(this.cacheCanvas, x - 1, y - 1)
   }
 
   // CircleShape mixins

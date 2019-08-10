@@ -33,14 +33,21 @@ export default class Topology extends Component<IProps, IState> {
       })
       this.canvas.eventEmitter.on('canvas:mounted', () => {
         this.nodes = this.nodeDatas.map((item: any) => {
-          const node = new CircleCanvasNode({
-            text: item.text,
+          // const node = new CircleCanvasNode({
+          //   text: item.text,
+          //   x: item.x,
+          //   y: item.y,
+          //   id: item.id,
+          //   radius: 40,
+          //   zIndex: item.zIndex
+          // })
+          const node = new CustomNode({
+            width: 146,
+            height: 53,
             x: item.x,
             y: item.y,
             id: item.id,
-            // width: 80,
-            // height: 80
-            radius: 40,
+            text: item.text,
             zIndex: item.zIndex
           })
           if (this.canvas) {

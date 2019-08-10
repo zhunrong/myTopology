@@ -12,6 +12,7 @@ interface IRectOptions extends ICanvasNodeOptions {
   id: number
 }
 export class RectCanvasNode extends CanvasNode implements RectShape {
+  shapeType = 'rect'
   width: number
   height: number
   id: number
@@ -48,7 +49,7 @@ export class RectCanvasNode extends CanvasNode implements RectShape {
     return false
   }
   isPointIn() {
-    const {canvas} = this
+    const { canvas } = this
     if (!canvas.nativeEvent) return false
     const event = canvas.nativeEvent as MouseEvent
     const point = canvas.viewPortTopixelCoordinate(new Vector2d(event.clientX, event.clientY))
@@ -85,7 +86,7 @@ export class RectCanvasNode extends CanvasNode implements RectShape {
       graphCanvasCtx.shadowBlur = 5
       graphCanvasCtx.shadowColor = 'rgba(255,0,0,0.8)'
     }
-    graphCanvasCtx.drawImage(this.cacheCanvas, x-1, y-1)
+    graphCanvasCtx.drawImage(this.cacheCanvas, x - 1, y - 1)
   }
 
   updateRender() { }

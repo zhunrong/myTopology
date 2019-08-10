@@ -12,6 +12,7 @@ export interface IRectDomNodeOptions extends IDomNodeOptions {
   id: number
 }
 export class RectDomNode extends DomNode implements RectShape {
+  shapeType = 'rect'
   width: number
   height: number
   text: string
