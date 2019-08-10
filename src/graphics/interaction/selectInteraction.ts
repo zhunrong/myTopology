@@ -5,7 +5,7 @@ import { Edge } from '../graph/Edge'
 
 class SelectInteraction extends Interaction {
   onMouseDown = (canvas: Canvas) => {
-    const nodes: Node[] = [...canvas.canvasNodes, ...canvas.domNodes].reverse()
+    const nodes: Node[] = canvas.rootNode.getDescendantDF() as Node[]
     let activeNode: Node | undefined
     let activeEdge: Edge | undefined
     nodes.forEach(node => {

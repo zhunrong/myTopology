@@ -1,6 +1,3 @@
-export * from './utils/math2d'
-export * from './utils/vector2d'
-export * from './utils/utils'
 export * from './core/Canvas'
 export * from './contextMenu/ContextMenu'
 export * from './events/eventEmitter'
@@ -28,3 +25,8 @@ export * from './node/CircleCanvasNode'
 // edge
 export * from './edge/Line'
 export * from './edge/L'
+// utils
+export * from './utils/math2d'
+export * from './utils/vector2d'
+export * from './utils/utils'
+export * from './utils/tree'

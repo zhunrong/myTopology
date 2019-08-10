@@ -1,6 +1,7 @@
 import Interaction from './Interaction'
 import Canvas from '../core/Canvas';
 import Vector2d from '../utils/vector2d';
+import Node from '../graph/Node'
 
 class AreaPickInteraction extends Interaction {
   minDragDistance: number = 5
@@ -72,7 +73,7 @@ class AreaPickInteraction extends Interaction {
     }
 
     const rect: Vector2d[] = [v0, v1, v2, v3]
-    const nodes = [...canvas.canvasNodes, ...canvas.domNodes]
+    const nodes = canvas.rootNode.getDescendantBF() as Node[]
     nodes.forEach(node => {
       if (node.isWrappedInRect(rect)) {
         node.active = true

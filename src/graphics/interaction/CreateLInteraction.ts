@@ -11,7 +11,7 @@ class CreateLInteraction extends Interaction {
   sourceNode: Node | undefined
   edge: L | undefined
   onMouseUp = (canvas: Canvas) => {
-    const nodes: Node[] = [...canvas.domNodes, ...canvas.canvasNodes]
+    const nodes = canvas.rootNode.getDescendantBF() as Node[]
     if (this.edge) {
       this.targetNode = nodes.find(node => node.isPointIn())
       if (this.targetNode && this.targetNode !== this.sourceNode) {

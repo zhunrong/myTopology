@@ -4,7 +4,7 @@ import { Canvas, CircleCanvasNode, RectCanvasNode, RectDomNode, Line as Edge } f
 import CustomNode from '../components/nodes/Node'
 import { nodeDatas } from '../data/topoData'
 import "./topology.scss"
-import "./treeTest"
+// import "./treeTest"
 interface IProps { }
 interface IState {
   mode: string
@@ -40,7 +40,8 @@ export default class Topology extends Component<IProps, IState> {
             id: item.id,
             // width: 80,
             // height: 80
-            radius: 40
+            radius: 40,
+            zIndex: item.zIndex
           })
           if (this.canvas) {
             this.canvas.addNode(node)
@@ -134,6 +135,8 @@ export default class Topology extends Component<IProps, IState> {
         }
       })
       this.canvas.start()
+      const w = window as any
+      w.canvas = this.canvas
       console.log(this.canvas)
     }
   }

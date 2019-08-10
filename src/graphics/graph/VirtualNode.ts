@@ -9,10 +9,10 @@ export class VirtualNode extends Node {
   get vertexes(): Vector2d[] {
     return [this.position, this.position, this.position, this.position]
   }
-  get boundingRect():BoundingRect{
+  get boundingRect():BoundingRect {
     return [this.position, this.position, this.position, this.position]
   }
-  get boundingJoinPoints():Vector2d[]{
+  get boundingJoinPoints():Vector2d[] {
     return [this.position]
   }
   get joinPoint() {

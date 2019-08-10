@@ -43,16 +43,13 @@ export class Canvas {
   // 辅助节点(不需要实际渲染的)
   public virtualNode: VirtualNode = new VirtualNode({
     x: 0,
-    y: 0
+    y: 0,
+    id: 'vn'
   })
 
   public mousedownPosition: Vector2d = new Vector2d(0, 0)
   public mouseupPosition: Vector2d = new Vector2d(0, 0)
   public mousemovePosition: Vector2d = new Vector2d(0, 0)
-  // canvas节点
-  public canvasNodes: CanvasNode[] = []
-  // dom节点
-  public domNodes: DomNode[] = []
   // 连线
   public edges: Edge[] = []
   // 活动的元素
@@ -72,6 +69,12 @@ export class Canvas {
   repaint: boolean = false
   // menu
   contextMenu: ContextMenu = new ContextMenu(this)
+  // 根节点
+  rootNode: VirtualNode = new VirtualNode({
+    x: 0,
+    y: 0,
+    id: 'rootNode'
+  })
 
   constructor(options: ICanvasOptions) {
     this.container = options.container
@@ -81,6 +84,7 @@ export class Canvas {
     this.canvasScale = options.scale || 1
     this.maxScale = options.maxScale || 5
     this.minScale = options.minScale || 0.1
+    this.rootNode.canvas = this
     this.ro = new ResizeObserver((entries, observer) => {
       for (const entry of entries) {
         const { width, height } = entry.contentRect
@@ -104,13 +108,13 @@ export class Canvas {
    * 设置缩放
    * @param scale 
    */
-  public setZoom(scale:number){
-    this.canvasScale=scale
-    this.canvasWidth=this.viewWidth/this.canvasScale
-    this.canvasHeight=this.viewHeight/this.canvasScale
+  public setZoom(scale: number) {
+    this.canvasScale = scale
+    this.canvasWidth = this.viewWidth / this.canvasScale
+    this.canvasHeight = this.viewHeight / this.canvasScale
     this.render()
     this.optimizeNode()
-    this.repaint=true
+    this.repaint = true
   }
   // 原生事件监听
   protected nativeEventInit() {
@@ -143,40 +147,9 @@ export class Canvas {
   }
   // 添加节点
   public addNode(node: Node) {
-    if (node instanceof CanvasNode) {
-      if (this.canvasNodes.find(item => item === node)) return
-      node.visible = node.isInRect(this.canvasVisibleRect)
-      let index = this.canvasNodes.length - 1
-      let current = this.canvasNodes[index]
-      while (current) {
-        if (current.zIndex <= node.zIndex) {
-          this.canvasNodes.splice(index, 0, node)
-          break
-        }
-        index--
-        current = this.canvasNodes[index]
-      }
-      if (!current) {
-        this.canvasNodes.unshift(node)
-      }
-    } else if (node instanceof DomNode) {
-      if (this.domNodes.find(item => item === node)) return
-      node.visible = node.isInRect(this.canvasVisibleRect)
-      let index = this.domNodes.length - 1
-      let current = this.domNodes[index]
-      while (current) {
-        if (current.zIndex <= node.zIndex) {
-          this.domNodes.splice(index, 0, node)
-          break
-        }
-        index--
-        current = this.domNodes[index]
-      }
-      if (!current) {
-        this.domNodes.unshift(node)
-      }
-    }
-    node.canvas = this
+    if (this.rootNode.hasChild(node)) return
+    node.visible = node.isInRect(this.canvasVisibleRect)
+    this.rootNode.addChild(node)
     node.render()
     this.repaint = true
   }
@@ -185,64 +158,15 @@ export class Canvas {
    * @param node 
    */
   public setNodeTop(node: Node) {
-    if (node instanceof CanvasNode) {
-      const length = this.canvasNodes.length
-      if (length) {
-        const index = this.canvasNodes.findIndex(item => item === node)
-        if (index === -1 || length - 1 === index) return
-        const lastNode = this.canvasNodes[length - 1]
-        node.zIndex = lastNode.zIndex
-        // 放到队列最后
-        this.canvasNodes.splice(index, 1)
-        this.canvasNodes.push(node)
-        this.repaint = true
-      }
-      return
-    }
-    if (node instanceof DomNode) {
-      const length = this.domNodes.length
-      if (length) {
-        const index = this.domNodes.findIndex(item => item === node)
-        if (index === -1 || length - 1 === index) return
-        const lastNode = this.domNodes[length - 1]
-        node.zIndex = lastNode.zIndex
-        // 放到队列最后
-        this.domNodes.splice(index, 1)
-        this.domNodes.push(node)
-        node.isUpdate = true
-        node.unmount(this)
-        node.mount(this)
-        this.repaint = true
-      }
-    }
+
   }
   // 删除节点
   public removeNode(node: Node) {
-    let index
-    if (node instanceof CanvasNode) {
-      index = this.canvasNodes.findIndex(item => item === node)
-      if (index > -1) {
-        node.destroy()
-        this.canvasNodes.splice(index, 1)
-      }
-    } else if (node instanceof DomNode) {
-      index = this.domNodes.findIndex(item => item === node)
-      if (index > -1) {
-        node.unmount(this)
-        node.destroy()
-        this.domNodes.splice(index, 1)
-      }
-    } else {
-      console.log(`不支持的renderType: ${node.renderType}`)
-    }
-    node.destroy()
+    if (!this.rootNode.hasDescendant(node)) return
+    if (!node.parent) return
+    node.parent.removeChild(node)
     // 把相连的edge也删掉
-    const edges: Edge[] = []
-    this.edges.forEach(edge => {
-      if (edge.targetNode === node || edge.sourceNode === node) {
-        edges.push(edge)
-      }
-    })
+    const edges: Edge[] = this.edges.filter(edge => edge.targetNode === node || edge.sourceNode === node)
     edges.forEach(edge => {
       this.removeEdge(edge)
     })
@@ -253,10 +177,7 @@ export class Canvas {
    * 删除所有节点
    */
   public removeAllNode() {
-    const nodes: Node[] = [...this.canvasNodes, ...this.domNodes]
-    nodes.forEach(node => {
-      this.removeNode(node)
-    })
+    this.rootNode.removeAllChild()
   }
 
   // 添加连线
@@ -326,7 +247,7 @@ export class Canvas {
     this.canvasHeight = this.viewHeight / this.canvasScale
 
     const offset = newCoordinate.substract(coordinate)
-    const nodes: (DomNode | CanvasNode)[] = [...this.domNodes, ...this.canvasNodes]
+    const nodes = this.rootNode.getDescendantBF() as Node[]
     nodes.forEach(node => {
       node.position = node.position.add(offset)
       node.isUpdate = true
@@ -353,7 +274,7 @@ export class Canvas {
     this.canvasHeight = this.viewHeight / this.canvasScale
 
     const offset = newCoordinate.substract(coordinate)
-    const nodes: (DomNode | CanvasNode)[] = [...this.domNodes, ...this.canvasNodes]
+    const nodes = this.rootNode.getDescendantBF() as Node[]
     nodes.forEach(node => {
       node.position = node.position.add(offset)
       node.isUpdate = true
@@ -427,6 +348,7 @@ export class Canvas {
       })
     }
 
+
     this.eventEmitter.emit('canvas:mousedown', e)
   }
   /**
@@ -497,10 +419,9 @@ export class Canvas {
     if (!this.optimize) return
     // 优化：缓存画布可视矩形
     const canvasRect = this.canvasVisibleRect
-    this.domNodes.forEach(node => {
-      node.visible = node.isInRect(canvasRect)
-    })
-    this.canvasNodes.forEach(node => {
+    const nodes = this.rootNode.getDescendantBF()
+
+    nodes.forEach(node => {
       node.visible = node.isInRect(canvasRect)
     })
   }
@@ -541,14 +462,16 @@ export class Canvas {
   loop() {
     if (!this._running) return
     this._animationFrameId = requestAnimationFrame(() => {
-      this.renderDomNodes()
+      // this.renderDomNodes()
       // 判断是否需要重绘
       if (this.repaint) {
         this.graphCanvasCtx.clearRect(0, 0, this.viewWidth, this.viewHeight)
         this.graphCanvasCtx.save()
         this.graphCanvasCtx.scale(this.canvasScale, this.canvasScale)
         this.renderEdge()
-        this.renderCanvasNodes()
+      }
+      this.renderNodes()
+      if (this.repaint) {
         this.graphCanvasCtx.restore()
         this.repaint = false
       }
@@ -563,31 +486,30 @@ export class Canvas {
       edge.render()
     })
   }
+
   /**
-   * 渲染DOM节点
+   * 渲染节点
    */
-  private renderDomNodes() {
-    this.domNodes.forEach(node => {
-      if (node.visible) {
-        node.mount(this)
-        if (node.isUpdate) {
-          // node.render(this)
+  private renderNodes() {
+    this.rootNode.getDescendantBF(item => {
+      const node = item as Node
+      if (node instanceof CanvasNode) {
+        if (node.visible && this.repaint) {
+          // node.render()
           node.updatePosition()
-          node.isUpdate = false
         }
-      } else {
-        node.unmount(this)
       }
-    })
-  }
-  /**
-   * 渲染Canvas节点
-   */
-  private renderCanvasNodes() {
-    this.canvasNodes.forEach(node => {
-      if (node.visible) {
-        // node.render()
-        node.updatePosition()
+      if (node instanceof DomNode) {
+        if (node.visible) {
+          node.mount()
+          if (node.isUpdate) {
+            // node.render(this)
+            node.updatePosition()
+            node.isUpdate = false
+          }
+        } else {
+          node.unmount()
+        }
       }
     })
   }

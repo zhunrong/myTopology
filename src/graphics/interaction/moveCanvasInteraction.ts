@@ -15,8 +15,7 @@ class MoveCanvasInteraction extends Interaction {
   move: boolean = false
   onMouseDown = (canvas: Canvas) => {
     this.mouseDown = true
-    const nodes = [...canvas.domNodes, ...canvas.canvasNodes]
-    this.moveNodes = nodes
+    this.moveNodes = canvas.rootNode.getDescendantBF() as (DomNode | CanvasNode)[]
     this.cachePositions = this.moveNodes.map(node => node.position)
   }
   onMouseMove = (canvas: Canvas) => {

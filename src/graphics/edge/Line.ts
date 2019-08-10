@@ -17,7 +17,6 @@ export class Line extends Edge {
   arrow: boolean
   arrowStart: Vector2d | undefined
   rotate: number = 0
-  // 缓存canvas(离屏canvas)
   constructor(options: ILineOptions) {
     super(options)
     this.dash = options.dash || false

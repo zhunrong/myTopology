@@ -1,9 +1,12 @@
 import { Vector2d } from '../utils/vector2d'
 import { Canvas } from '../core/Canvas'
-export interface IGraphOptions {
+import { TreeNode } from '../utils/tree'
+
+export interface IGraphOptions<T> {
   visible?: boolean
   zIndex?: number
-  data?: any
+  data?: T
+  parent?: TreeNode<T>
 }
 let graphId = 1
 export abstract class Graph {
@@ -21,7 +24,8 @@ export abstract class Graph {
   abstract renderType: string
   // 携带的数据
   data: any
-  constructor(options: IGraphOptions) {
+  constructor(options: IGraphOptions<any>) {
+    // super(options.id, options.data, options.parent)
     this.visible = options.visible || true
     this.zIndex = options.zIndex || 0
     this.data = options.data

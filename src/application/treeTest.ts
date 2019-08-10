@@ -48,4 +48,7 @@ nodes.forEach(node => {
 })
 const w = window as any
 w.rootNode = nodes[0].root
-console.log(nodes)
+w.rootNode.getDescendantDF(function(node:TreeNode<any>){
+  console.log(node.id)
+  if(node.id===7) return true
+})

@@ -1,9 +1,3 @@
-interface ITreeNode {
-  id: string | number
-  data?: any
-  children?: ITreeNode[],
-}
-
 type handler<T> = (node: TreeNode<T>) => void | true
 
 export class TreeNode<T> {

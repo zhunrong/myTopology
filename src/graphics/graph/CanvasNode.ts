@@ -7,6 +7,9 @@ export abstract class CanvasNode extends Node {
   constructor(options: ICanvasNodeOptions) {
     super(options)
   }
+  destroy() {
+    this.beforeDestroy()
+  }
 }
 
 export default CanvasNode

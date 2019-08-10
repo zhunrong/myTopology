@@ -1,5 +1,4 @@
 import Node, { INodeOptions } from './Node'
-import { Canvas } from '../core/Canvas'
 export interface IDomNodeOptions extends INodeOptions { }
 
 export abstract class DomNode extends Node {
@@ -11,24 +10,22 @@ export abstract class DomNode extends Node {
   }
   /**
    * 挂载到文档中
-   * @param canvas 
    */
-  mount(canvas: Canvas): void {
-    if (this.mounted) return
+  mount(): void {
+    if (this.mounted || !this.canvas) return
     this.mounted = true
-    canvas.domCanvas.appendChild(this.$el)
+    this.canvas.domCanvas.appendChild(this.$el)
   }
   /**
    * 卸载
-   * @param canvas 
    */
-  unmount(canvas: Canvas): void {
-    if (!this.mounted) return
+  unmount(): void {
+    if (!this.mounted || !this.canvas) return
     this.mounted = false
-    canvas.domCanvas.removeChild(this.$el)
+    this.canvas.domCanvas.removeChild(this.$el)
   }
   isPointIn(): boolean {
-    const {canvas} = this
+    const { canvas } = this
     if (!canvas.nativeEvent) return false
     let el = canvas.nativeEvent.target as HTMLElement
     let isHit = false
@@ -46,6 +43,11 @@ export abstract class DomNode extends Node {
   updatePosition() {
     const { x, y } = this.position
     this.$el.style.transform = `translate3d(${x}px,${y}px,0)`
+  }
+
+  destroy() {
+    this.beforeDestroy()
+    this.unmount()
   }
 }
 

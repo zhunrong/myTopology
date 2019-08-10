@@ -154,6 +154,7 @@ export class L extends Edge {
         graphCanvasCtx.lineTo(- 10, + 4)
         graphCanvasCtx.lineTo(- 10, - 4)
         graphCanvasCtx.closePath()
+        graphCanvasCtx.fillStyle = this.active ? '#e96160' : '#29c1f8'
         graphCanvasCtx.fill()
         graphCanvasCtx.restore()
       }
