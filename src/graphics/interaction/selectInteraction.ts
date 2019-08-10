@@ -26,9 +26,7 @@ class SelectInteraction extends Interaction {
       canvas.edges.forEach(edge => {
         edge.active = false
       })
-      canvas.activeNodes = [activeNode]
     } else {
-      canvas.activeNodes = []
       canvas.edges.forEach(edge => {
         if (activeEdge) {
           edge.active = false
@@ -36,17 +34,11 @@ class SelectInteraction extends Interaction {
           if (edge.isPointIn()) {
             edge.active = true
             activeEdge = edge
-            canvas.activeEdges = [edge]
           } else {
             edge.active = false
           }
         }
       })
-    }
-    if (activeEdge) {
-      canvas.activeEdges = [activeEdge]
-    } else {
-      canvas.activeEdges = []
     }
     canvas.repaint = true
   }

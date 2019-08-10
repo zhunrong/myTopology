@@ -161,6 +161,26 @@ export abstract class Node extends Graph {
   }
 
   /**
+   * 获取激活状态的子节点列表
+   */
+  getActiveChild(): Node[] {
+    return this.children.filter(child => child.active)
+  }
+
+  /**
+   * 获取激活状态的子孙节点列表
+   */
+  getActiveDescendant(): Node[] {
+    const nodes: Node[] = []
+    this.getDescendantBF(node => {
+      if (node.active) {
+        nodes.push(node)
+      }
+    })
+    return nodes
+  }
+
+  /**
    * 遍历子孙节点，深度优先
    * @param handler 
    */

@@ -100,10 +100,12 @@ export default class Topology extends Component<IProps, IState> {
         }
       })
       this.canvas.eventEmitter.on('canvas:menu', (command) => {
+        const activeNodes = this.canvas.getActiveNodes()
+        const activeEdges = this.canvas.getActiveEdges()
         switch (command) {
           case 'rename':
-            if (this.canvas.activeEdges.length) {
-              const edge = this.canvas.activeEdges[0] as Edge
+            if (activeEdges.length) {
+              const edge = activeEdges[0] as Edge
               setTimeout(() => {
                 const result = prompt('请输入新名称', edge.text)
                 if (result && this.canvas) {
@@ -113,8 +115,8 @@ export default class Topology extends Component<IProps, IState> {
               }, 100)
               return
             }
-            if (this.canvas.activeNodes.length) {
-              const node = this.canvas.activeNodes[0] as Node
+            if (activeNodes.length) {
+              const node = activeNodes[0] as Node
               setTimeout(() => {
                 const result = prompt('请输入新名称', node.text)
                 if (result && this.canvas) {
@@ -128,13 +130,13 @@ export default class Topology extends Component<IProps, IState> {
             }
             break
           case 'remove':
-            if (this.canvas.activeEdges.length) {
-              const edge = this.canvas.activeEdges[0] as Edge
+            if (activeEdges.length) {
+              const edge = activeEdges[0] as Edge
               this.canvas.removeEdge(edge)
               return
             }
-            if (this.canvas.activeNodes.length) {
-              const node = this.canvas.activeNodes[0] as Node
+            if (activeNodes.length) {
+              const node = activeNodes[0] as Node
               this.canvas.removeNode(node)
               return
             }

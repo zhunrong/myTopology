@@ -50,11 +50,10 @@ export class Canvas {
   public mousedownPosition: Vector2d = new Vector2d(0, 0)
   public mouseupPosition: Vector2d = new Vector2d(0, 0)
   public mousemovePosition: Vector2d = new Vector2d(0, 0)
-  // 连线
+  /**
+   * 边线
+   */
   public edges: Edge[] = []
-  // 活动的元素
-  public activeNodes: Node[] = []
-  public activeEdges: Edge[] = []
   // resize监听器
   private ro: ResizeObserver
   // 画布
@@ -120,12 +119,12 @@ export class Canvas {
   protected nativeEventInit() {
     this.wrapper.addEventListener('click', this.handleClick)
     this.wrapper.addEventListener('mousedown', this.handleMouseDown)
-    document.addEventListener('mousemove', this.handleMouseMove)
-    document.addEventListener('mouseup', this.handleMouseUp)
     this.wrapper.addEventListener('wheel', this.handleWheel)
     this.wrapper.addEventListener('dragover', this.handleDragOver)
     this.wrapper.addEventListener('drop', this.handleDrop)
     this.wrapper.addEventListener('contextmenu', this.handleContextMenu)
+    document.addEventListener('mousemove', this.handleMouseMove)
+    document.addEventListener('mouseup', this.handleMouseUp)
   }
   // 全局事件监听
   private globalEventInit() { }
@@ -135,11 +134,11 @@ export class Canvas {
   public destroy() {
     this.wrapper.removeEventListener('click', this.handleClick)
     this.wrapper.removeEventListener('mousedown', this.handleMouseDown)
-    document.removeEventListener('mousemove', this.handleMouseMove)
-    document.removeEventListener('mouseup', this.handleMouseUp)
     this.wrapper.removeEventListener('wheel', this.handleWheel)
     this.wrapper.removeEventListener('dragover', this.handleDragOver)
     this.wrapper.removeEventListener('drop', this.handleDrop)
+    document.removeEventListener('mousemove', this.handleMouseMove)
+    document.removeEventListener('mouseup', this.handleMouseUp)
     this.ro.unobserve(this.container)
     this.ro.disconnect()
     this.unmount()
@@ -160,6 +159,14 @@ export class Canvas {
   public setNodeTop(node: Node) {
 
   }
+
+  /**
+   * 获取激活状态的节点列表
+   */
+  public getActiveNodes(): Node[] {
+    return this.rootNode.getActiveDescendant()
+  }
+
   // 删除节点
   public removeNode(node: Node) {
     if (!this.rootNode.hasDescendant(node)) return
@@ -194,6 +201,13 @@ export class Canvas {
       this.edges.splice(index, 1)
     }
     this.repaint = true
+  }
+
+  /**
+   * 获取激活状态的边线列表
+   */
+  public getActiveEdges(): Edge[] {
+    return this.edges.filter(edge => edge.active)
   }
 
   /**
