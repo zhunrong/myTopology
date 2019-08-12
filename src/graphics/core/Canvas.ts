@@ -187,14 +187,21 @@ export class Canvas {
     this.rootNode.removeAllChild(destroy)
   }
 
-  // 添加连线
+  /**
+   * 添加边线
+   * @param edge 
+   */
   public addEdge(edge: Edge) {
     if (this.edges.find(item => item === edge)) return
     this.edges.push(edge)
     edge.canvas = this
     this.repaint = true
   }
-  // 删除连线
+
+  /**
+   * 删除边线
+   * @param edge 
+   */
   public removeEdge(edge: Edge) {
     const index = this.edges.findIndex(item => item === edge)
     if (index > -1) {
@@ -349,6 +356,7 @@ export class Canvas {
     }
     this.eventEmitter.emit('canvas:wheel', e)
   }
+
   /**
    * 鼠标按下
    */
@@ -361,10 +369,9 @@ export class Canvas {
         action.onMouseDown(this, e)
       })
     }
-
-
     this.eventEmitter.emit('canvas:mousedown', e)
   }
+
   /**
    * 鼠标移动
    */
@@ -381,6 +388,7 @@ export class Canvas {
     this.optimizeNode()
     this.eventEmitter.emit('canvas:mousemove', e)
   })
+
   /**
    * 鼠标按键释放
    */
@@ -395,6 +403,7 @@ export class Canvas {
     }
     this.eventEmitter.emit('canvas:mouseup', e)
   }
+
   /**
    * 拖拽over事件
    */
@@ -406,6 +415,7 @@ export class Canvas {
       })
     }
   }
+
   /**
    * 拖拽释放事件
    */
@@ -417,6 +427,7 @@ export class Canvas {
       })
     }
   }
+
   private handleContextMenu = (e: MouseEvent) => {
     e.preventDefault()
     const interactions = modes[this.interactionMode]
@@ -426,6 +437,7 @@ export class Canvas {
       })
     }
   }
+
   /**
    * 优化节点显示
    */
@@ -439,6 +451,7 @@ export class Canvas {
       node.visible = node.isInRect(canvasRect)
     })
   }
+
   render() {
     Object.assign(this.domCanvas.style, {
       width: `${this.canvasWidth}px`,
@@ -476,7 +489,6 @@ export class Canvas {
   loop() {
     if (!this._running) return
     this._animationFrameId = requestAnimationFrame(() => {
-      // this.renderDomNodes()
       // 判断是否需要重绘
       if (this.repaint) {
         this.graphCanvasCtx.clearRect(0, 0, this.viewWidth, this.viewHeight)
@@ -492,6 +504,7 @@ export class Canvas {
       this.loop()
     })
   }
+
   /**
    * 渲染连线
    */

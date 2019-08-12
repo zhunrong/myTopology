@@ -111,6 +111,7 @@ export abstract class Node extends Graph {
   /**
    * 删除并且销毁子节点
    * @param child 
+   * @param destroy 是否销毁
    */
   removeChild(child: Node, destroy: boolean = true): boolean {
     const index = this.children.findIndex(node => node === child)
@@ -123,6 +124,7 @@ export abstract class Node extends Graph {
 
   /**
    * 删除所有子节点
+   * @param destroy 是否销毁
    */
   removeAllChild(destroy: boolean = true) {
     const children = [...this.children]

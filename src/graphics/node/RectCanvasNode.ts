@@ -60,8 +60,8 @@ export class RectCanvasNode extends CanvasNode implements RectShape {
   async render() {
     if (!this.canvas) return
     const ctx = this.cacheCanvas.getContext('2d') as CanvasRenderingContext2D
-    this.cacheCanvas.width = this.width + 2
-    this.cacheCanvas.height = this.height + 2
+    this.cacheCanvas.width = this.width + 4
+    this.cacheCanvas.height = this.height + 4
 
     ctx.rect(1, 1, this.width, this.height)
     ctx.strokeStyle = '#29c1f8'
@@ -73,7 +73,7 @@ export class RectCanvasNode extends CanvasNode implements RectShape {
     ctx.textAlign = 'center'
     ctx.font = "14px serif"
     ctx.fillStyle = '#29c1f8'
-    ctx.fillText(this.text, this.width / 2 + 1, this.height / 2 + 1)
+    ctx.fillText(this.text, this.width / 2 + 2, this.height / 2 + 2)
 
     this.canvas.repaint = true
   }
@@ -85,8 +85,11 @@ export class RectCanvasNode extends CanvasNode implements RectShape {
     if (this.active) {
       graphCanvasCtx.shadowBlur = 5
       graphCanvasCtx.shadowColor = 'rgba(255,0,0,0.8)'
+    } else {
+      graphCanvasCtx.shadowBlur = 0
+      graphCanvasCtx.shadowColor = 'rgba(0, 0, 0, 0)'
     }
-    graphCanvasCtx.drawImage(this.cacheCanvas, x - 1, y - 1)
+    graphCanvasCtx.drawImage(this.cacheCanvas, x - 2, y - 2)
   }
 
   updateRender() { }

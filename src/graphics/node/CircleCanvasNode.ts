@@ -75,6 +75,7 @@ export class CircleCanvasNode extends CanvasNode implements CircleShape {
       graphCanvasCtx.shadowBlur = 5
       graphCanvasCtx.shadowColor = 'rgba(255,0,0,0.8)'
     } else {
+      graphCanvasCtx.shadowBlur = 0
       graphCanvasCtx.shadowColor = 'rgba(0, 0, 0, 0)'
     }
     graphCanvasCtx.drawImage(this.cacheCanvas, x - 1, y - 1)
