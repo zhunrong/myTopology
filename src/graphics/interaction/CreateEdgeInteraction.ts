@@ -11,9 +11,13 @@ class CreateEdgeInteraction extends Interaction {
   sourceNode: Node | undefined
   edge: Line | undefined
   onMouseUp = (canvas: Canvas) => {
-    const nodes = canvas.rootNode.getDescendantBF() as Node[]
     if (this.edge) {
-      this.targetNode = nodes.find(node => node.isPointIn())
+      canvas.rootNode.getDescendantDF(node => {
+        if (node.isPointIn()) {
+          this.targetNode = node
+          return true
+        }
+      })
       if (this.targetNode && this.targetNode !== this.sourceNode) {
         this.edge.targetNode = this.targetNode
         this.targetNode.isUpdate = true
@@ -27,7 +31,12 @@ class CreateEdgeInteraction extends Interaction {
         this.sourceNode = undefined
       }
     } else {
-      this.sourceNode = nodes.find(node => node.isPointIn())
+      canvas.rootNode.getDescendantDF(node => {
+        if (node.isPointIn()) {
+          this.sourceNode = node
+          return true
+        }
+      })
       if (this.sourceNode) {
         this.edge = new Line({
           sourceNode: this.sourceNode,

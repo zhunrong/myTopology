@@ -6,14 +6,12 @@ import { applyMixins } from '../utils/utils'
 
 export interface ICircleCanvasNodeOptions extends ICanvasNodeOptions {
   radius: number
-  id: number
   text?: string
 }
 
 export class CircleCanvasNode extends CanvasNode implements CircleShape {
   shapeType = 'circle'
   radius: number
-  id: number
   text: string
   get boundingJoinPoints(): Vector2d[] {
     return this.getBoundingJoinPoints()
@@ -30,11 +28,11 @@ export class CircleCanvasNode extends CanvasNode implements CircleShape {
   constructor(options: ICircleCanvasNodeOptions) {
     super(options)
     this.radius = options.radius
-    this.id = options.id
     this.text = options.text || ''
   }
   isPointIn() {
     const { canvas, centerPoint, radius } = this
+    if (!canvas) return false
     if (!canvas.nativeEvent) return false
     const event = canvas.nativeEvent as MouseEvent
     const point = canvas.viewPortTopixelCoordinate(new Vector2d(event.clientX, event.clientY))
@@ -42,6 +40,7 @@ export class CircleCanvasNode extends CanvasNode implements CircleShape {
   }
   render() {
     const { radius, canvas, active } = this
+    if (!canvas) return
     const diameter = 2 * radius
     this.cacheCanvas.width = diameter + 2
     this.cacheCanvas.height = diameter + 2
@@ -69,6 +68,7 @@ export class CircleCanvasNode extends CanvasNode implements CircleShape {
   }
   updateRender() { }
   updatePosition() {
+    if (!this.canvas) return
     const { graphCanvasCtx } = this.canvas
     const { x, y } = this.position
     if (this.active) {

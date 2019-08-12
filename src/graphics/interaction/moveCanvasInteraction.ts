@@ -1,7 +1,6 @@
 import Interaction from './Interaction'
-import { DomNode } from '../graph/DomNode'
 import { Canvas } from '../core/Canvas'
-import { CanvasNode } from '../graph/CanvasNode'
+import Node from '../graph/Node'
 import { Vector2d } from '../utils/vector2d'
 /**
  * 拖动整个画布
@@ -10,12 +9,13 @@ class MoveCanvasInteraction extends Interaction {
   // 最小拖动距离
   minDragDistance: number = 5
   cachePositions: Vector2d[] = []
-  moveNodes: (DomNode | CanvasNode)[] = []
+  moveNodes: Node[] = []
   mouseDown: boolean = false
   move: boolean = false
   onMouseDown = (canvas: Canvas) => {
     this.mouseDown = true
-    this.moveNodes = canvas.rootNode.getDescendantBF() as (DomNode | CanvasNode)[]
+    this.cachePositions = []
+    this.moveNodes = canvas.rootNode.getDescendantBF()
     this.cachePositions = this.moveNodes.map(node => node.position)
   }
   onMouseMove = (canvas: Canvas) => {
@@ -30,14 +30,14 @@ class MoveCanvasInteraction extends Interaction {
     })
     canvas.repaint = true
   }
-  onMouseUp = (canvas:Canvas) => {
+  onMouseUp = (canvas: Canvas) => {
     this.moveNodes = []
     this.cachePositions = []
     this.mouseDown = false
-    if(this.move){
+    if (this.move) {
       canvas.eventEmitter.emit('interaction:canvasMoveEnd')
+      this.move = false
     }
-    this.move = false
   }
 }
 

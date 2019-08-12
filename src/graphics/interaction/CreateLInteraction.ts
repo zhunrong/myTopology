@@ -11,9 +11,13 @@ class CreateLInteraction extends Interaction {
   sourceNode: Node | undefined
   edge: L | undefined
   onMouseUp = (canvas: Canvas) => {
-    const nodes = canvas.rootNode.getDescendantBF() as Node[]
     if (this.edge) {
-      this.targetNode = nodes.find(node => node.isPointIn())
+      canvas.rootNode.getDescendantDF(node => {
+        if (node.isPointIn()) {
+          this.targetNode = node
+          return true
+        }
+      })
       if (this.targetNode && this.targetNode !== this.sourceNode) {
         this.edge.targetNode = this.targetNode
         this.edge.arrow = true
@@ -28,7 +32,12 @@ class CreateLInteraction extends Interaction {
         this.sourceNode = undefined
       }
     } else {
-      this.sourceNode = nodes.find(node => node.isPointIn())
+      canvas.rootNode.getDescendantDF(node => {
+        if (node.isPointIn()) {
+          this.sourceNode = node
+          return true
+        }
+      })
       if (this.sourceNode) {
         this.edge = new L({
           sourceNode: this.sourceNode,

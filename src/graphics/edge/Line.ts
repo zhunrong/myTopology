@@ -27,7 +27,8 @@ export class Line extends Edge {
     return true
   }
   isPointIn() {
-    const {canvas} = this
+    const { canvas } = this
+    if (!canvas) return false
     if (!canvas.nativeEvent) return false
     if (!this.sourceNode || !this.targetNode) return false
     const event = canvas.nativeEvent as MouseEvent
@@ -72,6 +73,7 @@ export class Line extends Edge {
     return false
   }
   render() {
+    if (!this.canvas) return
     const { graphCanvasCtx } = this.canvas
     const { sourceNode, targetNode } = this
     // 两端节点都存在且至少有一个是可见的

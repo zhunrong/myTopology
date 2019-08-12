@@ -168,10 +168,10 @@ export class Canvas {
   }
 
   // 删除节点
-  public removeNode(node: Node) {
+  public removeNode(node: Node, destroy: boolean = true) {
     if (!this.rootNode.hasDescendant(node)) return
     if (!node.parent) return
-    node.parent.removeChild(node)
+    node.parent.removeChild(node, destroy)
     // 把相连的edge也删掉
     const edges: Edge[] = this.edges.filter(edge => edge.targetNode === node || edge.sourceNode === node)
     edges.forEach(edge => {
@@ -183,8 +183,8 @@ export class Canvas {
   /**
    * 删除所有节点
    */
-  public removeAllNode() {
-    this.rootNode.removeAllChild()
+  public removeAllNode(destroy: boolean = true) {
+    this.rootNode.removeAllChild(destroy)
   }
 
   // 添加连线

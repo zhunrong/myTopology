@@ -112,10 +112,11 @@ export abstract class Node extends Graph {
    * 删除并且销毁子节点
    * @param child 
    */
-  removeChild(child: Node): boolean {
+  removeChild(child: Node, destroy: boolean = true): boolean {
     const index = this.children.findIndex(node => node === child)
     if (index === -1) return false
-    child.destroy()
+    destroy && child.destroy()
+    child.canvas = undefined
     this.children.splice(index, 1)
     return true
   }
@@ -123,10 +124,10 @@ export abstract class Node extends Graph {
   /**
    * 删除所有子节点
    */
-  removeAllChild() {
+  removeAllChild(destroy: boolean = true) {
     const children = [...this.children]
     children.forEach(child => {
-      this.removeChild(child)
+      this.removeChild(child, destroy)
     })
   }
 
@@ -182,24 +183,50 @@ export abstract class Node extends Graph {
 
   /**
    * 遍历子孙节点，深度优先
+   * 遍历顺序：1.深度优先
+   *          2.从右到左
+   *          3.从下到上
+   * 场景：鼠标点击判定顺序
    * @param handler 
    */
   getDescendantDF(handler?: handler): Node[] {
+    let breakFlag = false
     const descendants: Node[] = []
-    const stack: Node[] = [...this.children]
-    while (stack.length) {
-      const last = stack.pop() as Node
-      descendants.push(last)
-      stack.push(...last.children)
-      if (handler && handler(last)) {
-        break
+    function getDescendantDF(this: Node, handler?: handler): Node[] {
+      for (let i = this.children.length - 1; i >= 0; i--) {
+        const current = this.children[i]
+        getDescendantDF.call(current, handler)
+        if (breakFlag) return descendants
+        descendants.push(current)
+        if (handler && handler(current)) {
+          breakFlag = true
+          return descendants
+        }
       }
+      return descendants
     }
+    return getDescendantDF.call(this, handler)
+  }
+
+  /**
+   * 获取子孙节点
+   * @param handler 处理函数
+   * @param deepFirst 深度优先
+   * @param top2Bottom 上到下
+   * @param left2right 左到右
+   */
+  getDescendant(handler?: handler, deepFirst: boolean = true, top2Bottom: boolean = true, left2right: boolean = true): Node[] {
+    const descendants: Node[] = []
     return descendants
   }
 
   /**
    * 遍历子孙节点，广度优先
+   * 遍历顺序：1.广度优先
+   *          2.从左到右
+   *          3.从上到下
+   * 场景：节点渲染顺序
+   * @param handler 
    */
   getDescendantBF(handler?: handler): Node[] {
     const descendants: Node[] = []

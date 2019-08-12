@@ -36,7 +36,8 @@ export class L extends Edge {
     return true
   }
   isPointIn() {
-    const {canvas} = this
+    const { canvas } = this
+    if (!canvas) return false
     if (!canvas.nativeEvent) return false
     if (!this.sourceJoinPoint || !this.targetJoinPoint) return false
     const event = canvas.nativeEvent as MouseEvent
@@ -53,7 +54,7 @@ export class L extends Edge {
     }
     // 判断是否在文字上
     if (this.text && this.centerPoint) {
-      const { graphCanvasCtx } = this.canvas
+      const { graphCanvasCtx } = canvas
       graphCanvasCtx.font = '14px sans-serif'
       const textRectWidth = graphCanvasCtx.measureText(this.text).width
       const textLeft = this.centerPoint.x - textRectWidth / 2
@@ -69,6 +70,7 @@ export class L extends Edge {
     return false
   }
   render() {
+    if (!this.canvas) return
     const { graphCanvasCtx } = this.canvas
     const { sourceNode, targetNode } = this
     // 两端节点都存在且至少有一个是可见的

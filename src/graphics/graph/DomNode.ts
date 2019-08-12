@@ -26,6 +26,7 @@ export abstract class DomNode extends Node {
   }
   isPointIn(): boolean {
     const { canvas } = this
+    if (!canvas) return false
     if (!canvas.nativeEvent) return false
     let el = canvas.nativeEvent.target as HTMLElement
     let isHit = false

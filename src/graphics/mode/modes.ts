@@ -8,6 +8,8 @@ import createLInteraction from '../interaction/createLInteraction'
 import selectInteraction from '../interaction/selectInteraction'
 import menuInteraction from '../interaction/menuInteraction'
 import areaPickInteraction from '../interaction/areaPickInteraction'
+import createGroupInteraction from '../interaction/createGroupInteraction'
+
 // 默认模式
 export const MODE_DEFAULT = 'mode.default'
 // 查看模式
@@ -27,6 +29,6 @@ export const modes: Mode = {
   [MODE_VIEW]: [moveCanvasInteraction, wheelZoomInteraction],
   [MODE_CREATE_EDGE]: [selectInteraction, wheelZoomInteraction, createEdgeInteraction, moveCanvasInteraction],
   [MODE_CREATE_L]: [selectInteraction, wheelZoomInteraction, createLInteraction, moveCanvasInteraction],
-  [MODE_AREA_PICK]: [selectInteraction, wheelZoomInteraction, areaPickInteraction]
+  [MODE_AREA_PICK]: [wheelZoomInteraction, areaPickInteraction, createGroupInteraction]
 }
 export default modes

@@ -10,7 +10,7 @@ export interface IGraphOptions<T> {
 }
 let graphId = 1
 export abstract class Graph {
-  canvas!: Canvas
+  canvas: Canvas | undefined
   active: boolean = false
   // 是否可见
   visible: boolean

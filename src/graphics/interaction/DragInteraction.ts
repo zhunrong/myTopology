@@ -13,14 +13,11 @@ class DragInteraction extends Interaction {
   moveNodes: Node[] = []
   mousedown: boolean = false
   onMouseDown = (canvas: Canvas) => {
-    const activeNodes = canvas.rootNode.children.filter(child => {
-      const node = child as Node
-      return node.active
-    }) as Node[]
+    const activeNodes = canvas.getActiveNodes()
     if (activeNodes.length) {
       this.moveNodes = [...activeNodes]
     } else {
-      this.moveNodes = canvas.rootNode.children as Node[]
+      this.moveNodes = canvas.rootNode.getDescendantBF()
     }
     this.cachePositions = this.moveNodes.map(node => node.position)
     this.mousedown = true

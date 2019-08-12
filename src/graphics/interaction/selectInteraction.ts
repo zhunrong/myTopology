@@ -5,10 +5,9 @@ import { Edge } from '../graph/Edge'
 
 class SelectInteraction extends Interaction {
   onMouseDown = (canvas: Canvas) => {
-    const nodes: Node[] = canvas.rootNode.getDescendantDF() as Node[]
     let activeNode: Node | undefined
     let activeEdge: Edge | undefined
-    nodes.forEach(node => {
+    canvas.rootNode.getDescendantDF(node => {
       if (activeNode) {
         node.active = false
       } else {
@@ -25,6 +24,10 @@ class SelectInteraction extends Interaction {
     if (activeNode) {
       canvas.edges.forEach(edge => {
         edge.active = false
+      })
+      activeNode.getDescendantBF(node => {
+        node.active = true
+        node.isUpdate = true
       })
     } else {
       canvas.edges.forEach(edge => {

@@ -22,6 +22,7 @@ export * from './interaction/areaPickInteraction'
 export * from './node/RectDomNode'
 export * from './node/RectCanvasNode'
 export * from './node/CircleCanvasNode'
+export * from './node/Group'
 // edge
 export * from './edge/Line'
 export * from './edge/L'

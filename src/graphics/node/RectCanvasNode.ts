@@ -5,23 +5,20 @@ import Vector2d from '../utils/vector2d';
 import { imgLoad, applyMixins } from '../utils/utils'
 import Math2d from '../utils/math2d'
 
-interface IRectOptions extends ICanvasNodeOptions {
+export interface IRectCanvasNodeOptions extends ICanvasNodeOptions {
   width?: number
   height?: number
   text?: string
-  id: number
 }
 export class RectCanvasNode extends CanvasNode implements RectShape {
   shapeType = 'rect'
   width: number
   height: number
-  id: number
   text: string
-  constructor(options: IRectOptions) {
+  constructor(options: IRectCanvasNodeOptions) {
     super(options)
     this.width = options.width || 146
     this.height = options.height || 53
-    this.id = options.id
     this.text = options.text || ''
   }
   getBoundingJoinPoints(): Vector2d[] {
@@ -50,6 +47,7 @@ export class RectCanvasNode extends CanvasNode implements RectShape {
   }
   isPointIn() {
     const { canvas } = this
+    if (!canvas) return false
     if (!canvas.nativeEvent) return false
     const event = canvas.nativeEvent as MouseEvent
     const point = canvas.viewPortTopixelCoordinate(new Vector2d(event.clientX, event.clientY))
@@ -60,6 +58,7 @@ export class RectCanvasNode extends CanvasNode implements RectShape {
     return new Vector2d(x + this.width / 2, y + this.height / 2)
   }
   async render() {
+    if (!this.canvas) return
     const ctx = this.cacheCanvas.getContext('2d') as CanvasRenderingContext2D
     this.cacheCanvas.width = this.width + 2
     this.cacheCanvas.height = this.height + 2
@@ -80,6 +79,7 @@ export class RectCanvasNode extends CanvasNode implements RectShape {
   }
 
   updatePosition() {
+    if (!this.canvas) return
     const { graphCanvasCtx } = this.canvas
     const { x, y } = this.position
     if (this.active) {

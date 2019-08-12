@@ -1,6 +1,6 @@
 const nodeDatas: any[] = []
 let id = 0
-while (id++ < 1000) {
+while (id++ < 10) {
   nodeDatas.push({
     text: `n-${id}`,
     id,

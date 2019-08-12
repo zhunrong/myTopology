@@ -9,14 +9,12 @@ export interface IRectDomNodeOptions extends IDomNodeOptions {
   x: number
   y: number
   text?: string
-  id: number
 }
 export class RectDomNode extends DomNode implements RectShape {
   shapeType = 'rect'
   width: number
   height: number
   text: string
-  id: number
   getBoundingRect(): Vector2d[] {
     return []
   }
@@ -46,7 +44,6 @@ export class RectDomNode extends DomNode implements RectShape {
     this.width = options.width
     this.height = options.height
     this.text = options.text || ''
-    this.id = options.id
   }
   render() {
     this.$el.innerHTML = 'text'

@@ -28,6 +28,7 @@ export class ContextMenu {
   destroy() {
     this.container.removeEventListener('click', this.handleClick)
     document.removeEventListener('click', this.handleDocumentClick)
+    this.unmount()
   }
   handleClick = (e: MouseEvent) => {
     e.stopPropagation()

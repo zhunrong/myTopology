@@ -1,4 +1,4 @@
-import { TreeNode } from '../graphics/utils/tree'
+import { RectCanvasNode } from '../graphics'
 
 /**                            1
  *                          /  |  \
@@ -6,7 +6,7 @@ import { TreeNode } from '../graphics/utils/tree'
  *                       / \  / \                   
  *                      5  6  7  8
  *                     /  
- *                     9     
+ *                     9
  */
 
 
@@ -39,7 +39,12 @@ const data = [{
   parentId: 5
 }]
 
-const nodes: TreeNode<any>[] = data.map(item => new TreeNode(item.id, item))
+const nodes: RectCanvasNode[] = data.map(item => new RectCanvasNode({
+  x: 0,
+  y: 0,
+  id: item.id,
+  data: item
+}))
 nodes.forEach(node => {
   const parent = nodes.find(item => item.id === node.data.parentId)
   if (parent) {
@@ -48,7 +53,7 @@ nodes.forEach(node => {
 })
 const w = window as any
 w.rootNode = nodes[0].root
-w.rootNode.getDescendantDF(function(node:TreeNode<any>){
+w.rootNode.getDescendantDF(function (node: RectCanvasNode) {
   console.log(node.id)
-  if(node.id===7) return true
+  return node.id===2
 })
