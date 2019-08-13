@@ -57,16 +57,16 @@ export class RectCanvasNode extends CanvasNode implements RectShape {
     const { x, y } = this.position
     return new Vector2d(x + this.width / 2, y + this.height / 2)
   }
-  async render() {
+  render() {
     if (!this.canvas) return
     const ctx = this.cacheCanvas.getContext('2d') as CanvasRenderingContext2D
     this.cacheCanvas.width = this.width + 4
     this.cacheCanvas.height = this.height + 4
 
-    ctx.rect(1, 1, this.width, this.height)
+    ctx.rect(2, 2, this.width, this.height)
     ctx.strokeStyle = '#29c1f8'
     ctx.fillStyle = '#fff'
-    ctx.lineWidth = 2
+    ctx.lineWidth = 1
     ctx.fill()
     ctx.stroke()
     ctx.textBaseline = 'middle'

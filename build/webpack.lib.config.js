@@ -15,6 +15,7 @@ module.exports = NODE_ENV => ({
     libraryTarget: 'commonjs2'
   },
   target: 'web',
+  mode: 'production',
   resolve: {
     // 创建模块别名，在import require时使用别名会更简洁
     alias: {

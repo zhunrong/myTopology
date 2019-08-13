@@ -9,42 +9,57 @@ export interface INodeOptions extends IGraphOptions<any> {
 export type BoundingRect = Vector2d[]
 export type handler = (node: Node) => void | true
 export abstract class Node extends Graph {
+
   /**
    * id
    */
   id: number | string
+
   /**
    * 位置
    */
   position: Vector2d
+
   /**
    * 顶点坐标数组
    */
   abstract get vertexes(): Vector2d[]
+
   /**
    * 几何中心坐标
    */
   abstract get centerPoint(): Vector2d
+
   /**
    * 边界矩形上的连接点
    */
   abstract get boundingJoinPoints(): Vector2d[]
+
   /**
    * 边界盒子
    */
   abstract get boundingRect(): Vector2d[]
+
   /**
    * 渲染类型
    */
   abstract renderType: string
+
   /**
    * 形状
    */
   abstract shapeType: string
+
+  /**
+   * 是否为组
+   */
+  isGroup: boolean = false
+
   /**
    * 子节点
    */
   children: Node[] = []
+  
   /**
    * 父节点
    */

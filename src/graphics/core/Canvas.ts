@@ -26,7 +26,7 @@ export class Canvas {
   public nativeEvent: Event | null = null
   public optimize: boolean = true
   // 交互模式
-  interactionMode: string = ''
+  interactionMode: string = MODE_DEFAULT
   // 最外层div
   protected container: HTMLElement
   // canvas与div的容器
@@ -157,7 +157,17 @@ export class Canvas {
    * @param node 
    */
   public setNodeTop(node: Node) {
-
+    const parent = node.parent
+    if (!parent) return
+    const zIndex = parent.lastChild && parent.lastChild.zIndex || 0
+    node.zIndex = Math.max(zIndex, node.zIndex)
+    parent.removeChild(node, false)
+    parent.addChild(node)
+    if (node instanceof DomNode) {
+      node.unmount()
+      node.mount()
+    }
+    this.repaint = true
   }
 
   /**
@@ -167,7 +177,11 @@ export class Canvas {
     return this.rootNode.getActiveDescendant()
   }
 
-  // 删除节点
+  /**
+   * 删除节点
+   * @param node 
+   * @param destroy 是否销毁,默认true
+   */
   public removeNode(node: Node, destroy: boolean = true) {
     if (!this.rootNode.hasDescendant(node)) return
     if (!node.parent) return
