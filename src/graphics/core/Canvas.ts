@@ -10,7 +10,9 @@ import Node from '../graph/Node'
 import VirtualNode from '../graph/VirtualNode'
 import modes, { MODE_DEFAULT } from '../mode/modes'
 import style from './canvas.less'
-interface ICanvasOptions {
+let count = 0
+let time = 0
+export interface ICanvasOptions {
   container: HTMLElement
   scale?: number
   maxScale?: number
@@ -39,6 +41,10 @@ export class Canvas {
   public domCanvas: HTMLDivElement = document.createElement('div')
   // 交互画布(交互时用到的辅助画布) 位于图层最顶层
   public topCanvas: HTMLCanvasElement = document.createElement('canvas')
+  /**
+   * 交互画布是否已挂载
+   */
+  topCanvasMounted: boolean = false
   public topCanvasCtx: CanvasRenderingContext2D
   // 辅助节点(不需要实际渲染的)
   public virtualNode: VirtualNode = new VirtualNode({
@@ -50,10 +56,6 @@ export class Canvas {
   public mousedownPosition: Vector2d = new Vector2d(0, 0)
   public mouseupPosition: Vector2d = new Vector2d(0, 0)
   public mousemovePosition: Vector2d = new Vector2d(0, 0)
-  /**
-   * 边线
-   */
-  public edges: Edge[] = []
   // resize监听器
   private ro: ResizeObserver
   // 画布
@@ -144,14 +146,19 @@ export class Canvas {
     this.unmount()
     this.removeAllNode()
   }
-  // 添加节点
+
+  /**
+   * 添加节点
+   * @param node 
+   */
   public addNode(node: Node) {
     if (this.rootNode.hasChild(node)) return
     node.visible = node.isInRect(this.canvasVisibleRect)
     this.rootNode.addChild(node)
-    node.render()
+    // node.render()
     this.repaint = true
   }
+
   /**
    * 将节点置顶显示
    * @param node 
@@ -187,7 +194,12 @@ export class Canvas {
     if (!node.parent) return
     node.parent.removeChild(node, destroy)
     // 把相连的edge也删掉
-    const edges: Edge[] = this.edges.filter(edge => edge.targetNode === node || edge.sourceNode === node)
+    // const edges: Edge[] = this.edges.filter(edge => edge.targetNode === node || edge.sourceNode === node)
+    // edges.forEach(edge => {
+    //   this.removeEdge(edge)
+    // })
+
+    const edges = [...node.edges]
     edges.forEach(edge => {
       this.removeEdge(edge)
     })
@@ -196,6 +208,7 @@ export class Canvas {
 
   /**
    * 删除所有节点
+   * @param destroy 是否销毁,默认true
    */
   public removeAllNode(destroy: boolean = true) {
     this.rootNode.removeAllChild(destroy)
@@ -206,8 +219,10 @@ export class Canvas {
    * @param edge 
    */
   public addEdge(edge: Edge) {
-    if (this.edges.find(item => item === edge)) return
-    this.edges.push(edge)
+    // if (this.edges.find(item => item === edge)) return
+    // this.edges.push(edge)
+    edge.sourceNode.addEdge(edge)
+    edge.targetNode.addEdge(edge)
     edge.canvas = this
     this.repaint = true
   }
@@ -217,10 +232,13 @@ export class Canvas {
    * @param edge 
    */
   public removeEdge(edge: Edge) {
-    const index = this.edges.findIndex(item => item === edge)
-    if (index > -1) {
-      this.edges.splice(index, 1)
-    }
+    // const index = this.edges.findIndex(item => item === edge)
+    // if (index > -1) {
+    //   this.edges.splice(index, 1)
+    // }
+    edge.sourceNode.removeEdge(edge)
+    edge.targetNode.removeEdge(edge)
+    edge.canvas = undefined
     this.repaint = true
   }
 
@@ -228,7 +246,18 @@ export class Canvas {
    * 获取激活状态的边线列表
    */
   public getActiveEdges(): Edge[] {
-    return this.edges.filter(edge => edge.active)
+    const activeEdges: Edge[] = []
+    const sign = Math.random()
+    this.rootNode.getDescendantBF(node => {
+      node.edges.forEach(edge => {
+        if (edge.renderSign === sign) return
+        edge.renderSign = sign
+        if (edge.active) {
+          activeEdges.push(edge)
+        }
+      })
+    })
+    return activeEdges
   }
 
   /**
@@ -485,6 +514,14 @@ export class Canvas {
     this.eventEmitter.emit('canvas:mounted')
     this.mounted = true
   }
+  topCanvasMount() {
+    if (this.topCanvasMounted) return
+    this.wrapper.appendChild(this.topCanvas)
+  }
+  topCanvasUnmount() {
+    if (!this.topCanvasMounted) return
+    this.wrapper.removeChild(this.topCanvas)
+  }
   unmount() {
     if (!this.mounted) return
     this.container.removeChild(this.wrapper)
@@ -508,10 +545,8 @@ export class Canvas {
         this.graphCanvasCtx.clearRect(0, 0, this.viewWidth, this.viewHeight)
         this.graphCanvasCtx.save()
         this.graphCanvasCtx.scale(this.canvasScale, this.canvasScale)
-        this.renderEdge()
-      }
-      this.renderNodes()
-      if (this.repaint) {
+        // this.renderEdge()
+        this.renderNodes()
         this.graphCanvasCtx.restore()
         this.repaint = false
       }
@@ -520,22 +555,43 @@ export class Canvas {
   }
 
   /**
-   * 渲染连线
-   */
-  private renderEdge() {
-    this.edges.forEach(edge => {
-      edge.render()
-    })
-  }
-
-  /**
    * 渲染节点
    */
   private renderNodes() {
-    this.rootNode.getDescendantBF(item => {
-      const node = item as Node
+    const before = Date.now()
+    // this.renderEdge()
+    this.rootNode.getDescendantBF(node => {
+      // this.edges.forEach(edge => {
+      //   if (edge.renderSign === this._animationFrameId) return
+      //   if (edge.targetNode === node) {
+      //     if (edge.sourceNode && edge.sourceNode.depth <= node.depth) {
+      //       edge.render()
+      //       edge.renderSign = this._animationFrameId
+      //     }
+      //   }
+      //   if (edge.sourceNode === node) {
+      //     if (edge.targetNode && edge.targetNode.depth <= node.depth) {
+      //       edge.render()
+      //       edge.renderSign = this._animationFrameId
+      //     }
+      //   }
+      // })
+      node.edges.forEach(edge => {
+        if (edge.renderSign === this._animationFrameId) return
+        if (edge.sourceNode === node) {
+          if (edge.targetNode.depth <= node.depth) {
+            edge.render()
+            edge.renderSign = this._animationFrameId
+          }
+        } else {
+          if (edge.sourceNode.depth <= node.depth) {
+            edge.render()
+            edge.renderSign = this._animationFrameId
+          }
+        }
+      })
       if (node instanceof CanvasNode) {
-        if (node.visible && this.repaint) {
+        if (node.visible) {
           // node.render()
           node.updatePosition()
         }
@@ -553,6 +609,13 @@ export class Canvas {
         }
       }
     })
+    this.virtualNode.edges.forEach(edge => {
+      edge.render()
+    })
+    time += Date.now() - before
+    if (++count === 300) {
+      console.log(time / 300)
+    }
   }
 }
 

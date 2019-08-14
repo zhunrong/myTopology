@@ -1,6 +1,7 @@
 import Graph, { IGraphOptions } from './Graph'
 import { Vector2d } from '../utils/vector2d'
-export interface INodeOptions extends IGraphOptions<any> {
+import Edge from './Edge'
+export interface INodeOptions extends IGraphOptions {
   x: number
   y: number
   id: number | string
@@ -56,14 +57,24 @@ export abstract class Node extends Graph {
   isGroup: boolean = false
 
   /**
+   * 是否可以调接尺寸
+   */
+  canResize: boolean = false
+
+  /**
    * 子节点
    */
   children: Node[] = []
-  
+
   /**
    * 父节点
    */
   parent: Node | undefined
+
+  /**
+   * 相关的边线
+   */
+  edges: Edge[] = []
 
   constructor(options: INodeOptions) {
     super(options)
@@ -83,6 +94,26 @@ export abstract class Node extends Graph {
 
   abstract updatePosition(): void
   abstract updateRender(): void
+
+  /**
+   * 添加边线
+   * @param edge 
+   */
+  addEdge(edge: Edge) {
+    if (this.edges.find(item => item === edge)) return
+    this.edges.push(edge)
+  }
+
+  /**
+   * 删除边线
+   * @param edge 
+   */
+  removeEdge(edge: Edge) {
+    const index = this.edges.findIndex(item => item === edge)
+    if (index > -1) {
+      this.edges.splice(index, 1)
+    }
+  }
 
   /**
    * 添加子节点，按zIndex升序排序
@@ -113,8 +144,12 @@ export abstract class Node extends Graph {
       this.children.splice(index, 0, child)
       if (this.canvas) {
         child.canvas = this.canvas
+        //
+        child.render()
         child.getDescendantBF(node => {
           node.canvas = this.canvas
+          //
+          node.render()
         })
       }
       return child

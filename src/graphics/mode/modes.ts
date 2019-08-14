@@ -9,6 +9,7 @@ import selectInteraction from '../interaction/selectInteraction'
 import menuInteraction from '../interaction/menuInteraction'
 import areaPickInteraction from '../interaction/areaPickInteraction'
 import createGroupInteraction from '../interaction/createGroupInteraction'
+import resizeInteraction from '../interaction/resizeInteraction'
 
 // 默认模式
 export const MODE_DEFAULT = 'mode.default'
@@ -20,6 +21,8 @@ export const MODE_CREATE_EDGE = 'mode.create.edge'
 export const MODE_CREATE_L = 'mode.create.L'
 // 框选模式
 export const MODE_AREA_PICK = 'mode.area.pick'
+// 边框模式
+export const MODE_BORDER = 'mode.border'
 
 interface Mode {
   [name: string]: Interaction[]
@@ -29,6 +32,7 @@ export const modes: Mode = {
   [MODE_VIEW]: [moveCanvasInteraction, wheelZoomInteraction],
   [MODE_CREATE_EDGE]: [selectInteraction, wheelZoomInteraction, createEdgeInteraction, moveCanvasInteraction],
   [MODE_CREATE_L]: [selectInteraction, wheelZoomInteraction, createLInteraction, moveCanvasInteraction],
-  [MODE_AREA_PICK]: [wheelZoomInteraction, areaPickInteraction, createGroupInteraction]
+  [MODE_AREA_PICK]: [selectInteraction, wheelZoomInteraction, areaPickInteraction, createGroupInteraction],
+  [MODE_BORDER]: [selectInteraction, wheelZoomInteraction, resizeInteraction]
 }
 export default modes

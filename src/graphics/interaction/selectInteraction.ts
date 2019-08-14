@@ -7,40 +7,32 @@ class SelectInteraction extends Interaction {
   onMouseDown = (canvas: Canvas) => {
     let activeNode: Node | undefined
     let activeEdge: Edge | undefined
+
+    const sign = Math.random()
     canvas.rootNode.getDescendantDF(node => {
-      if (activeNode) {
+      if (activeNode || activeEdge) {
         node.active = false
       } else {
-        if (node.isPointIn()) {
-          canvas.setNodeTop(node)
-          node.active = true
+        node.active = node.isPointIn()
+        if (node.active) {
           activeNode = node
-        } else {
-          node.active = false
         }
       }
       node.isUpdate = true
+      node.edges.forEach(edge => {
+        if (edge.renderSign === sign) return
+        edge.renderSign = sign
+        edge.active = false
+        if (activeEdge || activeNode) return
+        edge.active = edge.isPointIn()
+        if (edge.active) {
+          activeEdge = edge
+        }
+      })
     })
     if (activeNode) {
-      canvas.edges.forEach(edge => {
-        edge.active = false
-      })
       activeNode.getDescendantBF(node => {
         node.active = true
-        node.isUpdate = true
-      })
-    } else {
-      canvas.edges.forEach(edge => {
-        if (activeEdge) {
-          edge.active = false
-        } else {
-          if (edge.isPointIn()) {
-            edge.active = true
-            activeEdge = edge
-          } else {
-            edge.active = false
-          }
-        }
       })
     }
     canvas.repaint = true

@@ -20,6 +20,8 @@ class CreateEdgeInteraction extends Interaction {
       })
       if (this.targetNode && this.targetNode !== this.sourceNode) {
         this.edge.targetNode = this.targetNode
+        this.targetNode.addEdge(this.edge)
+        canvas.virtualNode.removeEdge(this.edge)
         this.targetNode.isUpdate = true
         this.edge = undefined
         this.targetNode = undefined

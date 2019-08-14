@@ -1,18 +1,19 @@
 import Interaction from './Interaction'
-import Canvas from '../core/Canvas';
-import Vector2d from '../utils/vector2d';
-import Node from '../graph/Node'
+import Canvas from '../core/Canvas'
+import Vector2d from '../utils/vector2d'
 
 class AreaPickInteraction extends Interaction {
   minDragDistance: number = 5
   mouseDown: boolean = false
   onInstall = (canvas: Canvas) => {
     // 显示交互画布
-    canvas.wrapper.appendChild(canvas.topCanvas)
+    // canvas.wrapper.appendChild(canvas.topCanvas)
+    canvas.topCanvasMount()
   }
   onUninstall = (canvas: Canvas) => {
     // 移除交互画布
-    canvas.wrapper.removeChild(canvas.topCanvas)
+    // canvas.wrapper.removeChild(canvas.topCanvas)
+    canvas.topCanvasUnmount()
   }
   onMouseDown = (canvas: Canvas, e: Event) => {
     const { button } = e as MouseEvent

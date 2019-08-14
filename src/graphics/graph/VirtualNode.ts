@@ -24,6 +24,10 @@ export class VirtualNode extends Node {
     return this.position
   }
 
+  get depth(): number {
+    return Number.MAX_SAFE_INTEGER
+  }
+
   isInRect() { return false }
   isPointIn() { return false }
   render() { }

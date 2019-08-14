@@ -114,6 +114,7 @@ export class L extends Edge {
         }
       }
 
+      graphCanvasCtx.save()
       if/* 虚线 */ (this.dash) {
         graphCanvasCtx.setLineDash([4, 4])
       }
@@ -160,6 +161,7 @@ export class L extends Edge {
         graphCanvasCtx.fill()
         graphCanvasCtx.restore()
       }
+      graphCanvasCtx.restore()
     }
   }
 }

@@ -1,12 +1,10 @@
 import { Vector2d } from '../utils/vector2d'
 import { Canvas } from '../core/Canvas'
-import { TreeNode } from '../utils/tree'
 
-export interface IGraphOptions<T> {
+export interface IGraphOptions{
   visible?: boolean
   zIndex?: number
-  data?: T
-  parent?: TreeNode<T>
+  data?: any
 }
 let graphId = 1
 export abstract class Graph {
@@ -22,8 +20,9 @@ export abstract class Graph {
   graphId: number = graphId++
   // 携带的数据
   data: any
-  constructor(options: IGraphOptions<any>) {
-    // super(options.id, options.data, options.parent)
+  // 渲染签名,用于判断在同一个渲染周期内，图元是否已渲染
+  renderSign: any
+  constructor(options: IGraphOptions) {
     this.visible = options.visible || true
     this.zIndex = options.zIndex || 0
     this.data = options.data

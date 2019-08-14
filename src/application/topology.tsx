@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import { MODE_DEFAULT, MODE_VIEW, MODE_CREATE_EDGE, MODE_AREA_PICK, MODE_CREATE_L } from '../graphics'
-import { Canvas, CircleCanvasNode, RectCanvasNode, RectDomNode, Line as Edge } from '../graphics'
+import { MODE_DEFAULT, MODE_VIEW, MODE_CREATE_EDGE, MODE_AREA_PICK, MODE_CREATE_L, MODE_BORDER } from '../graphics'
+import { Canvas, CircleCanvasNode, RectCanvasNode, RectDomNode, Line as Edge, Group } from '../graphics'
 import CustomNode from '../components/nodes/Node'
-import { nodeDatas } from '../data/topoData'
+import { nodeDatas, edgeDatas } from '../data/topoData'
 import "./topology.scss"
 // import "./treeTest"
 interface IProps { }
@@ -14,7 +14,7 @@ type Node = CircleCanvasNode | RectCanvasNode | RectDomNode | CustomNode
 
 export default class Topology extends Component<IProps, IState> {
   nodeDatas: any[] = nodeDatas
-  edgeDatas: any[] = []
+  edgeDatas: any[] = edgeDatas
   nodes: Node[] = []
   edges: Edge[] = []
   containerRef: React.RefObject<HTMLDivElement> = React.createRef()
@@ -41,32 +41,59 @@ export default class Topology extends Component<IProps, IState> {
           //   radius: 40,
           //   zIndex: item.zIndex
           // })
-          const node = new CustomNode({
+          // const node = new CustomNode({
+          //   width: 146,
+          //   height: 53,
+          //   x: item.x,
+          //   y: item.y,
+          //   id: item.id,
+          //   text: item.text,
+          //   zIndex: item.zIndex,
+          //   data: item
+          // })
+          return item.isGroup ? new Group({
+            width: item.width,
+            height: item.height,
+            id: item.id,
+            x: item.x,
+            y: item.y,
+            data: item
+          }) : new CustomNode({
             width: 146,
             height: 53,
             x: item.x,
             y: item.y,
             id: item.id,
             text: item.text,
-            zIndex: item.zIndex
+            zIndex: item.zIndex,
+            data: item
           })
-          if (this.canvas) {
+        })
+        this.nodes.forEach(node => {
+          const parentId = node.data.parentId
+          if (parentId) {
+            const parent = this.nodes.find(item => item.id === parentId)
+            if (parent) {
+              parent.addChild(node)
+            }
+          } else {
             this.canvas.addNode(node)
           }
-          return node
         })
-        this.edges = this.edgeDatas.map((item: any) => {
+        this.edgeDatas.forEach((item: any) => {
           const { targetId, sourceId } = item
           const sourceNode = this.nodes.find(node => node.id === sourceId)
           const targetNode = this.nodes.find(node => node.id === targetId)
-          const edge = new Edge({
-            sourceNode,
-            targetNode
-          })
-          if (this.canvas) {
+          if (sourceNode && targetNode) {
+            const edge = new Edge({
+              sourceNode,
+              targetNode,
+              arrow: true
+            })
+            // sourceNode.addEdge(edge)
+            // targetNode.addEdge(edge)
             this.canvas.addEdge(edge)
           }
-          return edge
         })
       })
       this.canvas.eventEmitter.on('canvas:drop', (params) => {
@@ -177,6 +204,7 @@ export default class Topology extends Component<IProps, IState> {
           <img draggable={false} onClick={this.modeChange.bind(this, MODE_DEFAULT)} className={`${this.state.mode === MODE_DEFAULT ? 'active' : ''}`} src={require('../assets/pointer.svg')} title="默认模式" />
           <img draggable={false} onClick={this.modeChange.bind(this, MODE_VIEW)} className={`${this.state.mode === MODE_VIEW ? 'active' : ''}`} src={require('../assets/move.svg')} title="浏览模式" />
           <img draggable={false} onClick={this.modeChange.bind(this, MODE_AREA_PICK)} className={`${this.state.mode === MODE_AREA_PICK ? 'active' : ''}`} src={require('../assets/area_pick.svg')} title="框选模式" />
+          <img draggable={false} onClick={this.modeChange.bind(this, MODE_BORDER)} className={`${this.state.mode === MODE_BORDER ? 'active' : ''}`} src={require('../assets/box_resize.svg')} title="边框模式" />
           <img draggable={false} src={require('../assets/zoom_out.svg')} onClick={this.zoomOut} title="缩小" />
           <img draggable={false} src={require('../assets/zoom_in.svg')} onClick={this.zoomIn} title="放大" />
           <img draggable={false} onClick={this.modeChange.bind(this, MODE_CREATE_EDGE)} className={`${this.state.mode === MODE_CREATE_EDGE ? 'active' : ''}`} src={require('../assets/line_2.svg')} title="创建连线" />

@@ -75,8 +75,8 @@ export class Line extends Edge {
     if (!this.canvas) return
     const { graphCanvasCtx } = this.canvas
     const { sourceNode, targetNode } = this
-    // 两端节点都存在且至少有一个是可见的
-    if (sourceNode && targetNode && (sourceNode.visible || targetNode.visible)) {
+    // 两端节点至少有一个是可见的
+    if (sourceNode.visible || targetNode.visible) {
 
       const sourceCenter = sourceNode.centerPoint
       const targetCenter = targetNode.centerPoint
@@ -87,7 +87,7 @@ export class Line extends Edge {
       if (!this.end) return
 
       const sourceToTarget = targetCenter.substract(sourceCenter)
-
+      graphCanvasCtx.save()
       graphCanvasCtx.beginPath()
       // 画线
       graphCanvasCtx.moveTo(this.begin.x, this.begin.y)
@@ -126,6 +126,7 @@ export class Line extends Edge {
         graphCanvasCtx.fill()
         graphCanvasCtx.restore()
       }
+      graphCanvasCtx.restore()
     }
   }
 }
