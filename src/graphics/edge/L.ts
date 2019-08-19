@@ -42,7 +42,7 @@ export class L extends Edge {
     if (!this.sourceJoinPoint || !this.targetJoinPoint) return false
     const event = canvas.nativeEvent as MouseEvent
     const viewCoordinate = new Vector2d(event.clientX, event.clientY)
-    const pixelCoordinate = canvas.viewPortTopixelCoordinate(viewCoordinate)
+    const pixelCoordinate = canvas.viewportToPixelCoordinate(viewCoordinate)
     // 判断点是否在线上
     if (Math2d.isPointInPolyline(pixelCoordinate, [this.sourceJoinPoint, ...this.middlePoints, this.targetJoinPoint], 0.1)) return true
     // 判断点是否在箭头上

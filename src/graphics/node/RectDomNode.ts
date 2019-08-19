@@ -1,6 +1,7 @@
 import DomNode, { IDomNodeOptions } from '../graph/DomNode'
 import RectShape from '../shape/RectShape'
 import Vector2d from '../utils/vector2d'
+import Math2d from '../utils/math2d'
 import { applyMixins } from '../utils/utils'
 
 export interface IRectDomNodeOptions extends IDomNodeOptions {
@@ -45,16 +46,20 @@ export class RectDomNode extends DomNode implements RectShape {
     this.height = options.height
     this.text = options.text || ''
   }
+  isPointIn() {
+    const { canvas } = this
+    if (!canvas) return false
+    if (!canvas.nativeEvent) return false
+    const event = canvas.nativeEvent as MouseEvent
+    const point = canvas.viewportToPixelCoordinate(new Vector2d(event.clientX, event.clientY))
+    return Math2d.isPointInRect(point, this.position, this.width, this.height)
+  }
+
   render() {
     this.$el.innerHTML = 'text'
   }
-  updateRender() {
-    this.$el.innerHTML = 'text'
-  }
-  /**
-   * 更新节点位置
-   */
-  updatePosition() {
+
+  update() {
     const { x, y } = this.position
     const { width, height, active } = this
     Object.assign(this.$el.style, {

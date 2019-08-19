@@ -35,7 +35,7 @@ export class CircleCanvasNode extends CanvasNode implements CircleShape {
     if (!canvas) return false
     if (!canvas.nativeEvent) return false
     const event = canvas.nativeEvent as MouseEvent
-    const point = canvas.viewPortTopixelCoordinate(new Vector2d(event.clientX, event.clientY))
+    const point = canvas.viewportToPixelCoordinate(new Vector2d(event.clientX, event.clientY))
     return Math2d.isPointInCircle(point, centerPoint, radius)
   }
   render() {
@@ -66,8 +66,8 @@ export class CircleCanvasNode extends CanvasNode implements CircleShape {
 
     canvas.repaint = true
   }
-  updateRender() { }
-  updatePosition() {
+
+  update() {
     if (!this.canvas) return
     const { graphCanvasCtx } = this.canvas
     const { x, y } = this.position

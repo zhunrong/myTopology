@@ -38,10 +38,8 @@ export abstract class DomNode extends Node {
     }
     return isHit
   }
-  /**
-   * 更新节点位置
-   */
-  updatePosition() {
+
+  update() {
     const { x, y } = this.position
     this.$el.style.transform = `translate3d(${x}px,${y}px,0)`
   }

@@ -1,7 +1,7 @@
 import { Vector2d } from '../utils/vector2d'
 import { Canvas } from '../core/Canvas'
 
-export interface IGraphOptions{
+export interface IGraphOptions {
   visible?: boolean
   zIndex?: number
   data?: any
@@ -44,10 +44,26 @@ export abstract class Graph {
    * @param rect 
    */
   isWrappedInRect(rect: Vector2d[]): boolean { return false }
+
   /**
-   * 渲染到主画布上
+   * hook:渲染时调用
    */
-  abstract render(): void
+  render() { }
+
+  /**
+   * hook:更新时调用
+   */
+  update() { }
+
+  /**
+   * hook:销毁时调用
+   */
+  destroy() { }
+
+  /**
+   * hook:销毁前调用
+   */
+  beforeDestroy() { }
 }
 
 export default Graph

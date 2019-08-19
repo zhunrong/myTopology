@@ -14,6 +14,8 @@ export abstract class Interaction {
   onInstall = noop2
   // 模式卸载
   onUninstall = noop2
+  // 渲染更新
+  onUpdate  = noop2
 }
 
 export default Interaction

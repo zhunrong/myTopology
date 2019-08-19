@@ -49,25 +49,25 @@ class AreaPickInteraction extends Interaction {
 
     if (mousedownPosition.x > mousemovePosition.x) {
       if (mousedownPosition.y > mousemovePosition.y) {
-        v0 = canvas.viewPortTopixelCoordinate(mousemovePosition)
-        v2 = canvas.viewPortTopixelCoordinate(mousedownPosition)
+        v0 = canvas.viewportToPixelCoordinate(mousemovePosition)
+        v2 = canvas.viewportToPixelCoordinate(mousedownPosition)
         v1 = new Vector2d(v2.x, v0.y)
         v3 = new Vector2d(v0.x, v2.y)
       } else {
-        v1 = canvas.viewPortTopixelCoordinate(mousedownPosition)
-        v3 = canvas.viewPortTopixelCoordinate(mousemovePosition)
+        v1 = canvas.viewportToPixelCoordinate(mousedownPosition)
+        v3 = canvas.viewportToPixelCoordinate(mousemovePosition)
         v0 = new Vector2d(v3.x, v1.y)
         v2 = new Vector2d(v1.x, v3.y)
       }
     } else {
       if (mousedownPosition.y > mousemovePosition.y) {
-        v1 = canvas.viewPortTopixelCoordinate(mousemovePosition)
-        v3 = canvas.viewPortTopixelCoordinate(mousedownPosition)
+        v1 = canvas.viewportToPixelCoordinate(mousemovePosition)
+        v3 = canvas.viewportToPixelCoordinate(mousedownPosition)
         v0 = new Vector2d(v3.x, v1.y)
         v2 = new Vector2d(v1.x, v3.y)
       } else {
-        v0 = canvas.viewPortTopixelCoordinate(mousedownPosition)
-        v2 = canvas.viewPortTopixelCoordinate(mousemovePosition)
+        v0 = canvas.viewportToPixelCoordinate(mousedownPosition)
+        v2 = canvas.viewportToPixelCoordinate(mousemovePosition)
         v1 = new Vector2d(v2.x, v0.y)
         v3 = new Vector2d(v0.x, v2.y)
       }

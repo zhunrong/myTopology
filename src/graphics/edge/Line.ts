@@ -34,7 +34,7 @@ export class Line extends Edge {
     if (!this.begin || !this.end) return false
     const event = canvas.nativeEvent as MouseEvent
     const viewCoordinate = new Vector2d(event.clientX, event.clientY)
-    const pixelCoordinate = canvas.viewPortTopixelCoordinate(viewCoordinate)
+    const pixelCoordinate = canvas.viewportToPixelCoordinate(viewCoordinate)
     // 判断点是否在线上
     if (Math2d.isPointInLineSegment(pixelCoordinate, [this.begin, this.end], 0.1)) return true
     // 判断点是否在箭头上

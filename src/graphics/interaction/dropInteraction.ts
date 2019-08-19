@@ -8,7 +8,7 @@ class DropInteraction extends Interaction {
   onDrop = (canvas: Canvas, e: Event) => {
     const event = e as DragEvent
     canvas.eventEmitter.emit('canvas:drop', {
-      coordinate: canvas.viewPortTopixelCoordinate(new Vector2d(event.clientX, event.clientY)),
+      coordinate: canvas.viewportToPixelCoordinate(new Vector2d(event.clientX, event.clientY)),
       dataTransfer: event.dataTransfer
     })
   }

@@ -82,18 +82,7 @@ export abstract class Node extends Graph {
     this.id = options.id
   }
 
-  /**
-   * 销毁节点
-   */
-  abstract destroy(): void
 
-  /**
-   * hook:销毁前钩子函数
-   */
-  beforeDestroy() { }
-
-  abstract updatePosition(): void
-  abstract updateRender(): void
 
   /**
    * 添加边线

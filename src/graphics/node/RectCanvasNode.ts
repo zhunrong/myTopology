@@ -50,7 +50,7 @@ export class RectCanvasNode extends CanvasNode implements RectShape {
     if (!canvas) return false
     if (!canvas.nativeEvent) return false
     const event = canvas.nativeEvent as MouseEvent
-    const point = canvas.viewPortTopixelCoordinate(new Vector2d(event.clientX, event.clientY))
+    const point = canvas.viewportToPixelCoordinate(new Vector2d(event.clientX, event.clientY))
     return Math2d.isPointInRect(point, this.position, this.width, this.height)
   }
   get joinPoint(): Vector2d {
@@ -78,7 +78,7 @@ export class RectCanvasNode extends CanvasNode implements RectShape {
     this.canvas.repaint = true
   }
 
-  updatePosition() {
+  update() {
     if (!this.canvas) return
     const { graphCanvasCtx } = this.canvas
     const { x, y } = this.position

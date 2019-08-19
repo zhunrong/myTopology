@@ -52,7 +52,7 @@ class CreateEdgeInteraction extends Interaction {
     canvas.repaint = true
   }
   onMouseMove = (canvas: Canvas) => {
-    canvas.virtualNode.position = canvas.viewPortTopixelCoordinate(canvas.mousemovePosition)
+    canvas.virtualNode.position = canvas.viewportToPixelCoordinate(canvas.mousemovePosition)
     if (this.sourceNode) {
       canvas.virtualNode.isUpdate = true
     }
