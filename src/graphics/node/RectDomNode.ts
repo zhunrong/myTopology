@@ -56,7 +56,15 @@ export class RectDomNode extends DomNode implements RectShape {
   }
 
   render() {
-    this.$el.innerHTML = 'text'
+    this.$el.innerHTML = `<div style="height:100%;
+                                      display:flex;
+                                      align-items:center;
+                                      justify-content:center;
+                                      border:1px solid #29c1f8;
+                                      box-sizing: border-box;
+                                      font-size:12px;
+                                      user-select: none;
+                                      color:#29c1f8;">${this.text?this.text:''}</div>`
   }
 
   update() {

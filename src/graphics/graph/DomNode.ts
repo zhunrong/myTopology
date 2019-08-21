@@ -7,6 +7,11 @@ export abstract class DomNode extends Node {
   $el: HTMLDivElement = document.createElement('div')
   constructor(options: IDomNodeOptions) {
     super(options)
+    Object.assign(this.$el.style, {
+      position: 'absolute',
+      left: 0,
+      top: 0
+    })
   }
   /**
    * 挂载到文档中

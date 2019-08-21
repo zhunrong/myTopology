@@ -12,10 +12,10 @@ module.exports = NODE_ENV => ({
   output: {
     path: path.resolve(__dirname, '../lib'),
     filename: '[name].js',
-    libraryTarget: 'commonjs2'
+    libraryTarget: 'umd'
   },
   target: 'web',
-  mode: 'production',
+  mode: 'development',
   resolve: {
     // 创建模块别名，在import require时使用别名会更简洁
     alias: {
