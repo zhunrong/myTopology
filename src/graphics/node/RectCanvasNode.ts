@@ -1,24 +1,29 @@
 import CanvasNode, { ICanvasNodeOptions } from '../graph/CanvasNode'
 import RectShape from '../shape/RectShape'
-import Canvas from '../core/Canvas';
-import Vector2d from '../utils/vector2d';
-import { imgLoad, applyMixins } from '../utils/utils'
+import Vector2d from '../utils/vector2d'
+import { applyMixins } from '../utils/utils'
 import Math2d from '../utils/math2d'
 
 export interface IRectCanvasNodeOptions extends ICanvasNodeOptions {
   width?: number
   height?: number
   text?: string
+  minWidth?: number
+  minHeight?: number
 }
 export class RectCanvasNode extends CanvasNode implements RectShape {
   shapeType = 'rect'
   width: number
   height: number
+  minWidth: number
+  minHeight: number
   text: string
   constructor(options: IRectCanvasNodeOptions) {
     super(options)
-    this.width = options.width || 146
-    this.height = options.height || 53
+    this.width = options.width || 100
+    this.height = options.height || 100
+    this.minWidth = options.minWidth || 30
+    this.minHeight = options.minHeight || 30
     this.text = options.text || ''
   }
   getBoundingJoinPoints(): Vector2d[] {

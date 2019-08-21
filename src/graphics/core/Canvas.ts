@@ -534,10 +534,12 @@ export class Canvas {
   topCanvasMount() {
     if (this.topCanvasMounted) return
     this.wrapper.appendChild(this.topCanvas)
+    this.topCanvasMounted = true
   }
   topCanvasUnmount() {
     if (!this.topCanvasMounted) return
     this.wrapper.removeChild(this.topCanvas)
+    this.topCanvasMounted = false
   }
   unmount() {
     if (!this.mounted) return

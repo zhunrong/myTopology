@@ -33,6 +33,6 @@ export const modes: Mode = {
   [MODE_CREATE_EDGE]: [selectInteraction, wheelZoomInteraction, createEdgeInteraction, moveCanvasInteraction],
   [MODE_CREATE_L]: [selectInteraction, wheelZoomInteraction, createLInteraction, moveCanvasInteraction],
   [MODE_AREA_PICK]: [wheelZoomInteraction, areaPickInteraction, createGroupInteraction],
-  [MODE_BORDER]: [resizeInteraction, dragInteraction, wheelZoomInteraction]
+  [MODE_BORDER]: [resizeInteraction, wheelZoomInteraction]
 }
 export default modes

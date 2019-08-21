@@ -5,16 +5,18 @@ import Math2d from '../utils/math2d'
 import { applyMixins } from '../utils/utils'
 
 export interface IRectDomNodeOptions extends IDomNodeOptions {
-  width: number
-  height: number
-  x: number
-  y: number
+  width?: number
+  height?: number
   text?: string
+  minWidth?: number
+  minHeight?: number
 }
 export class RectDomNode extends DomNode implements RectShape {
   shapeType = 'rect'
   width: number
   height: number
+  minWidth: number
+  minHeight: number
   text: string
   getBoundingRect(): Vector2d[] {
     return []
@@ -42,8 +44,10 @@ export class RectDomNode extends DomNode implements RectShape {
   }
   constructor(options: IRectDomNodeOptions) {
     super(options)
-    this.width = options.width
-    this.height = options.height
+    this.width = options.width || 100
+    this.height = options.height || 100
+    this.minWidth = options.minWidth || 30
+    this.minHeight = options.minHeight || 30
     this.text = options.text || ''
   }
   isPointIn() {
@@ -64,7 +68,7 @@ export class RectDomNode extends DomNode implements RectShape {
                                       box-sizing: border-box;
                                       font-size:12px;
                                       user-select: none;
-                                      color:#29c1f8;">${this.text?this.text:''}</div>`
+                                      color:#29c1f8;">${this.text ? this.text : ''}</div>`
   }
 
   update() {

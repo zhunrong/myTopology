@@ -5,11 +5,12 @@ interface IOptions extends IRectDomNodeOptions {
 export default class Node extends RectDomNode {
   constructor(options: IOptions) {
     super(options)
-    this.id = options.id
   }
   render(): void {
-    this.$el.innerHTML = this.text
-    this.$el.className = style.node
+    // this.$el.innerHTML = this.text
+    // this.$el.className = style.node
+    this.$el.innerHTML = `
+      <div class="${style.node}">${this.text}</div>
+    `
   }
-  updateRender() { }
 }
