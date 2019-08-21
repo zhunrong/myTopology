@@ -15,8 +15,8 @@
 
     .node-list {
       position: fixed;
-      left: 850px;
-      top: 50px;
+      left: 815px;
+      top: 33px;
       width: 60px;
       text-align: center;
       border: 1px dashed #999;
@@ -52,6 +52,7 @@
 <body>
   <button onclick="changeMode(MODE_DEFAULT)">默认模式</button>
   <button onclick="changeMode(MODE_CREATE_EDGE)">连线模式</button>
+  <button onclick="changeMode(MODE_BORDER)">边框模式</button>
   <div class="node-list">
     <img ondragstart="dragStart(event)" data-type="host" draggable="true" src="./images/windows主机.png">
     <img ondragstart="dragStart(event)" data-type="server" draggable="true" src="./images/服务器.png">

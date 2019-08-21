@@ -16,6 +16,7 @@ class SelectInteraction extends Interaction {
         node.active = node.isPointIn()
         if (node.active) {
           activeNode = node
+          canvas.setNodeTop(node)
         }
       }
       node.isUpdate = true
