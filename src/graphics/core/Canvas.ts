@@ -269,7 +269,7 @@ export class Canvas {
       this.containerClientRect = this.container.getBoundingClientRect()
     }
     const { top, left } = this.containerClientRect
-    return coordinate.add(new Vector2d(left, top))
+    return coordinate.clone().add(new Vector2d(left, top))
   }
 
   /**
@@ -330,7 +330,7 @@ export class Canvas {
     const offset = newCoordinate.substract(coordinate)
     const nodes = this.rootNode.getDescendantBF() as Node[]
     nodes.forEach(node => {
-      node.position = node.position.add(offset)
+      node.position.add(offset)
       node.isUpdate = true
     })
     this.optimizeNode()
@@ -357,7 +357,7 @@ export class Canvas {
     const offset = newCoordinate.substract(coordinate)
     const nodes = this.rootNode.getDescendantBF() as Node[]
     nodes.forEach(node => {
-      node.position = node.position.add(offset)
+      node.position.add(offset)
       node.isUpdate = true
     })
     this.optimizeNode()

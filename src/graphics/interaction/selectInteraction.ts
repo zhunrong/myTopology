@@ -10,7 +10,7 @@ class SelectInteraction extends Interaction {
 
     const sign = Math.random()
     canvas.rootNode.getDescendantDF(node => {
-      if (activeNode || activeEdge) {
+      if /* 已存在激活图元 */ (activeNode || activeEdge) {
         node.active = false
       } else {
         node.active = node.isPointIn()
@@ -21,21 +21,17 @@ class SelectInteraction extends Interaction {
       }
       node.isUpdate = true
       node.edges.forEach(edge => {
-        if (edge.renderSign === sign) return
+        if /* 是否已遍历 */ (edge.renderSign === sign) return
         edge.renderSign = sign
         edge.active = false
-        if (activeEdge || activeNode) return
+        if /* 已存在激活图元 */ (activeEdge || activeNode) return
+        if /* 边线不可见 */ (!edge.sourceNode.visible && !edge.targetNode.visible) return
         edge.active = edge.isPointIn()
         if (edge.active) {
           activeEdge = edge
         }
       })
     })
-    if (activeNode) {
-      activeNode.getDescendantBF(node => {
-        node.active = true
-      })
-    }
     canvas.repaint = true
   }
 }

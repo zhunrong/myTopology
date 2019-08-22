@@ -1,4 +1,6 @@
 export class Vector2d {
+  static xAxis = new Vector2d(1, 0)
+  static yAxis = new Vector2d(0, 1)
   x: number
   y: number
   constructor(x: number = 0, y: number = 0) {
@@ -6,7 +8,7 @@ export class Vector2d {
     this.y = y;
   }
 
-  get magnitude():number{
+  get magnitude(): number {
     return this.getMagnitude()
   }
 
@@ -24,8 +26,10 @@ export class Vector2d {
    * 矢量加
    * @param target 
    */
-  add(target: Vector2d): Vector2d {
-    return new Vector2d(this.x + target.x, this.y + target.y);
+  add(target: Vector2d): this {
+    this.x += target.x
+    this.y += target.y
+    return this
   }
 
   /**
@@ -33,7 +37,9 @@ export class Vector2d {
    * @param target 
    */
   substract(target: Vector2d): Vector2d {
-    return new Vector2d(this.x - target.x, this.y - target.y);
+    // this.x -= target.x
+    // this.y -= target.y
+    return new Vector2d(this.x - target.x, this.y - target.y)
   }
 
   /**
@@ -108,8 +114,7 @@ export class Vector2d {
    * 与x轴夹角(顺时针为正) [-Math.PI,Math.PI]
    */
   xAxisAngle(): number {
-    const xAxis = new Vector2d(1, 0)
-    const angle = this.angle(xAxis)
+    const angle = this.angle(Vector2d.xAxis)
     return this.y > 0 ? angle : -angle
   }
 
@@ -145,6 +150,13 @@ export class Vector2d {
    */
   distance(target: Vector2d): number {
     return this.substract(target).magnitude
+  }
+
+  /**
+   * 克隆
+   */
+  clone(): Vector2d {
+    return new Vector2d(this.x, this.y)
   }
 }
 

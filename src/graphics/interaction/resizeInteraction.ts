@@ -23,7 +23,7 @@ class ResizeInteraction extends Interaction {
 
   onMouseUp = (canvas: Canvas) => {
     this.activeAnchorIndex = -1
-    dragInteraction.onMouseUp()
+    dragInteraction.onMouseUp(canvas)
   }
 
   onMouseDown = (canvas: Canvas) => {

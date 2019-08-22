@@ -52,18 +52,18 @@ export class Line extends Edge {
       const textRectWidth = graphCanvasCtx.measureText(this.text).width
       const sourceToTarget = this.end.substract(this.begin)
       const lineNormal = sourceToTarget.normalize()
-      const lineCenter = this.begin.add(sourceToTarget.scale(1 / 2))
+      const lineCenter = this.begin.clone().add(sourceToTarget.scale(1 / 2))
       const perpendicular = sourceToTarget.perpendicular().normalize()
       graphCanvasCtx.restore()
       if (this.rotate < Math.PI / 2 && this.rotate >= -Math.PI / 2) {
-        const p0 = lineCenter.substract(lineNormal.scale(textRectWidth / 2)).add(perpendicular.scale(17))
-        const p1 = p0.add(lineNormal.scale(textRectWidth))
+        const p0 = lineCenter.clone().substract(lineNormal.scale(textRectWidth / 2)).add(perpendicular.scale(17))
+        const p1 = p0.clone().add(lineNormal.scale(textRectWidth))
         const p2 = p1.substract(perpendicular.scale(14))
         const p3 = p2.substract(lineNormal.scale(textRectWidth))
         if (Math2d.isPointInPolygon(pixelCoordinate, [p0, p1, p2, p3])) return true
       } else {
-        const p0 = lineCenter.substract(lineNormal.scale(textRectWidth / 2)).add(perpendicular.scale(-17))
-        const p1 = p0.add(lineNormal.scale(textRectWidth))
+        const p0 = lineCenter.clone().substract(lineNormal.scale(textRectWidth / 2)).add(perpendicular.scale(-17))
+        const p1 = p0.clone().add(lineNormal.scale(textRectWidth))
         const p2 = p1.substract(perpendicular.scale(-14))
         const p3 = p2.substract(lineNormal.scale(textRectWidth))
         if (Math2d.isPointInPolygon(pixelCoordinate, [p0, p1, p2, p3])) return true
@@ -101,7 +101,7 @@ export class Line extends Edge {
       this.rotate = sourceToTarget.xAxisAngle()
       if/* 文本 */ (this.text) {
         graphCanvasCtx.save()
-        const lineCenter = sourceNode.centerPoint.add(sourceToTarget.scale(1 / 2))
+        const lineCenter = sourceCenter.clone().add(sourceToTarget.scale(1 / 2))
         graphCanvasCtx.font = '14px sans-serif'
         graphCanvasCtx.textAlign = 'center'
         graphCanvasCtx.textBaseline = 'middle'

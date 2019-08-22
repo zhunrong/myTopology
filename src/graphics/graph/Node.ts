@@ -82,7 +82,17 @@ export abstract class Node extends Graph {
     this.id = options.id
   }
 
-
+  /**
+   * 将节点以及其子元素位置偏移
+   * @param offset 
+   */
+  translate(offset: Vector2d) {
+    this.position.add(offset)
+    this.isUpdate = true
+    this.children.forEach(child => {
+      child.translate(offset)
+    })
+  }
 
   /**
    * 添加边线
@@ -247,18 +257,6 @@ export abstract class Node extends Graph {
       return descendants
     }
     return getDescendantDF.call(this, handler)
-  }
-
-  /**
-   * 获取子孙节点
-   * @param handler 处理函数
-   * @param deepFirst 深度优先
-   * @param top2Bottom 上到下
-   * @param left2right 左到右
-   */
-  getDescendant(handler?: handler, deepFirst: boolean = true, top2Bottom: boolean = true, left2right: boolean = true): Node[] {
-    const descendants: Node[] = []
-    return descendants
   }
 
   /**

@@ -136,8 +136,7 @@ export class Math2d {
     // 设交点P,则AP的模
     const magnitude = AB.magnitude * ac.magnitude / (ac.magnitude + cb.magnitude)
     const AP = AB.normalize().scale(magnitude)
-    const P = AP.add(A)
-    return P
+    return AP.add(A)
   }
 
   /**
@@ -156,7 +155,7 @@ export class Math2d {
       sum += line[i].distance(line[i - 1])
       if (sum >= length) {
         const diff = sum - length
-        return line[i].add(line[i - 1].substract(line[i]).normalize().scale(diff))
+        return line[i].clone().add(line[i - 1].substract(line[i]).normalize().scale(diff))
       }
     }
     return new Vector2d(0, 0)
