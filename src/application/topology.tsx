@@ -40,7 +40,7 @@ export default class Topology extends Component<IProps, IState> {
             x: item.x,
             y: item.y,
             data: item
-          }) : new RectCanvasNode({
+          }) : new CustomNode({
             width: 146,
             height: 53,
             x: item.x,
@@ -70,7 +70,8 @@ export default class Topology extends Component<IProps, IState> {
             const edge = new Edge({
               sourceNode,
               targetNode,
-              arrow: true
+              arrow: true,
+              text: 'text'
             })
             // sourceNode.addEdge(edge)
             // targetNode.addEdge(edge)

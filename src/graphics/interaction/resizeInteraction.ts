@@ -7,6 +7,7 @@ import selectInteraction from './selectInteraction'
 import dragInteraction from './dragInteraction'
 import RectDomNode from '../node/RectDomNode'
 
+const anchorPositionOffset = new Vector2d(-3, -3)
 class ResizeInteraction extends Interaction {
   activeNode: Node | undefined
   flag: boolean = false
@@ -178,9 +179,9 @@ class ResizeInteraction extends Interaction {
     const points: Vector2d[] = [...this.activeNode.boundingRect, ...this.activeNode.boundingJoinPoints]
     let index: number = 0
     const anchor = points.find((point, i) => {
-      const viewportCoordinate = canvas.pixelToViewportCoordinate(point)
+      const anchorRectPosition = canvas.pixelToViewportCoordinate(point).add(anchorPositionOffset)
       index = i
-      return Math2d.isPointInRect(canvas.mousemovePosition, viewportCoordinate.substract(new Vector2d(3, 3)), 6, 6)
+      return Math2d.isPointInRect(canvas.mousemovePosition, anchorRectPosition, 6, 6)
     })
     if (!anchor) return -1
     return index

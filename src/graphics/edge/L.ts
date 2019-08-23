@@ -1,6 +1,5 @@
 import { Vector2d } from '../utils/vector2d'
 import { Edge, IEdgeOptions } from '../graph/Edge'
-import { Canvas } from '../core/Canvas'
 import { Math2d } from '../utils/math2d'
 
 export interface ILOptions extends IEdgeOptions {
@@ -11,6 +10,10 @@ export interface ILOptions extends IEdgeOptions {
   // 显示箭头
   arrow?: boolean
 }
+
+let sourceJoinPointCopy = new Vector2d()
+let targetNodeCenterCopy = new Vector2d()
+let pixelCoordinateCopy = new Vector2d()
 
 /**
  * L型线段
@@ -25,7 +28,6 @@ export class L extends Edge {
   centerPoint: Vector2d | null = null
   sourceJoinPoint: Vector2d | undefined
   targetJoinPoint: Vector2d | undefined
-  // 缓存canvas(离屏canvas)
   constructor(options: ILOptions) {
     super(options)
     this.dash = options.dash || false
@@ -43,6 +45,7 @@ export class L extends Edge {
     const event = canvas.nativeEvent as MouseEvent
     const viewCoordinate = new Vector2d(event.clientX, event.clientY)
     const pixelCoordinate = canvas.viewportToPixelCoordinate(viewCoordinate)
+    pixelCoordinateCopy.copy(pixelCoordinate)
     // 判断点是否在线上
     if (Math2d.isPointInPolyline(pixelCoordinate, [this.sourceJoinPoint, ...this.middlePoints, this.targetJoinPoint], 0.1)) return true
     // 判断点是否在箭头上
@@ -50,7 +53,7 @@ export class L extends Edge {
       const p0 = new Vector2d(0, 0).rotate(this.rotate)
       const p1 = new Vector2d(- 10, + 4).rotate(this.rotate)
       const p2 = new Vector2d(- 10, - 4).rotate(this.rotate)
-      if (Math2d.isPointInTriangle(pixelCoordinate.substract(this.arrowStart), p0, p1, p2)) return true
+      if (Math2d.isPointInTriangle(pixelCoordinateCopy.substract(this.arrowStart), p0, p1, p2)) return true
     }
     // 判断是否在文字上
     if (this.text && this.centerPoint) {
@@ -74,7 +77,7 @@ export class L extends Edge {
     const { graphCanvasCtx } = this.canvas
     const { sourceNode, targetNode } = this
     // 两端节点都存在且至少有一个是可见的
-    if (sourceNode && targetNode && (sourceNode.visible || targetNode.visible)) {
+    if (sourceNode.visible || targetNode.visible) {
 
       const sourceJoinPoints = sourceNode.boundingJoinPoints
       const targetJoinPoints = targetNode.boundingJoinPoints
@@ -95,8 +98,11 @@ export class L extends Edge {
       if (!this.sourceJoinPoint || !this.targetJoinPoint) return
       const sourceJoinPoint = this.sourceJoinPoint as Vector2d
       const targetJoinPoint = this.targetJoinPoint as Vector2d
-      const outDirection = sourceJoinPoint.substract(sourceNode.centerPoint).normalize()
-      const inDirection = targetNode.centerPoint.substract(targetJoinPoint).normalize()
+
+      sourceJoinPointCopy.copy(sourceJoinPoint)
+      const outDirection = sourceJoinPointCopy.substract(sourceNode.centerPoint).normalize()
+      targetNodeCenterCopy.copy(targetNode.centerPoint)
+      const inDirection = targetNodeCenterCopy.substract(targetJoinPoint).normalize()
 
       if (outDirection.x === 1 || outDirection.x === -1) {
         if (inDirection.x === 1 || inDirection.x === -1) {

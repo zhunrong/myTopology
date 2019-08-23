@@ -2,6 +2,8 @@ import Interaction from './Interaction'
 import { Canvas } from '../core/Canvas'
 import Node from '../graph/Node'
 import { Vector2d } from '../utils/vector2d'
+
+let mousemovePositionCopy = new Vector2d()
 /**
  * 拖动整个画布
  */
@@ -19,7 +21,8 @@ class MoveCanvasInteraction extends Interaction {
   }
   onMouseMove = (canvas: Canvas) => {
     if (!this.mouseDown) return
-    const offset = canvas.mousemovePosition.substract(this.lastCoordinate)
+    mousemovePositionCopy.copy(canvas.mousemovePosition)
+    const offset = mousemovePositionCopy.substract(this.lastCoordinate)
     this.lastCoordinate = canvas.mousemovePosition
     if (offset.magnitude < this.minDragDistance) return
     this.move = true

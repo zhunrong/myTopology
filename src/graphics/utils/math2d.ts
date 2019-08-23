@@ -1,4 +1,5 @@
 import { Vector2d } from './vector2d'
+
 export class Math2d {
   /**
    * 判断点是否在矩形内
@@ -20,9 +21,10 @@ export class Math2d {
    * @param C 
    * @param radius 
    */
-  static isPointInCircle(P: Vector2d, C: Vector2d, radius: number) {
-    return C.substract(P).magnitude <= radius
+  static isPointInCircle(P: Vector2d, C: Vector2d, radius: number): boolean {
+    return Vector2d.copy(C).substract(P).magnitude <= radius
   }
+
   /**
    * 判断点是否在三角形内
    * @param point 
@@ -31,9 +33,9 @@ export class Math2d {
    * @param v2 
    */
   static isPointInTriangle(P: Vector2d, A: Vector2d, B: Vector2d, C: Vector2d): boolean {
-    const PA = A.substract(P)
-    const PB = B.substract(P)
-    const PC = C.substract(P)
+    const PA = Vector2d.copy(A).substract(P)
+    const PB = Vector2d.copy(B).substract(P)
+    const PC = Vector2d.copy(C).substract(P)
     const b1 = PA.crossProduct(PB) < 0
     const b2 = PB.crossProduct(PC) < 0
     const b3 = PC.crossProduct(PA) < 0
@@ -60,10 +62,10 @@ export class Math2d {
   static isPointInLineSegment(P: Vector2d, lineSegment: [Vector2d, Vector2d], deviation: number = 0.01): boolean {
     const A = lineSegment[0]
     const B = lineSegment[1]
-    const PA = P.substract(A)
-    const PB = P.substract(B)
-    const AB = A.substract(B)
-    if (PA.magnitude + PB.magnitude - AB.magnitude < deviation) {
+    const AP = Vector2d.copy(P).substract(A)
+    const BP = Vector2d.copy(P).substract(B)
+    const BA = Vector2d.copy(A).substract(B)
+    if (AP.magnitude + BP.magnitude - BA.magnitude < deviation) {
       return true
     }
     return false
@@ -82,6 +84,7 @@ export class Math2d {
     }
     return false
   }
+
   /**
    * 判断两条线是否相交
    * @param line1 
@@ -96,17 +99,17 @@ export class Math2d {
     if (Math2d.isPointInLineSegment(B, line2)) return true
     if (Math2d.isPointInLineSegment(C, line1)) return true
     if (Math2d.isPointInLineSegment(D, line1)) return true
-    const AC = C.substract(A)
-    const AD = D.substract(A)
-    const BC = C.substract(B)
-    const BD = D.substract(B)
+    const AC = Vector2d.copy(C).substract(A)
+    const AD = Vector2d.copy(D).substract(A)
+    const BC = Vector2d.copy(C).substract(B)
+    const BD = Vector2d.copy(D).substract(B)
     const b1 = AC.crossProduct(AD) < 0
     const b2 = BC.crossProduct(BD) < 0
     if (b1 === b2) return false
-    const CA = A.substract(C)
-    const CB = B.substract(C)
-    const DA = A.substract(D)
-    const DB = B.substract(D)
+    const CA = Vector2d.copy(A).substract(C)
+    const CB = Vector2d.copy(B).substract(C)
+    const DA = Vector2d.copy(A).substract(D)
+    const DB = Vector2d.copy(B).substract(D)
     const b3 = CA.crossProduct(CB) < 0
     const b4 = DA.crossProduct(DB) < 0
     if (b3 === b4) return false
@@ -123,16 +126,16 @@ export class Math2d {
     const B = line1[1]
     const C = line2[0]
     const D = line2[1]
-    const AB = B.substract(A)
-    const CD = D.substract(C)
+    const AB = Vector2d.copy(B).substract(A)
+    const CD = Vector2d.copy(D).substract(C)
     const perpendicular = CD.perpendicular()
     // C,A,B 在perpendicular的投影  a----c----->b
     const c = C.project(perpendicular)
     const a = A.project(perpendicular)
     const b = B.project(perpendicular)
 
-    const ac = c.substract(a)
-    const cb = b.substract(c)
+    const ac = Vector2d.copy(c).substract(a)
+    const cb = Vector2d.copy(b).substract(c)
     // 设交点P,则AP的模
     const magnitude = AB.magnitude * ac.magnitude / (ac.magnitude + cb.magnitude)
     const AP = AB.normalize().scale(magnitude)
@@ -155,7 +158,7 @@ export class Math2d {
       sum += line[i].distance(line[i - 1])
       if (sum >= length) {
         const diff = sum - length
-        return line[i].clone().add(line[i - 1].substract(line[i]).normalize().scale(diff))
+        return Vector2d.copy(line[i]).add(Vector2d.copy(line[i - 1]).substract(line[i]).normalize().scale(diff))
       }
     }
     return new Vector2d(0, 0)
@@ -175,5 +178,16 @@ export class Math2d {
     return sum
   }
 }
+
+// let count = 10000
+// const before = Date.now()
+// const p = new Vector2d(-10, 10)
+// const a = new Vector2d(10, 10)
+// const b = new Vector2d(-10, -10)
+// const c = new Vector2d(10, -10)
+// while (count--) {
+//   Math2d.getLineIntersect([p, c], [a, b])
+// }
+// console.log(Date.now() - before)
 
 export default Math2d

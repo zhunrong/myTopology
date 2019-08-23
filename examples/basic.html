@@ -176,6 +176,18 @@
     })
 
     canvas.start()
+
+    let count = 10000
+    const before = Date.now()
+    const p = new Vector2d(-10, 10)
+    const a = new Vector2d(10, 10)
+    const b = new Vector2d(-10, -10)
+    const c = new Vector2d(10, -10)
+    while (count--) {
+      Math2d.getLineIntersect([p, c], [a, b])
+    }
+    console.log(Date.now() - before)
+
   </script>
 </body>
 

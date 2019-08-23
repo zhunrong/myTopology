@@ -103,6 +103,7 @@ export class Canvas {
     this.globalEventInit()
     this.setMode(options.mode || MODE_DEFAULT)
   }
+  
   /**
    * 设置缩放
    * @param scale 
@@ -128,6 +129,7 @@ export class Canvas {
   }
   // 全局事件监听
   private globalEventInit() { }
+
   /**
    * 销毁
    */
@@ -257,7 +259,7 @@ export class Canvas {
       this.containerClientRect = this.container.getBoundingClientRect()
     }
     const { top, left } = this.containerClientRect
-    return coordinate.substract(new Vector2d(left, top))
+    return coordinate.clone().substract(new Vector2d(left, top))
   }
 
   /**
@@ -277,7 +279,7 @@ export class Canvas {
    * @param coordinate 画布坐标
    */
   canvasToPixelCoordinate(coordinate: Vector2d) {
-    return coordinate.scale(1 / this.canvasScale)
+    return coordinate.clone().scale(1 / this.canvasScale)
   }
 
   /**
@@ -285,7 +287,7 @@ export class Canvas {
    * @param coordinate 像素坐标
    */
   pixelToCanvasCoordinate(coordinate: Vector2d) {
-    return coordinate.scale(this.canvasScale)
+    return coordinate.clone().scale(this.canvasScale)
   }
 
   /**
@@ -322,16 +324,13 @@ export class Canvas {
     const coordinate = this.canvasToPixelCoordinate(focus)
     this.canvasScale += 0.15
     this.canvasScale = this.canvasScale > this.maxScale ? this.maxScale : this.canvasScale
-    const newCoordinate = this.canvasToPixelCoordinate(focus)
+    const offset = this.canvasToPixelCoordinate(focus).substract(coordinate)
 
     this.canvasWidth = this.viewWidth / this.canvasScale
     this.canvasHeight = this.viewHeight / this.canvasScale
 
-    const offset = newCoordinate.substract(coordinate)
-    const nodes = this.rootNode.getDescendantBF() as Node[]
-    nodes.forEach(node => {
-      node.position.add(offset)
-      node.isUpdate = true
+    this.rootNode.children.forEach(child => {
+      child.translate(offset)
     })
     this.optimizeNode()
     this.render()
@@ -349,16 +348,13 @@ export class Canvas {
     const coordinate = this.canvasToPixelCoordinate(focus)
     this.canvasScale -= 0.15
     this.canvasScale = this.canvasScale < this.minScale ? this.minScale : this.canvasScale
-    const newCoordinate = this.canvasToPixelCoordinate(focus)
+    const offset = this.canvasToPixelCoordinate(focus).substract(coordinate)
 
     this.canvasWidth = this.viewWidth / this.canvasScale
     this.canvasHeight = this.viewHeight / this.canvasScale
 
-    const offset = newCoordinate.substract(coordinate)
-    const nodes = this.rootNode.getDescendantBF() as Node[]
-    nodes.forEach(node => {
-      node.position.add(offset)
-      node.isUpdate = true
+    this.rootNode.children.forEach(child => {
+      child.translate(offset)
     })
     this.optimizeNode()
     this.render()

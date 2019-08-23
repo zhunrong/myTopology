@@ -1,6 +1,5 @@
 import { Vector2d } from '../utils/vector2d'
 import { Edge, IEdgeOptions } from '../graph/Edge'
-import { Canvas } from '../core/Canvas'
 import { Math2d } from '../utils/math2d'
 
 export interface ILineOptions extends IEdgeOptions {
@@ -42,7 +41,7 @@ export class Line extends Edge {
       const p0 = new Vector2d(0, 0).rotate(this.rotate)
       const p1 = new Vector2d(- 10, + 4).rotate(this.rotate)
       const p2 = new Vector2d(- 10, - 4).rotate(this.rotate)
-      if (Math2d.isPointInTriangle(pixelCoordinate.substract(this.end), p0, p1, p2)) return true
+      if (Math2d.isPointInTriangle(Vector2d.copy(pixelCoordinate).substract(this.end), p0, p1, p2)) return true
     }
     // 判断是否在文字上
     if (this.text) {
@@ -50,22 +49,22 @@ export class Line extends Edge {
       graphCanvasCtx.save()
       graphCanvasCtx.font = '14px sans-serif'
       const textRectWidth = graphCanvasCtx.measureText(this.text).width
-      const sourceToTarget = this.end.substract(this.begin)
+      const sourceToTarget = Vector2d.copy(this.end).substract(this.begin)
       const lineNormal = sourceToTarget.normalize()
-      const lineCenter = this.begin.clone().add(sourceToTarget.scale(1 / 2))
+      const lineCenter = Vector2d.copy(this.begin).add(Vector2d.copy(sourceToTarget).scale(1 / 2))
       const perpendicular = sourceToTarget.perpendicular().normalize()
       graphCanvasCtx.restore()
       if (this.rotate < Math.PI / 2 && this.rotate >= -Math.PI / 2) {
-        const p0 = lineCenter.clone().substract(lineNormal.scale(textRectWidth / 2)).add(perpendicular.scale(17))
-        const p1 = p0.clone().add(lineNormal.scale(textRectWidth))
-        const p2 = p1.substract(perpendicular.scale(14))
-        const p3 = p2.substract(lineNormal.scale(textRectWidth))
+        const p0 = Vector2d.copy(lineCenter).substract(Vector2d.copy(lineNormal).scale(textRectWidth / 2)).add(Vector2d.copy(perpendicular).scale(17))
+        const p1 = Vector2d.copy(p0).add(Vector2d.copy(lineNormal).scale(textRectWidth))
+        const p2 = Vector2d.copy(p1).substract(Vector2d.copy(perpendicular).scale(14))
+        const p3 = Vector2d.copy(p2).substract(Vector2d.copy(lineNormal).scale(textRectWidth))
         if (Math2d.isPointInPolygon(pixelCoordinate, [p0, p1, p2, p3])) return true
       } else {
-        const p0 = lineCenter.clone().substract(lineNormal.scale(textRectWidth / 2)).add(perpendicular.scale(-17))
-        const p1 = p0.clone().add(lineNormal.scale(textRectWidth))
-        const p2 = p1.substract(perpendicular.scale(-14))
-        const p3 = p2.substract(lineNormal.scale(textRectWidth))
+        const p0 = Vector2d.copy(lineCenter).substract(Vector2d.copy(lineNormal).scale(textRectWidth / 2)).add(Vector2d.copy(perpendicular).scale(-17))
+        const p1 = Vector2d.copy(p0).add(Vector2d.copy(lineNormal).scale(textRectWidth))
+        const p2 = Vector2d.copy(p1).substract(Vector2d.copy(perpendicular).scale(-14))
+        const p3 = Vector2d.copy(p2).substract(Vector2d.copy(lineNormal).scale(textRectWidth))
         if (Math2d.isPointInPolygon(pixelCoordinate, [p0, p1, p2, p3])) return true
       }
     }
@@ -86,7 +85,7 @@ export class Line extends Edge {
       this.end = targetNode.shapeType === 'rect' ? intersectWithRect(beginToEnd, targetNode.boundingRect) : intersectWithCircle(targetCenter, (targetNode as any).radius, sourceCenter)
       if (!this.end) return
 
-      const sourceToTarget = targetCenter.substract(sourceCenter)
+      const sourceToTarget = Vector2d.copy(targetCenter).substract(sourceCenter)
       graphCanvasCtx.save()
       graphCanvasCtx.beginPath()
       // 画线
@@ -101,7 +100,7 @@ export class Line extends Edge {
       this.rotate = sourceToTarget.xAxisAngle()
       if/* 文本 */ (this.text) {
         graphCanvasCtx.save()
-        const lineCenter = sourceCenter.clone().add(sourceToTarget.scale(1 / 2))
+        const lineCenter = Vector2d.copy(sourceCenter).add(Vector2d.copy(sourceToTarget).scale(1 / 2))
         graphCanvasCtx.font = '14px sans-serif'
         graphCanvasCtx.textAlign = 'center'
         graphCanvasCtx.textBaseline = 'middle'
@@ -155,7 +154,7 @@ function intersectWithRect(line: [Vector2d, Vector2d], rect: Vector2d[]) {
  * @param point 线段的另一端点
  */
 function intersectWithCircle(o: Vector2d, radius: number, point: Vector2d) {
-  const line = point.substract(o)
+  const line = Vector2d.copy(point).substract(o)
   if (line.magnitude < radius) return undefined
   const angle = line.xAxisAngle()
   return o.add(new Vector2d(radius * Math.cos(angle), radius * Math.sin(angle)))

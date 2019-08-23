@@ -1,6 +1,13 @@
 export class Vector2d {
   static xAxis = new Vector2d(1, 0)
   static yAxis = new Vector2d(0, 1)
+  static copy(target: Vector2d): Vector2d {
+    if (copyIndex > copys.length - 1) {
+      copyIndex = 0
+    }
+    return copys[copyIndex++].copy(target)
+  }
+
   x: number
   y: number
   constructor(x: number = 0, y: number = 0) {
@@ -36,10 +43,10 @@ export class Vector2d {
    * 矢量减
    * @param target 
    */
-  substract(target: Vector2d): Vector2d {
-    // this.x -= target.x
-    // this.y -= target.y
-    return new Vector2d(this.x - target.x, this.y - target.y)
+  substract(target: Vector2d): this {
+    this.x -= target.x
+    this.y -= target.y
+    return this
   }
 
   /**
@@ -62,33 +69,36 @@ export class Vector2d {
    * 与标量的积
    * @param scalar 
    */
-  scale(scalar: number): Vector2d {
-    return new Vector2d(this.x * scalar, this.y * scalar);
+  scale(scalar: number): this {
+    this.x *= scalar
+    this.y *= scalar
+    return this
   }
 
   /**
-   * 求边缘向量
+   * 求边缘向量,返回新向量
    */
   edge(target: Vector2d): Vector2d {
-    return this.substract(target);
+    return this.clone().substract(target);
   }
 
   /**
-   * 求正交向量
+   * 求正交向量,返回新向量
    */
   perpendicular(): Vector2d {
     return new Vector2d(this.y, -this.x);
   }
 
   /**
-   * 求单位向量
+   * 求单位向量,返回新向量
    */
   normalize(): Vector2d {
-    return new Vector2d(this.x / this.magnitude, this.y / this.magnitude);
+    const magnitude = this.getMagnitude()
+    return new Vector2d(this.x / magnitude, this.y / magnitude);
   }
 
   /**
-   * 求法向量
+   * 求法向量,返回新向量
    */
   normal(): Vector2d {
     return this.perpendicular().normalize();
@@ -122,13 +132,15 @@ export class Vector2d {
    * 对向量进行旋转(参数为弧度值)
    * @param deg 
    */
-  rotate(deg: number): Vector2d {
+  rotate(deg: number): this {
     const { x, y } = this
-    return new Vector2d(x * Math.cos(deg) - y * Math.sin(deg), x * Math.sin(deg) + y * Math.cos(deg))
+    this.x = x * Math.cos(deg) - y * Math.sin(deg)
+    this.y = x * Math.sin(deg) + y * Math.cos(deg)
+    return this
   }
 
   /**
-   * 在目标向量上的投影
+   * 在目标向量上的投影,返回新向量
    * @param target 
    */
   project(target: Vector2d): Vector2d {
@@ -149,15 +161,33 @@ export class Vector2d {
    * @param target 
    */
   distance(target: Vector2d): number {
-    return this.substract(target).magnitude
+    return this.edge(target).magnitude
   }
 
   /**
-   * 克隆
+   * 复制目标向量
+   * @param target 
+   */
+  copy(target: Vector2d): this {
+    this.x = target.x
+    this.y = target.y
+    return this
+  }
+
+  /**
+   * 克隆,复制当前向量返回新的向量
    */
   clone(): Vector2d {
     return new Vector2d(this.x, this.y)
   }
+}
+
+// 用于copy向量(优化)
+let copyIndex = 0
+let copyCount = 200
+const copys: Vector2d[] = []
+while (copyCount--) {
+  copys.push(new Vector2d())
 }
 
 export default Vector2d
