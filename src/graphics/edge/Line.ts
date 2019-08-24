@@ -29,7 +29,7 @@ export class Line extends Edge {
   isPointIn() {
     const targetNode = this.getTargetNode()
     const sourceNode = this.getSourceNode()
-    if (!targetNode || !sourceNode) return false
+    if (!targetNode.visible && !sourceNode.visible) return false
     const { canvas } = this
     if (!canvas) return false
     if (!canvas.nativeEvent) return false
@@ -76,10 +76,9 @@ export class Line extends Edge {
   render() {
     if (!this.canvas) return
     const { graphCanvasCtx } = this.canvas
-    // const { sourceNode, targetNode } = this
     const targetNode = this.getTargetNode()
     const sourceNode = this.getSourceNode()
-    if (sourceNode && targetNode) {
+    if (sourceNode.visible || targetNode.visible) {
 
       const sourceCenter = sourceNode.centerPoint
       const targetCenter = targetNode.centerPoint

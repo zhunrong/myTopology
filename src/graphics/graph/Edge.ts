@@ -17,22 +17,22 @@ export abstract class Edge extends Graph {
   /**
    * 获取可见的目标节点
    */
-  getTargetNode(): Node | undefined {
+  getTargetNode(): Node {
     let node = this.targetNode
-    while (!node.visible && node.parent) {
+    while (!node.visible && node.parent && node.parent.renderType !== 'NONE') {
       node = node.parent
     }
-    return node.visible ? node : undefined
+    return node
   }
   /**
    * 获取可见的源节点
    */
-  getSourceNode(): Node | undefined {
+  getSourceNode(): Node {
     let node = this.sourceNode
-    while (!node.visible && node.parent) {
+    while (!node.visible && node.parent && node.parent.renderType !== 'NONE') {
       node = node.parent
     }
-    return node.visible ? node : undefined
+    return node
   }
 }
 

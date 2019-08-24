@@ -40,7 +40,7 @@ export class L extends Edge {
   isPointIn() {
     const sourceNode = this.getSourceNode()
     const targetNode = this.getTargetNode()
-    if (!sourceNode || !targetNode) return false
+    if (!sourceNode.visible && !targetNode.visible) return false
     const { canvas } = this
     if (!canvas) return false
     if (!canvas.nativeEvent) return false
@@ -82,7 +82,7 @@ export class L extends Edge {
     const sourceNode = this.getSourceNode()
     const targetNode = this.getTargetNode()
     // 两端节点都存在且至少有一个是可见的
-    if (sourceNode && targetNode) {
+    if (sourceNode.visible || targetNode.visible) {
 
       const sourceJoinPoints = sourceNode.boundingJoinPoints
       const targetJoinPoints = targetNode.boundingJoinPoints
