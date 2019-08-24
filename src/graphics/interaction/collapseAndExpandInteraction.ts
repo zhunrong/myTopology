@@ -6,7 +6,6 @@ import Canvas from '../core/Canvas'
  */
 class CollapseAndExpandInteraction extends Interaction {
   onDblClick = (canvas: Canvas) => {
-    console.log('dblclick')
     const activeNode = canvas.getActiveNodes()[0]
     if (activeNode && activeNode.isGroup) {
       activeNode.isExpanded = !activeNode.isExpanded

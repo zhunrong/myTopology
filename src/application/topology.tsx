@@ -41,8 +41,6 @@ export default class Topology extends Component<IProps, IState> {
             y: item.y,
             data: item
           }) : new CustomNode({
-            width: 146,
-            height: 53,
             x: item.x,
             y: item.y,
             id: item.id,
@@ -63,7 +61,7 @@ export default class Topology extends Component<IProps, IState> {
           }
         })
         this.edgeDatas.forEach((item: any) => {
-          const { targetId, sourceId } = item
+          const { targetId, sourceId, text } = item
           const sourceNode = this.nodes.find(node => node.id === sourceId)
           const targetNode = this.nodes.find(node => node.id === targetId)
           if (sourceNode && targetNode) {
@@ -71,7 +69,7 @@ export default class Topology extends Component<IProps, IState> {
               sourceNode,
               targetNode,
               arrow: true,
-              text: 'text'
+              text
             })
             // sourceNode.addEdge(edge)
             // targetNode.addEdge(edge)
@@ -86,8 +84,6 @@ export default class Topology extends Component<IProps, IState> {
         switch (dataTransfer.getData('nodeType')) {
           case 'rect':
             node = new CustomNode({
-              width: 146,
-              height: 53,
               x: coordinate.x - 73,
               y: coordinate.y - 26.5,
               id: Math.random() * 10000,

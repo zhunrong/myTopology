@@ -34,7 +34,7 @@ class ResizeInteraction extends Interaction {
       selectInteraction.onMouseDown(canvas)
       dragInteraction.onMouseDown(canvas)
       const activeNode = canvas.getActiveNodes()[0]
-      if (activeNode && activeNode.canResize) {
+      if (activeNode && activeNode.canResize && activeNode.isExpanded) {
         this.activeNode = activeNode
       } else {
         this.activeNode = undefined

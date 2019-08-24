@@ -10,7 +10,7 @@
 //   })
 // }
 
-const edgeDatas: any[] = []
+// const edgeDatas: any[] = []
 // let edgeId = 0
 // let nodeCount = nodeDatas.length
 // while (edgeId++ < nodeCount / 2) {
@@ -38,7 +38,7 @@ const nodeDatas: any[] = [
     parentId: null,
     isGroup: false,
     x: 400,
-    y: 100,
+    y: 200,
     zIndex: 2
   },
   {
@@ -62,6 +62,19 @@ const nodeDatas: any[] = [
     zIndex: 3
   }
 ]
+const edgeDatas: any[] = [
+  {
+    targetId: 1,
+    sourceId: 4,
+    text: 'node-4 -> node-1'
+  },
+  {
+    targetId: 2,
+    sourceId: 4,
+    text: 'node-4 -> node-2'
+  }
+]
+
 export {
   nodeDatas,
   edgeDatas
