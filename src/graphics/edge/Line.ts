@@ -27,6 +27,9 @@ export class Line extends Edge {
     return true
   }
   isPointIn() {
+    const targetNode = this.getTargetNode()
+    const sourceNode = this.getSourceNode()
+    if (!targetNode || !sourceNode) return false
     const { canvas } = this
     if (!canvas) return false
     if (!canvas.nativeEvent) return false
@@ -73,9 +76,10 @@ export class Line extends Edge {
   render() {
     if (!this.canvas) return
     const { graphCanvasCtx } = this.canvas
-    const { sourceNode, targetNode } = this
-    // 两端节点至少有一个是可见的
-    if (sourceNode.visible || targetNode.visible) {
+    // const { sourceNode, targetNode } = this
+    const targetNode = this.getTargetNode()
+    const sourceNode = this.getSourceNode()
+    if (sourceNode && targetNode) {
 
       const sourceCenter = sourceNode.centerPoint
       const targetCenter = targetNode.centerPoint

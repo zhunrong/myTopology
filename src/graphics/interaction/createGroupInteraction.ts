@@ -1,6 +1,6 @@
 import Interaction from './Interaction'
 import Canvas from '../core/Canvas'
-import Group from '../node/Group'
+import RectGroup from '../node/RectGroup'
 import Vector2d from '../utils/vector2d';
 
 class CreateGroupInteraction extends Interaction {
@@ -29,7 +29,7 @@ class CreateGroupInteraction extends Interaction {
     if (command !== 'addToGroup') return
     const activeNodes = this.canvas.rootNode.children.filter(node => node.active)
     if (!activeNodes.length) return
-    const group = new Group({
+    const group = new RectGroup({
       width: 200,
       height: 200,
       id: 'group',

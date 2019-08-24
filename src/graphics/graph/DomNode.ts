@@ -45,11 +45,12 @@ export abstract class DomNode extends Node {
   }
 
   update() {
-    const { x, y } = this.position
+    const { x, y } = this.getPosition()
     this.$el.style.transform = `translate3d(${x}px,${y}px,0)`
   }
 
   destroy() {
+    this.removeAllChild()
     this.beforeDestroy()
     this.unmount()
   }

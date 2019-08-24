@@ -10,6 +10,7 @@ export abstract class Interaction {
   onDragOver = noop
   onWheel = noop
   onContextMenu = noop
+  onDblClick = noop
   // 模式安装
   onInstall = noop2
   // 模式卸载

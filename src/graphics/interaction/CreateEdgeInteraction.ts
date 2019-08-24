@@ -40,11 +40,17 @@ class CreateEdgeInteraction extends Interaction {
         }
       })
       if (this.sourceNode) {
+        // this.edge = new Line({
+        //   sourceNode: this.sourceNode,
+        //   targetNode: canvas.virtualNode,
+        //   arrow: true,
+        //   text: ''
+        // })
         this.edge = new Line({
           sourceNode: this.sourceNode,
           targetNode: canvas.virtualNode,
-          arrow: true,
-          text: ''
+          arrow: Canvas.config.createLineOptions.arrow,
+          text: Canvas.config.createLineOptions.text
         })
         canvas.addEdge(this.edge)
       }

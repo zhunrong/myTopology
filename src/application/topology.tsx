@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { MODE_DEFAULT, MODE_VIEW, MODE_CREATE_EDGE, MODE_AREA_PICK, MODE_CREATE_L, MODE_BORDER } from '../graphics'
-import { Canvas, CircleCanvasNode, RectCanvasNode, RectDomNode, Line as Edge, Group } from '../graphics'
+import { Canvas, CircleCanvasNode, RectCanvasNode, RectDomNode, Line as Edge, RectGroup } from '../graphics'
 import CustomNode from '../components/nodes/Node'
 import { nodeDatas, edgeDatas } from '../data/topoData'
 import "./topology.scss"
@@ -33,7 +33,7 @@ export default class Topology extends Component<IProps, IState> {
       })
       this.canvas.eventEmitter.on('canvas:mounted', () => {
         this.nodes = this.nodeDatas.map((item: any) => {
-          return item.isGroup ? new Group({
+          return item.isGroup ? new RectGroup({
             width: item.width,
             height: item.height,
             id: item.id,

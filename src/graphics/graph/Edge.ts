@@ -14,6 +14,26 @@ export abstract class Edge extends Graph {
     this.targetNode = options.targetNode
     this.sourceNode = options.sourceNode
   }
+  /**
+   * 获取可见的目标节点
+   */
+  getTargetNode(): Node | undefined {
+    let node = this.targetNode
+    while (!node.visible && node.parent) {
+      node = node.parent
+    }
+    return node.visible ? node : undefined
+  }
+  /**
+   * 获取可见的源节点
+   */
+  getSourceNode(): Node | undefined {
+    let node = this.sourceNode
+    while (!node.visible && node.parent) {
+      node = node.parent
+    }
+    return node.visible ? node : undefined
+  }
 }
 
 export default Edge

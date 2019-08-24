@@ -22,6 +22,23 @@ export abstract class Node extends Graph {
   position: Vector2d
 
   /**
+   * 获取位置
+   */
+  getPosition() {
+    return this.position
+  }
+
+  get visible(): boolean {
+    if (!this._visible) return false
+    if (this.parent && (!this.parent.visible || !this.parent.isExpanded)) return false
+    return true
+  }
+
+  set visible(visible: boolean) {
+    this._visible = visible
+  }
+
+  /**
    * 顶点坐标数组
    */
   abstract get vertexes(): Vector2d[]
@@ -57,7 +74,12 @@ export abstract class Node extends Graph {
   isGroup: boolean = false
 
   /**
-   * 是否可以调接尺寸
+   * 是否展开
+   */
+  isExpanded: boolean = true
+
+  /**
+   * 是否可以调节尺寸
    */
   canResize: boolean = false
 

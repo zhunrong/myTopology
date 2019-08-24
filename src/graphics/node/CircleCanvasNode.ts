@@ -5,13 +5,15 @@ import Math2d from '../utils/math2d'
 import { applyMixins } from '../utils/utils'
 
 export interface ICircleCanvasNodeOptions extends ICanvasNodeOptions {
-  radius: number
+  radius?: number
+  minRadius?: number
   text?: string
 }
 
 export class CircleCanvasNode extends CanvasNode implements CircleShape {
   shapeType = 'circle'
   radius: number
+  minRadius: number
   text: string
   get boundingJoinPoints(): Vector2d[] {
     return this.getBoundingJoinPoints()
@@ -27,7 +29,8 @@ export class CircleCanvasNode extends CanvasNode implements CircleShape {
   }
   constructor(options: ICircleCanvasNodeOptions) {
     super(options)
-    this.radius = options.radius
+    this.radius = options.radius || 50
+    this.minRadius = options.minRadius || 30
     this.text = options.text || ''
   }
   isPointIn() {
@@ -70,7 +73,7 @@ export class CircleCanvasNode extends CanvasNode implements CircleShape {
   update() {
     if (!this.canvas) return
     const { graphCanvasCtx } = this.canvas
-    const { x, y } = this.position
+    const { x, y } = this.getPosition()
     graphCanvasCtx.save()
     if (this.active) {
       graphCanvasCtx.shadowBlur = 5

@@ -10,7 +10,7 @@ class SelectInteraction extends Interaction {
 
     const sign = Math.random()
     canvas.rootNode.getDescendantDF(node => {
-      if /* 已存在激活图元 */ (activeNode || activeEdge) {
+      if /* 已存在激活图元或本身不可见 */ (activeNode || activeEdge || !node.visible) {
         node.active = false
       } else {
         node.active = node.isPointIn()

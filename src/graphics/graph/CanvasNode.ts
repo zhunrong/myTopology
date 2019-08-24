@@ -8,6 +8,7 @@ export abstract class CanvasNode extends Node {
     super(options)
   }
   destroy() {
+    this.removeAllChild()
     this.beforeDestroy()
   }
 }

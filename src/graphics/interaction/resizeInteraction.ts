@@ -5,7 +5,8 @@ import Vector2d from '../utils/vector2d'
 import Math2d from '../utils/math2d'
 import selectInteraction from './selectInteraction'
 import dragInteraction from './dragInteraction'
-import RectDomNode from '../node/RectDomNode'
+import RectCanvasNode from '../node/RectCanvasNode'
+import CircleCanvasNode from '../node/CircleCanvasNode'
 
 const anchorPositionOffset = new Vector2d(-3, -3)
 class ResizeInteraction extends Interaction {
@@ -32,92 +33,26 @@ class ResizeInteraction extends Interaction {
     if (this.activeAnchorIndex === -1) {
       selectInteraction.onMouseDown(canvas)
       dragInteraction.onMouseDown(canvas)
-      this.activeNode = canvas.getActiveNodes()[0]
+      const activeNode = canvas.getActiveNodes()[0]
+      if (activeNode && activeNode.canResize) {
+        this.activeNode = activeNode
+      } else {
+        this.activeNode = undefined
+      }
     }
   }
 
   onMouseMove = (canvas: Canvas, e: Event) => {
-    const activeNode = this.activeNode as RectDomNode
+    const activeNode = this.activeNode
     if (this.activeAnchorIndex > -1 && activeNode) {
       const event = e as MouseEvent
       const coordinate = canvas.viewportToPixelCoordinate(new Vector2d(event.clientX, event.clientY))
-      const nodeBoundingRect = activeNode.boundingRect
       activeNode.isUpdate = true
       canvas.repaint = true
-
-      let currentWidth: number = activeNode.width
-      let currentHeight: number = activeNode.height
-      switch (this.activeAnchorIndex) {
-        case 0: // 西北
-          currentWidth = nodeBoundingRect[2].x - coordinate.x
-          currentHeight = nodeBoundingRect[2].y - coordinate.y
-          if (currentWidth >= activeNode.minWidth) {
-            activeNode.position.x = coordinate.x
-            activeNode.width = currentWidth
-          }
-          if (currentHeight >= activeNode.minHeight) {
-            activeNode.position.y = coordinate.y
-            activeNode.height = currentHeight
-          }
-          break
-        case 1: // 东北
-          currentWidth = coordinate.x - nodeBoundingRect[3].x
-          currentHeight = nodeBoundingRect[3].y - coordinate.y
-          if (currentWidth >= activeNode.minWidth) {
-            activeNode.width = currentWidth
-          }
-          if (currentHeight >= activeNode.minHeight) {
-            activeNode.position.y = coordinate.y
-            activeNode.height = currentHeight
-          }
-          break
-        case 2: // 东南
-          currentWidth = coordinate.x - nodeBoundingRect[0].x
-          currentHeight = coordinate.y - nodeBoundingRect[0].y
-          if (currentWidth >= activeNode.minWidth) {
-            activeNode.width = currentWidth
-          }
-          if (currentHeight >= activeNode.minHeight) {
-            activeNode.height = currentHeight
-          }
-          break
-        case 3: // 西南
-          currentWidth = nodeBoundingRect[1].x - coordinate.x
-          currentHeight = coordinate.y - nodeBoundingRect[1].y
-          if (currentWidth >= activeNode.minWidth) {
-            activeNode.position.x = coordinate.x
-            activeNode.width = currentWidth
-          }
-          if (currentHeight >= activeNode.minHeight) {
-            activeNode.height = currentHeight
-          }
-          break
-        case 4: // 北
-          currentHeight = nodeBoundingRect[2].y - coordinate.y
-          if (currentHeight >= activeNode.minHeight) {
-            activeNode.position.y = coordinate.y
-            activeNode.height = currentHeight
-          }
-          break
-        case 5: // 东
-          currentWidth = coordinate.x - nodeBoundingRect[0].x
-          if (currentWidth >= activeNode.minWidth) {
-            activeNode.width = currentWidth
-          }
-          break
-        case 6: // 南
-          currentHeight = coordinate.y - nodeBoundingRect[0].y
-          if (currentHeight >= activeNode.minHeight) {
-            activeNode.height = currentHeight
-          }
-          break
-        case 7: // 西
-          currentWidth = nodeBoundingRect[2].x - coordinate.x
-          if (currentWidth >= activeNode.minWidth) {
-            activeNode.position.x = coordinate.x
-            activeNode.width = currentWidth
-          }
-          break
+      if (activeNode.shapeType === 'rect') {
+        resizeRectNode(activeNode as RectCanvasNode, this.activeAnchorIndex, coordinate)
+      } else {
+        resizeCircleNode(activeNode as CircleCanvasNode, this.activeAnchorIndex, coordinate)
       }
       activeNode.render()
     } else {
@@ -185,6 +120,121 @@ class ResizeInteraction extends Interaction {
     })
     if (!anchor) return -1
     return index
+  }
+}
+
+/**
+ * 矩形
+ * @param activeNode 
+ * @param anchorIndex 
+ * @param coordinate 
+ */
+function resizeRectNode(activeNode: RectCanvasNode, anchorIndex: number, coordinate: Vector2d): void {
+  const nodeBoundingRect = activeNode.boundingRect
+  let currentWidth: number = activeNode.width
+  let currentHeight: number = activeNode.height
+  switch (anchorIndex) {
+    case 0: // 西北
+      currentWidth = nodeBoundingRect[2].x - coordinate.x
+      currentHeight = nodeBoundingRect[2].y - coordinate.y
+      if (currentWidth >= activeNode.minWidth) {
+        activeNode.position.x = coordinate.x
+        activeNode.width = currentWidth
+      }
+      if (currentHeight >= activeNode.minHeight) {
+        activeNode.position.y = coordinate.y
+        activeNode.height = currentHeight
+      }
+      break
+    case 1: // 东北
+      currentWidth = coordinate.x - nodeBoundingRect[3].x
+      currentHeight = nodeBoundingRect[3].y - coordinate.y
+      if (currentWidth >= activeNode.minWidth) {
+        activeNode.width = currentWidth
+      }
+      if (currentHeight >= activeNode.minHeight) {
+        activeNode.position.y = coordinate.y
+        activeNode.height = currentHeight
+      }
+      break
+    case 2: // 东南
+      currentWidth = coordinate.x - nodeBoundingRect[0].x
+      currentHeight = coordinate.y - nodeBoundingRect[0].y
+      if (currentWidth >= activeNode.minWidth) {
+        activeNode.width = currentWidth
+      }
+      if (currentHeight >= activeNode.minHeight) {
+        activeNode.height = currentHeight
+      }
+      break
+    case 3: // 西南
+      currentWidth = nodeBoundingRect[1].x - coordinate.x
+      currentHeight = coordinate.y - nodeBoundingRect[1].y
+      if (currentWidth >= activeNode.minWidth) {
+        activeNode.position.x = coordinate.x
+        activeNode.width = currentWidth
+      }
+      if (currentHeight >= activeNode.minHeight) {
+        activeNode.height = currentHeight
+      }
+      break
+    case 4: // 北
+      currentHeight = nodeBoundingRect[2].y - coordinate.y
+      if (currentHeight >= activeNode.minHeight) {
+        activeNode.position.y = coordinate.y
+        activeNode.height = currentHeight
+      }
+      break
+    case 5: // 东
+      currentWidth = coordinate.x - nodeBoundingRect[0].x
+      if (currentWidth >= activeNode.minWidth) {
+        activeNode.width = currentWidth
+      }
+      break
+    case 6: // 南
+      currentHeight = coordinate.y - nodeBoundingRect[0].y
+      if (currentHeight >= activeNode.minHeight) {
+        activeNode.height = currentHeight
+      }
+      break
+    case 7: // 西
+      currentWidth = nodeBoundingRect[2].x - coordinate.x
+      if (currentWidth >= activeNode.minWidth) {
+        activeNode.position.x = coordinate.x
+        activeNode.width = currentWidth
+      }
+      break
+  }
+}
+
+/**
+ * 圆形
+ * @param activeNode 
+ * @param anchorIndex 
+ * @param coordinate 
+ */
+function resizeCircleNode(activeNode: CircleCanvasNode, anchorIndex: number, coordinate: Vector2d): void {
+  let currentRadius: number = activeNode.radius
+  let minRadius: number = activeNode.minRadius
+  const center = activeNode.centerPoint
+  switch (anchorIndex) {
+    case 0: // 西北
+    case 1: // 东北
+    case 2: // 东南
+    case 3: // 西南
+      currentRadius = Vector2d.copy(coordinate).substract(center).magnitude / Math.sqrt(2)
+      break
+    case 4: // 北
+    case 5: // 东
+    case 6: // 南
+    case 7: // 西
+      currentRadius = Vector2d.copy(coordinate).substract(center).magnitude
+      break
+  }
+  if (currentRadius >= minRadius) {
+    activeNode.radius = currentRadius
+    activeNode.position.y = center.y - currentRadius
+    activeNode.position.x = center.x - currentRadius
   }
 }
 

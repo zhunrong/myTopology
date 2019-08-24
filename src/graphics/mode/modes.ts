@@ -10,6 +10,7 @@ import menuInteraction from '../interaction/menuInteraction'
 import areaPickInteraction from '../interaction/areaPickInteraction'
 import createGroupInteraction from '../interaction/createGroupInteraction'
 import resizeInteraction from '../interaction/resizeInteraction'
+import collapseAndExpandInteraction from '../interaction/collapseAndExpandInteraction'
 
 // 默认模式
 export const MODE_DEFAULT = 'mode.default'
@@ -28,7 +29,7 @@ interface Mode {
   [name: string]: Interaction[]
 }
 export const modes: Mode = {
-  [MODE_DEFAULT]: [selectInteraction, dragInteraction, dropInteraction, wheelZoomInteraction, menuInteraction],
+  [MODE_DEFAULT]: [selectInteraction, dragInteraction, dropInteraction, wheelZoomInteraction, menuInteraction, collapseAndExpandInteraction],
   [MODE_VIEW]: [moveCanvasInteraction, wheelZoomInteraction],
   [MODE_CREATE_EDGE]: [selectInteraction, wheelZoomInteraction, createEdgeInteraction, moveCanvasInteraction],
   [MODE_CREATE_L]: [selectInteraction, wheelZoomInteraction, createLInteraction, moveCanvasInteraction],

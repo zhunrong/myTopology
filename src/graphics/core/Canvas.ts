@@ -10,6 +10,7 @@ import Node from '../graph/Node'
 import VirtualNode from '../graph/VirtualNode'
 import modes, { MODE_DEFAULT } from '../mode/modes'
 import style from './canvas.less'
+import config from '../config/config'
 export interface ICanvasOptions {
   container: HTMLElement
   scale?: number
@@ -18,6 +19,7 @@ export interface ICanvasOptions {
   mode?: string
 }
 export class Canvas {
+  static config = config
   private mounted: boolean = false
   private _running: boolean = false
   private _animationFrameId: number = 0
@@ -103,7 +105,7 @@ export class Canvas {
     this.globalEventInit()
     this.setMode(options.mode || MODE_DEFAULT)
   }
-  
+
   /**
    * 设置缩放
    * @param scale 
@@ -119,6 +121,7 @@ export class Canvas {
   // 原生事件监听
   protected nativeEventInit() {
     this.wrapper.addEventListener('click', this.handleClick)
+    this.wrapper.addEventListener('dblclick', this.handleDblClick)
     this.wrapper.addEventListener('mousedown', this.handleMouseDown)
     this.wrapper.addEventListener('wheel', this.handleWheel)
     this.wrapper.addEventListener('dragover', this.handleDragOver)
@@ -398,6 +401,20 @@ export class Canvas {
       })
     }
     this.eventEmitter.emit('canvas:click', e)
+  }
+
+  /**
+   * 双击事件
+   */
+  private handleDblClick = (e: MouseEvent) => {
+    this.nativeEvent = e
+    const interactions = modes[this.interactionMode]
+    if (interactions) {
+      interactions.forEach(action => {
+        action.onDblClick(this, e)
+      })
+    }
+    this.eventEmitter.emit('canvas:dblclick')
   }
 
   /**
