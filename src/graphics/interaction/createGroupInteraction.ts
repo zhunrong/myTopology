@@ -2,6 +2,9 @@ import Interaction from './Interaction'
 import Canvas from '../core/Canvas'
 import RectGroup from '../node/RectGroup'
 
+/**
+ * 创建组
+ */
 export class CreateGroupInteraction extends Interaction {
   canvas!: Canvas
   onContextMenu = (canvas: Canvas, e: Event) => {

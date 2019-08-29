@@ -2,6 +2,9 @@ import Interaction from './Interaction'
 import Canvas from '../core/Canvas'
 import Vector2d from '../utils/vector2d'
 
+/**
+ * 框选交互
+ */
 export class AreaPickInteraction extends Interaction {
   minDragDistance: number = 5
   mouseDown: boolean = false

@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>定义交互与模式示例</title>
+  <title>自定义交互与模式示例</title>
   <style>
     #topology {
       width: 800px;
@@ -51,9 +51,8 @@
 
 <body>
   <button onclick="changeMode(MODE_DEFAULT)">默认模式</button>
-  <button onclick="changeMode(MODE_CREATE_EDGE)">连线模式</button>
-  <button onclick="changeMode(MODE_BORDER)">边框模式</button>
-  <button onclick="changeMode(MODE_CUSTOM)">自定义模式</button>
+  <button onclick="changeMode(MODE_CUSTOM_1)">创建连线（虚线、无箭头）</button>
+  <button onclick="changeMode(MODE_CUSTOM_2)">创建连线（实线、有箭头）</button>
   <div class="node-list">
     <img ondragstart="dragStart(event)" data-type="host" draggable="true" src="./images/windows主机.png">
     <img ondragstart="dragStart(event)" data-type="server" draggable="true" src="./images/服务器.png">
@@ -72,11 +71,11 @@
       // 注：事件处理函数必须写成箭头函数形式
       // 交互安装时执行
       onInstall = (canvas) => {
-        console.log(canvas, this)
+        console.log('onInstall', canvas, this)
       }
       // 交互卸载时执行
       onUninstall = (canvas) => {
-        console.log(canvas, this)
+        console.log('onUninstall', canvas, this)
       }
       // 点击画布
       onClick = (canvas, e) => { }
@@ -102,8 +101,34 @@
       // 鼠标按键释放
       onMouseUp = (canvas, e) => { }
     }
-    const MODE_CUSTOM = 'mode.custom'
-    Canvas.registerMode(MODE_CUSTOM, [selectInteraction, new MyInteraction()])
+    const MODE_CUSTOM_1 = '创建连线（虚线、无箭头）'
+    const MODE_CUSTOM_2 = '创建连线（实线、有箭头）'
+
+    // 注册一个自定义的模式
+    // 参数一是模式的名字 string
+    // 参数二是交互对象数组 Interaction[]
+    Canvas.registerMode(MODE_CUSTOM_1, [
+      new SelectInteraction(), // 内置交互,用于选中节点或连线,一般建议放在前面
+      new MoveCanvasInteraction(), // 内置交互,用于拖拽整个画布
+      new WheelZoomInteraction(), // 内置交互,使用鼠标滚轮缩放画布
+      new CreateLineInteraction({
+        dash: true,
+        arrow: false,
+        text: 'text'
+      }),
+      new MyInteraction() // 自定义交互
+    ])
+
+    Canvas.registerMode(MODE_CUSTOM_2, [
+      new SelectInteraction(),
+      new MoveCanvasInteraction(),
+      new WheelZoomInteraction(),
+      new CreateLineInteraction({
+        dash: false,
+        arrow: true,
+        text: ''
+      })
+    ])
 
 
     // 切换模式
@@ -213,6 +238,10 @@
           canvas.addNode(node)
           break
       }
+    })
+
+    canvas.eventEmitter.on('canvas:menu', function (e) {
+      console.log(e)
     })
 
     canvas.start()

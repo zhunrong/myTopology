@@ -1,6 +1,9 @@
 import Interaction from './Interaction'
 import { Canvas } from '../core/Canvas'
 
+/**
+ * 右键菜单
+ */
 export class MenuInteraction extends Interaction {
   onContextMenu = (canvas: Canvas, e: Event) => {
     const event = e as MouseEvent
