@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>基础示例</title>
+  <title>定义交互与模式示例</title>
   <style>
     #topology {
       width: 800px;
@@ -53,6 +53,7 @@
   <button onclick="changeMode(MODE_DEFAULT)">默认模式</button>
   <button onclick="changeMode(MODE_CREATE_EDGE)">连线模式</button>
   <button onclick="changeMode(MODE_BORDER)">边框模式</button>
+  <button onclick="changeMode(MODE_CUSTOM)">自定义模式</button>
   <div class="node-list">
     <img ondragstart="dragStart(event)" data-type="host" draggable="true" src="./images/windows主机.png">
     <img ondragstart="dragStart(event)" data-type="server" draggable="true" src="./images/服务器.png">
@@ -65,6 +66,45 @@
     const canvas = new Canvas({
       container: document.getElementById('topology')
     })
+
+    // 自定义一个交互
+    class MyInteraction extends Interaction {
+      // 注：事件处理函数必须写成箭头函数形式
+      // 交互安装时执行
+      onInstall = (canvas) => {
+        console.log(canvas, this)
+      }
+      // 交互卸载时执行
+      onUninstall = (canvas) => {
+        console.log(canvas, this)
+      }
+      // 点击画布
+      onClick = (canvas, e) => { }
+      // 在画布中点击鼠标右键
+      onContextMenu = (canvas, e) => {
+        const activeNodes = canvas.getActiveNodes()
+        if (activeNodes.length) {
+          // 定义菜单
+          canvas.contextMenu.menu = [{
+            label: '自定义菜单一',
+            command: 'command1'
+          }]
+          // 显示右键菜单，需要传入显示位置
+          canvas.contextMenu.show(e.clientX, e.clientY)
+        }
+      }
+      //  双击画布
+      onDblClick = (canvas, e) => { }
+      // 鼠标按下
+      onMouseDown = (canvas, e) => { }
+      // 鼠标移动
+      onMouseMove = (canvas, e) => { }
+      // 鼠标按键释放
+      onMouseUp = (canvas, e) => { }
+    }
+    const MODE_CUSTOM = 'mode.custom'
+    Canvas.registerMode(MODE_CUSTOM, [selectInteraction, new MyInteraction()])
+
 
     // 切换模式
     const changeMode = function (mode) {
@@ -100,11 +140,6 @@
             <span>${this.text}</span>  
           </div>
         `
-      }
-
-      // 注销前调用
-      beforeDestroy() {
-        console.log('before destroy')
       }
     }
 
@@ -178,38 +213,6 @@
           canvas.addNode(node)
           break
       }
-    })
-
-    canvas.eventEmitter.on('canvas:menu', function (e) {
-      // 获取激活状态的节点
-      const activeNodes = canvas.getActiveNodes()
-      // 获取激活状态的边线
-      const activeEdges = canvas.getActiveEdges()
-      switch (e.command) {
-        case 'rename':
-          const node = activeNodes[0]
-          if (node) {
-            setTimeout(() => {
-              const result = prompt(node.text)
-              node.text = result
-              node.render()
-            }, 300)
-          }
-          break
-        case 'remove':
-          if (activeNodes.length) {
-            activeNodes.forEach(item => {
-              canvas.removeNode(item)
-            })
-          }
-          if (activeEdges.length) {
-            activeEdges.forEach(item => {
-              canvas.removeEdge(item)
-            })
-          }
-          break
-      }
-
     })
 
     canvas.start()

@@ -6,7 +6,7 @@ import L from '../edge/L'
 /**
  * 连线（L型）
  */
-class CreateLInteraction extends Interaction {
+export class CreateLInteraction extends Interaction {
   targetNode: Node | undefined
   sourceNode: Node | undefined
   edge: L | undefined

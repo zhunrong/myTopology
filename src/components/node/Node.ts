@@ -3,7 +3,11 @@ import style from './node.less'
 
 const deviceMap: { [key: string]: string } = {
   '主机1': require('../../assets/device/主机1.png'),
-  '主机2': require('../../assets/device/主机2.png')
+  '主机2': require('../../assets/device/主机2.png'),
+  '主机3': require('../../assets/device/主机2.png'),
+  '服务器': require('../../assets/device/服务器.png'),
+  '交换机1': require('../../assets/device/交换机1.png'),
+  '交换机2': require('../../assets/device/交换机2.png'),
 }
 
 interface IOptions extends IRectDomNodeOptions {

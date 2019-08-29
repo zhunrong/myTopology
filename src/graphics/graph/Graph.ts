@@ -48,10 +48,15 @@ export abstract class Graph {
     return false
   }
   /**
-   * 是否被某矩形包围
+   * 是否被指定矩形包围
    * @param rect 
    */
   isWrappedInRect(rect: Vector2d[]): boolean { return false }
+
+  /**
+   * 是否被指定圆包围
+   */
+  isWrappedInCircle(): boolean { return false }
 
   /**
    * hook:渲染时调用

@@ -4,7 +4,7 @@ import Canvas from '../core/Canvas'
 /**
  * 折叠与展开操作
  */
-class CollapseAndExpandInteraction extends Interaction {
+export class CollapseAndExpandInteraction extends Interaction {
   onDblClick = (canvas: Canvas) => {
     const activeNode = canvas.getActiveNodes()[0]
     if (activeNode && activeNode.isGroup) {

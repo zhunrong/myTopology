@@ -40,6 +40,4 @@ export class EventEmitter {
   }
 }
 
-export const globalEvent = new EventEmitter()
-
 export default EventEmitter

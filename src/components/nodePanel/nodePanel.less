@@ -1,0 +1,52 @@
+:local(.node-panel) {
+  position: fixed;
+  width: 60px;
+  top: 50px;
+  bottom: 0;
+  left: 0;
+  background: white;
+  z-index: 1;
+  box-shadow: 3px 0px 5px rgba(0, 0, 0, 0.175);
+  transition: all 0.3s;
+  transform: translate3d(-100%, 0, 0);
+
+  &.visible {
+    transform: translate3d(0, 0, 0);
+  }
+
+  .node {
+    width: 40px;
+    height: 40px;
+    border: 1px dashed #cccccc;
+    border-radius: 3px;
+    margin: 10px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+
+    &:hover {
+      background: #ccc;
+    }
+
+    img {
+      width: 60%;
+    }
+  }
+
+  .btn {
+    position: absolute;
+    width: 15px;
+    height: 30px;
+    line-height: 30px;
+    border-radius: 0 15px 15px 0;
+    background: white;
+    color: #ccc;
+    text-align: center;
+    left: 60px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    box-shadow: 4px 0px 5px rgba(0, 0, 0, 0.175);
+  }
+}

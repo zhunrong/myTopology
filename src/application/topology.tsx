@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { MODE_DEFAULT, MODE_VIEW, MODE_CREATE_EDGE, MODE_AREA_PICK, MODE_CREATE_L, MODE_BORDER } from '../graphics'
 import { Canvas, CircleCanvasNode, RectCanvasNode, RectDomNode, Line as Edge, RectGroup } from '../graphics'
-import CustomNode from '../components/nodes/Node'
+import CustomNode from '../components/node/Node'
+import NodePanel from '../components/nodePanel/nodePanel'
 import { nodeDatas, edgeDatas } from '../data/topoData'
 import "./topology.scss"
 // import "./treeTest"
@@ -71,8 +72,6 @@ export default class Topology extends Component<IProps, IState> {
               arrow: true,
               text
             })
-            // sourceNode.addEdge(edge)
-            // targetNode.addEdge(edge)
             this.canvas.addEdge(edge)
           }
         })
@@ -81,16 +80,22 @@ export default class Topology extends Component<IProps, IState> {
         const { coordinate, dataTransfer } = params
 
         let node: Node | undefined
-        switch (dataTransfer.getData('nodeType')) {
-          case 'rect':
+        const type = dataTransfer.getData('nodeType')
+        switch (type) {
+          case '主机1':
+          case '主机2':
+          case '主机3':
+          case '服务器':
+          case '交换机1':
+          case '交换机2':
             node = new CustomNode({
-              x: coordinate.x - 73,
-              y: coordinate.y - 26.5,
+              x: coordinate.x - 40,
+              y: coordinate.y - 40,
               id: Math.random() * 10000,
-              text: 'new Rect'
+              text: type,
+              deviceType: type
             })
             break
-          case 'circle':
           default:
             node = new CircleCanvasNode({
               id: Math.random() * 10000,
@@ -105,7 +110,7 @@ export default class Topology extends Component<IProps, IState> {
           this.canvas.addNode(node)
         }
       })
-      this.canvas.eventEmitter.on('canvas:menu', (command) => {
+      this.canvas.eventEmitter.on('canvas:menu', ({ command }) => {
         const activeNodes = this.canvas.getActiveNodes()
         const activeEdges = this.canvas.getActiveEdges()
         switch (command) {
@@ -164,9 +169,7 @@ export default class Topology extends Component<IProps, IState> {
       this.canvas.zoomIn()
     }
   }
-  handleDragStart = (e: React.DragEvent<HTMLSpanElement>, type: string) => {
-    e.dataTransfer.setData('nodeType', type)
-  }
+
   modeChange(type: string) {
     this.setState({
       mode: type
@@ -187,9 +190,8 @@ export default class Topology extends Component<IProps, IState> {
           <img draggable={false} src={require('../assets/zoom_in.svg')} onClick={this.zoomIn} title="放大" />
           <img draggable={false} onClick={this.modeChange.bind(this, MODE_CREATE_EDGE)} className={`${this.state.mode === MODE_CREATE_EDGE ? 'active' : ''}`} src={require('../assets/line_2.svg')} title="创建连线" />
           <img draggable={false} onClick={this.modeChange.bind(this, MODE_CREATE_L)} className={`${this.state.mode === MODE_CREATE_L ? 'active' : ''}`} src={require('../assets/L_line.svg')} title="创建L连线" />
-          <span className="node" draggable={true} onDragStart={e => this.handleDragStart(e, 'rect')}>Rect</span>
-          <span className="node" draggable={true} onDragStart={e => this.handleDragStart(e, 'circle')}>Circle</span>
         </div>
+        <NodePanel />
         <div ref={this.containerRef} className="topo-chart" />
       </div>
     )

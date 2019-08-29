@@ -9,7 +9,10 @@ import RectCanvasNode from '../node/RectCanvasNode'
 import CircleCanvasNode from '../node/CircleCanvasNode'
 
 const anchorPositionOffset = new Vector2d(-3, -3)
-class ResizeInteraction extends Interaction {
+/**
+ * resize
+ */
+export class ResizeInteraction extends Interaction {
   activeNode: Node | undefined
   flag: boolean = false
   activeAnchorIndex: number = -1

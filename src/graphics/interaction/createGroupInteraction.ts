@@ -1,9 +1,8 @@
 import Interaction from './Interaction'
 import Canvas from '../core/Canvas'
 import RectGroup from '../node/RectGroup'
-import Vector2d from '../utils/vector2d';
 
-class CreateGroupInteraction extends Interaction {
+export class CreateGroupInteraction extends Interaction {
   canvas!: Canvas
   onContextMenu = (canvas: Canvas, e: Event) => {
     const event = e as MouseEvent
@@ -25,8 +24,8 @@ class CreateGroupInteraction extends Interaction {
     canvas.eventEmitter.off('canvas:menu', this.onAddToGroup)
   }
   //
-  onAddToGroup = (command: string) => {
-    if (command !== 'addToGroup') return
+  onAddToGroup = (menu: any) => {
+    if (menu.command !== 'addToGroup') return
     const activeNodes = this.canvas.rootNode.children.filter(node => node.active)
     if (!activeNodes.length) return
     const group = new RectGroup({

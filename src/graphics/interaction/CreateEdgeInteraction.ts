@@ -3,13 +3,30 @@ import Canvas from '../core/Canvas'
 import Node from '../graph/Node'
 import Line from '../edge/Line'
 
+interface ICreateLineInteraction {
+  text?: string
+  arrow?: boolean
+  dash?: boolean
+}
 /**
  * 连线（直线）
  */
-class CreateEdgeInteraction extends Interaction {
+export class CreateLineInteraction extends Interaction {
   targetNode: Node | undefined
   sourceNode: Node | undefined
   edge: Line | undefined
+
+  text: string = ''
+  arrow: boolean = false
+  dash: boolean = false
+  constructor(options?: ICreateLineInteraction) {
+    super()
+    if (options) {
+      this.text = options.text || ''
+      this.arrow = options.arrow || false
+      this.dash = options.dash || false
+    }
+  }
   onMouseUp = (canvas: Canvas) => {
     if (this.edge) {
       canvas.rootNode.getDescendantDF(node => {
@@ -40,17 +57,12 @@ class CreateEdgeInteraction extends Interaction {
         }
       })
       if (this.sourceNode) {
-        // this.edge = new Line({
-        //   sourceNode: this.sourceNode,
-        //   targetNode: canvas.virtualNode,
-        //   arrow: true,
-        //   text: ''
-        // })
         this.edge = new Line({
           sourceNode: this.sourceNode,
           targetNode: canvas.virtualNode,
-          arrow: Canvas.config.createLineOptions.arrow,
-          text: Canvas.config.createLineOptions.text
+          arrow: this.arrow,
+          text: this.text,
+          dash: this.dash
         })
         canvas.addEdge(this.edge)
       }
@@ -75,5 +87,5 @@ class CreateEdgeInteraction extends Interaction {
   }
 }
 
-export const createEdgeInteraction = new CreateEdgeInteraction()
+export const createEdgeInteraction = new CreateLineInteraction()
 export default createEdgeInteraction

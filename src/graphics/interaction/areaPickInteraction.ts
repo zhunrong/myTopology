@@ -2,8 +2,7 @@ import Interaction from './Interaction'
 import Canvas from '../core/Canvas'
 import Vector2d from '../utils/vector2d'
 
-let mousemovePositionCopy = new Vector2d()
-class AreaPickInteraction extends Interaction {
+export class AreaPickInteraction extends Interaction {
   minDragDistance: number = 5
   mouseDown: boolean = false
   onInstall = (canvas: Canvas) => {
@@ -25,8 +24,7 @@ class AreaPickInteraction extends Interaction {
   onMouseMove = (canvas: Canvas, e: Event) => {
     const { mousedownPosition, mousemovePosition, topCanvasCtx, viewWidth, viewHeight, graphCanvasCtx } = canvas
     if (!this.mouseDown) return
-    mousemovePositionCopy.copy(mousemovePosition)
-    const offset = mousemovePositionCopy.substract(mousedownPosition)
+    const offset = Vector2d.copy(mousemovePosition).substract(mousedownPosition)
     if (offset.magnitude < this.minDragDistance) return
     const p0 = canvas.viewportToCanvasCoordinate(mousedownPosition)
     const p2 = canvas.viewportToCanvasCoordinate(mousemovePosition)

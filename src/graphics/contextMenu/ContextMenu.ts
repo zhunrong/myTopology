@@ -11,6 +11,7 @@ const menu = [{
 interface IMenu {
   label: string
   command: string
+  [key: string]: any
 }
 export class ContextMenu {
   mouseX: number = 0
@@ -44,7 +45,8 @@ export class ContextMenu {
         this.canvas.zoomOut(new Vector2d(this.mouseX, this.mouseY))
         break
       default:
-        this.canvas.eventEmitter.emit('canvas:menu', command)
+        const menu = this.menu.find(item => item.command === command)
+        this.canvas.eventEmitter.emit('canvas:menu', menu)
     }
     this.hide()
   }

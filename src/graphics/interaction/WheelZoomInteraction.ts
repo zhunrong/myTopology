@@ -4,7 +4,7 @@ import { Vector2d } from '../utils/vector2d'
 /**
  * 滚轮缩放
  */
-class WheelZoomInteraction extends Interaction {
+export class WheelZoomInteraction extends Interaction {
   onWheel = (canvas: Canvas, e: Event) => {
     const { deltaY, clientX, clientY } = e as WheelEvent
     if (deltaY > 0) {

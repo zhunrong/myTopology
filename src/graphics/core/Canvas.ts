@@ -1,5 +1,5 @@
 import { ContextMenu } from '../contextMenu/ContextMenu'
-import { globalEvent, EventEmitter } from '../events/eventEmitter'
+import { EventEmitter } from '../events/eventEmitter'
 import { Vector2d } from '../utils/vector2d'
 import { CanvasNode } from '../graph/CanvasNode'
 import { DomNode } from '../graph/DomNode'
@@ -8,7 +8,8 @@ import { throttle } from '../utils/utils'
 import ResizeObserver from 'resize-observer-polyfill'
 import Node from '../graph/Node'
 import VirtualNode from '../graph/VirtualNode'
-import modes, { MODE_DEFAULT } from '../mode/modes'
+import Interaction from '../interaction/Interaction'
+import modeManager, { MODE_DEFAULT } from '../mode/modes'
 import style from './canvas.less'
 import config from '../config/config'
 export interface ICanvasOptions {
@@ -19,12 +20,20 @@ export interface ICanvasOptions {
   mode?: string
 }
 export class Canvas {
+  /**
+   * 注册模式
+   * @param modeName 
+   * @param interactions 
+   */
+  static registerMode(modeName: string, interactions: Interaction[]) {
+    modeManager.registerMode(modeName, interactions)
+  }
   static config = config
   private mounted: boolean = false
   private _running: boolean = false
   private _animationFrameId: number = 0
   protected name: string = 'application'
-  public eventEmitter: EventEmitter = globalEvent
+  public eventEmitter: EventEmitter = new EventEmitter()
   public nativeEvent: Event | null = null
   public optimize: boolean = true
   // 交互模式
@@ -370,18 +379,18 @@ export class Canvas {
    * @param mode 
    */
   setMode(mode: string) {
-    if (!modes[mode]) {
+    if (!modeManager.hasMode(mode)) {
       console.log(`该模式不存在:${mode}`)
       return
     }
-    let interactions = modes[this.interactionMode]
+    let interactions = modeManager.use(this.interactionMode)
     if (interactions) {
       interactions.forEach(action => {
         action.onUninstall(this)
       })
     }
     this.interactionMode = mode
-    interactions = modes[mode]
+    interactions = modeManager.use(this.interactionMode)
     if (interactions) {
       interactions.forEach(action => {
         action.onInstall(this)
@@ -394,7 +403,7 @@ export class Canvas {
    */
   private handleClick = (e: MouseEvent) => {
     this.nativeEvent = e
-    const interactions = modes[this.interactionMode]
+    const interactions = modeManager.use(this.interactionMode)
     if (interactions) {
       interactions.forEach(action => {
         action.onClick(this, e)
@@ -408,7 +417,7 @@ export class Canvas {
    */
   private handleDblClick = (e: MouseEvent) => {
     this.nativeEvent = e
-    const interactions = modes[this.interactionMode]
+    const interactions = modeManager.use(this.interactionMode)
     if (interactions) {
       interactions.forEach(action => {
         action.onDblClick(this, e)
@@ -421,7 +430,7 @@ export class Canvas {
    * 滚轮事件
    */
   private handleWheel = (e: Event) => {
-    const interactions = modes[this.interactionMode]
+    const interactions = modeManager.use(this.interactionMode)
     if (interactions) {
       interactions.forEach(action => {
         action.onWheel(this, e)
@@ -436,7 +445,7 @@ export class Canvas {
   private handleMouseDown = (e: MouseEvent) => {
     this.nativeEvent = e
     this.mousedownPosition = new Vector2d(e.clientX, e.clientY)
-    const interactions = modes[this.interactionMode]
+    const interactions = modeManager.use(this.interactionMode)
     if (interactions) {
       interactions.forEach(action => {
         action.onMouseDown(this, e)
@@ -452,7 +461,7 @@ export class Canvas {
     this.nativeEvent = e
     this.mousemovePosition = new Vector2d(e.clientX, e.clientY)
 
-    const interactions = modes[this.interactionMode]
+    const interactions = modeManager.use(this.interactionMode)
     if (interactions) {
       interactions.forEach(action => {
         action.onMouseMove(this, e)
@@ -468,7 +477,7 @@ export class Canvas {
   private handleMouseUp = (e: MouseEvent) => {
     this.nativeEvent = e
     this.mouseupPosition = new Vector2d(e.clientX, e.clientY)
-    const interactions = modes[this.interactionMode]
+    const interactions = modeManager.use(this.interactionMode)
     if (interactions) {
       interactions.forEach(action => {
         action.onMouseUp(this, e)
@@ -481,7 +490,7 @@ export class Canvas {
    * 拖拽over事件
    */
   private handleDragOver = (e: DragEvent) => {
-    const interactions = modes[this.interactionMode]
+    const interactions = modeManager.use(this.interactionMode)
     if (interactions) {
       interactions.forEach(action => {
         action.onDragOver(this, e)
@@ -493,7 +502,7 @@ export class Canvas {
    * 拖拽释放事件
    */
   private handleDrop = (e: DragEvent) => {
-    const interactions = modes[this.interactionMode]
+    const interactions = modeManager.use(this.interactionMode)
     if (interactions) {
       interactions.forEach(action => {
         action.onDrop(this, e)
@@ -503,7 +512,7 @@ export class Canvas {
 
   private handleContextMenu = (e: MouseEvent) => {
     e.preventDefault()
-    const interactions = modes[this.interactionMode]
+    const interactions = modeManager.use(this.interactionMode)
     if (interactions) {
       interactions.forEach(action => {
         action.onContextMenu(this, e)
@@ -580,7 +589,7 @@ export class Canvas {
         this.renderNodes()
         this.graphCanvasCtx.restore()
         // 交互onUpdate钩子
-        const interactions = modes[this.interactionMode]
+        const interactions = modeManager.use(this.interactionMode)
         if (interactions) {
           interactions.forEach(action => {
             action.onUpdate(this)

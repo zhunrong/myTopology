@@ -1,6 +1,7 @@
 import Interaction from './Interaction'
 import { Canvas } from '../core/Canvas'
-class MenuInteraction extends Interaction {
+
+export class MenuInteraction extends Interaction {
   onContextMenu = (canvas: Canvas, e: Event) => {
     const event = e as MouseEvent
     canvas.contextMenu.hide()

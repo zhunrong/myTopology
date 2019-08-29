@@ -161,6 +161,10 @@ export abstract class Node extends Graph {
    */
   addChildAt(child: Node, index: number) {
     if (index >= 0 && index <= this.children.length) {
+      if (child.parent) {
+        child.parent.removeChild(child, false)
+      }
+
       child.parent = this
       this.children.splice(index, 0, child)
       if (this.canvas) {

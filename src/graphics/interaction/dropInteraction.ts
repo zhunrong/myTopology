@@ -4,7 +4,7 @@ import { Vector2d } from '../utils/vector2d'
 /**
  * drop
  */
-class DropInteraction extends Interaction {
+export class DropInteraction extends Interaction {
   onDrop = (canvas: Canvas, e: Event) => {
     const event = e as DragEvent
     canvas.eventEmitter.emit('canvas:drop', {

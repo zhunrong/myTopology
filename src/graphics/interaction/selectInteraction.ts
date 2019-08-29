@@ -3,7 +3,10 @@ import Node from '../graph/Node'
 import { Canvas } from '../core/Canvas'
 import { Edge } from '../graph/Edge'
 
-class SelectInteraction extends Interaction {
+/**
+ * 选中图元
+ */
+export class SelectInteraction extends Interaction {
   onMouseDown = (canvas: Canvas) => {
     let activeNode: Node | undefined
     let activeEdge: Edge | undefined

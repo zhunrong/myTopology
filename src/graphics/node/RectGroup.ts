@@ -25,9 +25,18 @@ export class RectGroup extends RectCanvasNode {
     if (!this.canvas) return
     const { graphCanvasCtx } = this.canvas
     const { x, y } = this.getPosition()
+    const center = this.centerPoint
 
     graphCanvasCtx.beginPath()
     graphCanvasCtx.rect(x, y, this.width, this.height)
+
+    if (!this.isExpanded) {
+      graphCanvasCtx.moveTo(center.x, center.y - 10)
+      graphCanvasCtx.lineTo(center.x, center.y + 10)
+      graphCanvasCtx.moveTo(center.x - 10, center.y)
+      graphCanvasCtx.lineTo(center.x + 10, center.y)
+    }
+
     // graphCanvasCtx.drawImage(this.cacheCanvas, x - 2, y - 2)
     graphCanvasCtx.save()
     if (this.active) {
