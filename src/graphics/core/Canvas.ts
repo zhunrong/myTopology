@@ -155,6 +155,7 @@ export class Canvas {
     document.removeEventListener('mouseup', this.handleMouseUp)
     this.ro.unobserve(this.container)
     this.ro.disconnect()
+    this.eventEmitter.clear()
     this.unmount()
     this.removeAllNode()
   }
@@ -167,7 +168,6 @@ export class Canvas {
     if (this.rootNode.hasChild(node)) return
     node.visible = node.isInRect(this.canvasVisibleRect)
     this.rootNode.addChild(node)
-    // node.render()
     this.repaint = true
   }
 

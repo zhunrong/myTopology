@@ -28,14 +28,6 @@ export const MODE_BORDER = 'mode.border'
 interface IMode {
   [name: string]: Interaction[]
 }
-export const modes: IMode = {
-  [MODE_DEFAULT]: [selectInteraction, dragInteraction, dropInteraction, wheelZoomInteraction, menuInteraction, collapseAndExpandInteraction],
-  [MODE_VIEW]: [moveCanvasInteraction, wheelZoomInteraction],
-  [MODE_CREATE_EDGE]: [selectInteraction, wheelZoomInteraction, createEdgeInteraction, moveCanvasInteraction],
-  [MODE_CREATE_L]: [selectInteraction, wheelZoomInteraction, createLInteraction, moveCanvasInteraction],
-  [MODE_AREA_PICK]: [wheelZoomInteraction, areaPickInteraction, createGroupInteraction],
-  [MODE_BORDER]: [resizeInteraction, wheelZoomInteraction]
-}
 
 /**
  * 模式管理器

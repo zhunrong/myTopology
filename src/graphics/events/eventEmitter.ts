@@ -38,6 +38,15 @@ export class EventEmitter {
       })
     }
   }
+
+  /**
+   * 清除所有事件
+   */
+  clear() {
+    Object.keys(this.events).forEach(key => {
+      delete this.events[key]
+    })
+  }
 }
 
 export default EventEmitter
