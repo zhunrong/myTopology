@@ -102,7 +102,7 @@ export class Canvas {
         this.viewHeight = height
         this.canvasWidth = width / this.canvasScale
         this.canvasHeight = height / this.canvasScale
-        this.containerClientRect = this.container.getBoundingClientRect()
+        this.getBoundingClientRect()
       }
       this.mount()
       this.render()
@@ -111,7 +111,6 @@ export class Canvas {
     })
     this.ro.observe(this.container)
     this.nativeEventInit()
-    this.globalEventInit()
     this.setMode(options.mode || MODE_DEFAULT)
   }
 
@@ -136,21 +135,23 @@ export class Canvas {
     this.wrapper.addEventListener('dragover', this.handleDragOver)
     this.wrapper.addEventListener('drop', this.handleDrop)
     this.wrapper.addEventListener('contextmenu', this.handleContextMenu)
+    this.wrapper.addEventListener('mouseenter', this.handleMouseEnter)
     document.addEventListener('mousemove', this.handleMouseMove)
     document.addEventListener('mouseup', this.handleMouseUp)
   }
-  // 全局事件监听
-  private globalEventInit() { }
 
   /**
    * 销毁
    */
   public destroy() {
     this.wrapper.removeEventListener('click', this.handleClick)
+    this.wrapper.removeEventListener('dblclick', this.handleDblClick)
     this.wrapper.removeEventListener('mousedown', this.handleMouseDown)
     this.wrapper.removeEventListener('wheel', this.handleWheel)
     this.wrapper.removeEventListener('dragover', this.handleDragOver)
     this.wrapper.removeEventListener('drop', this.handleDrop)
+    this.wrapper.removeEventListener('contextmenu', this.handleContextMenu)
+    this.wrapper.removeEventListener('mouseenter', this.handleMouseEnter)
     document.removeEventListener('mousemove', this.handleMouseMove)
     document.removeEventListener('mouseup', this.handleMouseUp)
     this.ro.unobserve(this.container)
@@ -263,14 +264,19 @@ export class Canvas {
   }
 
   /**
+   * 获取画布容器边界盒
+   */
+  getBoundingClientRect() {
+    this.containerClientRect = this.container.getBoundingClientRect()
+    return this.containerClientRect
+  }
+
+  /**
    * 将视口坐标转换成画布坐标。注：不考虑缩放
    * @param coordinate 鼠标位于视口的坐标
    */
   viewportToCanvasCoordinate(coordinate: Vector2d) {
-    if (!this.containerClientRect) {
-      this.containerClientRect = this.container.getBoundingClientRect()
-    }
-    const { top, left } = this.containerClientRect
+    const { top, left } = this.containerClientRect || this.getBoundingClientRect()
     return coordinate.clone().substract(new Vector2d(left, top))
   }
 
@@ -279,10 +285,7 @@ export class Canvas {
    * @param coordinate 
    */
   canvasToViewportCoordinate(coordinate: Vector2d) {
-    if (!this.containerClientRect) {
-      this.containerClientRect = this.container.getBoundingClientRect()
-    }
-    const { top, left } = this.containerClientRect
+    const { top, left } = this.containerClientRect || this.getBoundingClientRect()
     return coordinate.clone().add(new Vector2d(left, top))
   }
 
@@ -399,6 +402,13 @@ export class Canvas {
   }
 
   /**
+   * mouseenter
+   */
+  private handleMouseEnter = (e: MouseEvent) => {
+    this.getBoundingClientRect()
+  }
+
+  /**
    * 点击事件
    */
   private handleClick = (e: MouseEvent) => {
@@ -445,6 +455,7 @@ export class Canvas {
   private handleMouseDown = (e: MouseEvent) => {
     this.nativeEvent = e
     this.mousedownPosition = new Vector2d(e.clientX, e.clientY)
+    this.getBoundingClientRect()
     const interactions = modeManager.use(this.interactionMode)
     if (interactions) {
       interactions.forEach(action => {
@@ -502,6 +513,7 @@ export class Canvas {
    * 拖拽释放事件
    */
   private handleDrop = (e: DragEvent) => {
+    this.getBoundingClientRect()
     const interactions = modeManager.use(this.interactionMode)
     if (interactions) {
       interactions.forEach(action => {
