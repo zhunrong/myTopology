@@ -59,9 +59,9 @@ export class CreateGroupInteraction extends Interaction {
         }
       })
       // 将节点从原来的父节点中删除
-      if (node.parent) {
-        node.parent.removeChild(node, false)
-      }
+      // if (node.parent) {
+      //   node.parent.removeChild(node, false)
+      // }
       group.addChild(node)
     })
     group.width = xMax - xMin + 40

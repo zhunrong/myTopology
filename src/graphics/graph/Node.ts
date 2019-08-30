@@ -231,6 +231,13 @@ export abstract class Node extends Graph {
   }
 
   /**
+   * 判断是否有激活的祖先节点
+   */
+  hasActiveAncestor(): boolean {
+    return !!this.parent && (this.parent.active || this.parent.hasActiveAncestor())
+  }
+
+  /**
    * 根据id获取子节点
    * @param id 
    */

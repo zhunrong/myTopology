@@ -23,10 +23,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    color: #666;
     cursor: grab;
 
     &:hover {
       background: #ccc;
+    }
+
+    &.circle {
+      border-radius: 50%;
     }
 
     img {

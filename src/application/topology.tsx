@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { MODE_DEFAULT, MODE_VIEW, MODE_CREATE_EDGE, MODE_AREA_PICK, MODE_CREATE_L, MODE_BORDER } from '../graphics'
-import { Canvas, CircleCanvasNode, RectCanvasNode, RectDomNode, Line as Edge, RectGroup } from '../graphics'
+import { Canvas, CircleCanvasNode, RectCanvasNode, RectDomNode, Line as Edge, RectGroup, CircleGroup } from '../graphics'
 import CustomNode from '../components/node/Node'
 import NodePanel from '../components/nodePanel/nodePanel'
 import { nodeDatas, edgeDatas } from '../data/topoData'
@@ -94,6 +94,23 @@ export default class Topology extends Component<IProps, IState> {
               id: Math.random() * 10000,
               text: type,
               deviceType: type
+            })
+            break
+          case 'rect group':
+            node = new RectGroup({
+              width: 100,
+              height: 100,
+              x: coordinate.x - 50,
+              y: coordinate.y - 50,
+              id: Math.random() * 10000
+            })
+            break
+          case 'circle group':
+            node = new CircleGroup({
+              radius: 50,
+              x: coordinate.x - 50,
+              y: coordinate.y - 50,
+              id: Math.random() * 10000
             })
             break
           default:

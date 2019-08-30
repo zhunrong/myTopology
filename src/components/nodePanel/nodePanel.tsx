@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import style from './nodePanel.less'
+import style from './nodePanel.scss'
 
 interface IState {
   nodeTypes: any[]
@@ -32,6 +32,16 @@ class NodePanel extends Component<{}, IState> {
       {
         type: '交换机2',
         img: require('../../assets/device/交换机2.png')
+      },
+      {
+        type: 'rect group',
+        isGroup: true,
+        isCircle: false
+      },
+      {
+        type: 'circle group',
+        isGroup: true,
+        isCircle: true
       }
     ]
   }
@@ -54,8 +64,9 @@ class NodePanel extends Component<{}, IState> {
         {
           nodeTypes.map((item, index) => {
             return (
-              <div className="node" draggable={true} title={item.type} key={index} onDragStart={e => this.handleDragStart(e, item.type)}>
-                <img draggable={false} src={item.img} />
+              <div className={`node ${item.isCircle ? 'circle' : ''}`} draggable={true} title={item.type} key={index} onDragStart={e => this.handleDragStart(e, item.type)}>
+                {item.img && <img draggable={false} src={item.img} />}
+                {item.isGroup && 'G'}
               </div>
             )
           })
