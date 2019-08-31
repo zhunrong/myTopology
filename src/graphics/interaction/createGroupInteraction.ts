@@ -1,22 +1,34 @@
 import Interaction from './Interaction'
 import Canvas from '../core/Canvas'
 import RectGroup from '../node/RectGroup'
+import Node from '../graph/Node'
 
 /**
  * 创建组
  */
 export class CreateGroupInteraction extends Interaction {
   canvas!: Canvas
+  // 父节点
+  parentNode: Node | undefined
   onContextMenu = (canvas: Canvas, e: Event) => {
     const event = e as MouseEvent
     const activeNodes = canvas.getActiveNodes()
     canvas.contextMenu.hide()
     if (activeNodes.length) {
-      canvas.contextMenu.menu = [{
-        label: '添加到组',
-        command: 'addToGroup'
-      }]
-      canvas.contextMenu.show(event.clientX, event.clientY)
+      this.parentNode = undefined
+      const index = activeNodes.findIndex(node => {
+        if (!node.parent) return false
+        if (this.parentNode && this.parentNode !== node.parent) return true
+        this.parentNode = node.parent
+        return false
+      })
+      if (index === -1) {
+        canvas.contextMenu.menu = [{
+          label: '添加到组',
+          command: 'addToGroup'
+        }]
+        canvas.contextMenu.show(event.clientX, event.clientY)
+      }
     }
   }
   onInstall = (canvas: Canvas) => {
@@ -29,12 +41,13 @@ export class CreateGroupInteraction extends Interaction {
   //
   onAddToGroup = (menu: any) => {
     if (menu.command !== 'addToGroup') return
-    const activeNodes = this.canvas.rootNode.children.filter(node => node.active)
+    // const activeNodes = this.canvas.rootNode.children.filter(node => node.active)
+    const activeNodes = this.canvas.getActiveNodes()
     if (!activeNodes.length) return
     const group = new RectGroup({
       width: 200,
       height: 200,
-      id: 'group',
+      id: Math.random(),
       x: 0,
       y: 0
     })
@@ -58,17 +71,19 @@ export class CreateGroupInteraction extends Interaction {
           yMax = point.y
         }
       })
-      // 将节点从原来的父节点中删除
-      // if (node.parent) {
-      //   node.parent.removeChild(node, false)
-      // }
       group.addChild(node)
     })
     group.width = xMax - xMin + 40
     group.height = yMax - yMin + 40
     group.position.x = xMin - 20
     group.position.y = yMin - 20
-    this.canvas.addNode(group)
+    console.log(this.parentNode)
+    if (this.parentNode) {
+      this.parentNode.addChild(group)
+      this.canvas.repaint = true
+    } else {
+      this.canvas.addNode(group)
+    }
   }
 }
 

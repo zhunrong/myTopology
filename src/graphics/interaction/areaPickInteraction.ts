@@ -32,14 +32,14 @@ export class AreaPickInteraction extends Interaction {
     this.lastCoordinate.copy(canvas.mousedownPosition)
     const activeNodes = canvas.getActiveNodes()
 
-    if /* 选中已激活元素 */ (activeNodes.length && activeNodes.find(node => node.isPointIn())) {
+    if /* 选中已激活元素 */ (activeNodes.length && activeNodes.find(node => node.visible && node.isPointIn())) {
       this.dragMove = true
       this.activeNodes = activeNodes
     } else {
       this.activeNodes = []
       canvas.rootNode.getDescendantDF(node => {
         node.isUpdate = true
-        if (!this.activeNodes.length && node.isPointIn()) {
+        if (!this.activeNodes.length && node.visible && node.isPointIn()) {
           this.activeNodes.push(node)
           this.dragMove = true
           node.active = true

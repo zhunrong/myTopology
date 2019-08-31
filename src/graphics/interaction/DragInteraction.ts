@@ -43,7 +43,11 @@ export class DragInteraction extends Interaction {
       const activeNode = this.moveNodes[0]
       let wrap = false
       canvas.rootNode.getDescendantDF(node => {
-        if (node !== activeNode && node.isGroup && activeNode.isWrappedInRect(node.boundingRect)) {
+        if (!node.visible) return
+        if (node === activeNode) return
+        if (!node.isGroup) return
+        if (activeNode.hasDescendant(node)) return
+        if (activeNode.isWrappedInRect(node.boundingRect)) {
           node.addChild(activeNode)
           return wrap = true
         }

@@ -1,7 +1,5 @@
 import CanvasNode, { ICanvasNodeOptions } from '../graph/CanvasNode'
-import RectShape from '../shape/RectShape'
 import Vector2d from '../utils/vector2d'
-import { applyMixins } from '../utils/utils'
 import Math2d from '../utils/math2d'
 
 export interface IRectCanvasNodeOptions extends ICanvasNodeOptions {
@@ -14,26 +12,8 @@ export interface IRectCanvasNodeOptions extends ICanvasNodeOptions {
 export class RectCanvasNode extends CanvasNode {
   shapeType = 'rect'
 
-  _width: number
-  /**
-   * 计算宽度
-   */
-  get width(): number {
-    return this.isExpanded ? this._width : this.collapseWidth
-  }
-  set width(width: number) {
-    this._width = width
-  }
-  _height: number
-  /**
-   * 计算高度
-   */
-  get height(): number {
-    return this.isExpanded ? this._height : this.collapseHeight
-  }
-  set height(height: number) {
-    this._height = height
-  }
+  width: number
+  height: number
 
   minWidth: number
   minHeight: number
@@ -44,8 +24,8 @@ export class RectCanvasNode extends CanvasNode {
   text: string
   constructor(options: IRectCanvasNodeOptions) {
     super(options)
-    this._width = options.width || 100
-    this._height = options.height || 100
+    this.width = options.width || 100
+    this.height = options.height || 100
     this.minWidth = options.minWidth || 30
     this.minHeight = options.minHeight || 30
     this.text = options.text || ''
@@ -63,13 +43,27 @@ export class RectCanvasNode extends CanvasNode {
     return this.getCenterPoint()
   }
 
+  /**
+   * 获取实际位置
+   */
   getPosition(): Vector2d {
     if /* 展开状态 */ (this.isExpanded) {
       return this.position
     } /* 折叠状态 */ else {
       const { x, y } = this.position
-      return new Vector2d(x + (this._width - this.collapseWidth) / 2, y + (this._height - this.collapseHeight) / 2)
+      return new Vector2d(x + (this.width - this.collapseWidth) / 2, y + (this.height - this.collapseHeight) / 2)
     }
+  }
+
+  /**
+   * 获取实际宽度
+   */
+  getWidth(): number {
+    return this.isExpanded ? this.width : this.collapseWidth
+  }
+
+  getHeight(): number {
+    return this.isExpanded ? this.height : this.collapseHeight
   }
 
   isPointIn() {
@@ -78,17 +72,18 @@ export class RectCanvasNode extends CanvasNode {
     if (!canvas.nativeEvent) return false
     const event = canvas.nativeEvent as MouseEvent
     const point = canvas.viewportToPixelCoordinate(new Vector2d(event.clientX, event.clientY))
-    return Math2d.isPointInRect(point, this.getPosition(), this.width, this.height)
+    return Math2d.isPointInRect(point, this.getPosition(), this.getWidth(), this.getHeight())
   }
   get joinPoint(): Vector2d {
     const { x, y } = this.getPosition()
-    return new Vector2d(x + this.width / 2, y + this.height / 2)
+    return new Vector2d(x + this.getWidth() / 2, y + this.getHeight() / 2)
   }
   /**
    * 边界矩形坐标数组
    */
   getBoundingRect(): Vector2d[] {
-    const { width, height } = this
+    const width = this.getWidth()
+    const height = this.getHeight()
     const { x, y } = this.getPosition()
     return [
       new Vector2d(x, y),
@@ -101,7 +96,8 @@ export class RectCanvasNode extends CanvasNode {
    * 边界矩形上的连接点坐标数组
    */
   getBoundingJoinPoints(): Vector2d[] {
-    const { width, height } = this
+    const width = this.getWidth()
+    const height = this.getHeight()
     const { x, y } = this.getPosition()
     return [
       new Vector2d(x + width / 2, y),
@@ -114,7 +110,8 @@ export class RectCanvasNode extends CanvasNode {
    * 几何中点坐标
    */
   getCenterPoint(): Vector2d {
-    const { width, height } = this
+    const width = this.getWidth()
+    const height = this.getHeight()
     const { x, y } = this.getPosition()
     return new Vector2d(x + width / 2, y + height / 2)
   }
@@ -147,11 +144,13 @@ export class RectCanvasNode extends CanvasNode {
 
   render() {
     if (!this.canvas) return
+    const width = this.getWidth()
+    const height = this.getHeight()
     const ctx = this.cacheCanvas.getContext('2d') as CanvasRenderingContext2D
-    this.cacheCanvas.width = this.width + 4
-    this.cacheCanvas.height = this.height + 4
+    this.cacheCanvas.width = width + 4
+    this.cacheCanvas.height = height + 4
 
-    ctx.rect(2, 2, this.width, this.height)
+    ctx.rect(2, 2, width, height)
     ctx.strokeStyle = '#29c1f8'
     ctx.fillStyle = '#fff'
     ctx.lineWidth = 1
@@ -161,7 +160,7 @@ export class RectCanvasNode extends CanvasNode {
     ctx.textAlign = 'center'
     ctx.font = "14px serif"
     ctx.fillStyle = '#29c1f8'
-    ctx.fillText(this.text, this.width / 2 + 2, this.height / 2 + 2)
+    ctx.fillText(this.text, width / 2 + 2, height / 2 + 2)
 
     this.canvas.repaint = true
   }

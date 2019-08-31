@@ -184,7 +184,7 @@ export class Vector2d {
 
 // 用于copy向量(优化)
 let copyIndex = 0
-let copyCount = 200
+let copyCount = 1000
 const copys: Vector2d[] = []
 while (copyCount--) {
   copys.push(new Vector2d())

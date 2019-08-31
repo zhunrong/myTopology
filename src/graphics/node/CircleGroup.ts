@@ -1,4 +1,8 @@
-import CircleCanvasNode from './CircleCanvasNode'
+import CircleCanvasNode, { ICircleCanvasNodeOptions } from './CircleCanvasNode'
+
+interface IGroupOptions extends ICircleCanvasNodeOptions {
+  isExpanded?: boolean
+}
 
 /**
  * 圆形组
@@ -6,6 +10,13 @@ import CircleCanvasNode from './CircleCanvasNode'
 export class CircleGroup extends CircleCanvasNode {
   isGroup = true
   canResize = true
+
+  constructor(options: IGroupOptions) {
+    super(options)
+    if (typeof options.isExpanded === 'boolean') {
+      this.isExpanded = options.isExpanded
+    }
+  }
 
   render() { }
 

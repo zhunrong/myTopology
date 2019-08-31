@@ -1,7 +1,9 @@
 import { RectCanvasNode, IRectCanvasNodeOptions } from './RectCanvasNode'
 import Vector2d from '../utils/vector2d';
 
-export interface IGroupOptions extends IRectCanvasNodeOptions { }
+export interface IGroupOptions extends IRectCanvasNodeOptions {
+  isExpanded?: boolean
+}
 
 /**
  * 矩形组
@@ -12,23 +14,25 @@ export class RectGroup extends RectCanvasNode {
   // 默认可调接尺寸
   canResize = true
 
-  render() {
-    // const ctx = this.cacheCanvas.getContext('2d') as CanvasRenderingContext2D
-    // this.cacheCanvas.width = this.width + 4
-    // this.cacheCanvas.height = this.height + 4
-    // ctx.rect(2, 2, this.width, this.height)
-    // ctx.strokeStyle = '#066df2'
-    // ctx.stroke()
+  constructor(options: IGroupOptions) {
+    super(options)
+    if (typeof options.isExpanded === 'boolean') {
+      this.isExpanded = options.isExpanded
+    }
   }
+
+  render() {}
 
   update() {
     if (!this.canvas) return
     const { graphCanvasCtx } = this.canvas
+    const width = this.getWidth()
+    const height = this.getHeight()
     const { x, y } = this.getPosition()
     const center = this.centerPoint
 
     graphCanvasCtx.beginPath()
-    graphCanvasCtx.rect(x, y, this.width, this.height)
+    graphCanvasCtx.rect(x, y, width, height)
 
     if (!this.isExpanded) {
       graphCanvasCtx.moveTo(center.x, center.y - 10)

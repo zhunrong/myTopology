@@ -141,7 +141,9 @@ export abstract class Node extends Graph {
    * @param child 
    */
   addChild(child: Node) {
-    if (this.hasChild(child)) return undefined
+    // fix: 禁止将祖先节点添加为子节点，否则会造成引用死循环
+    if (child.hasDescendant(this)) return
+    if (this.hasChild(child)) return
     let index = this.children.length - 1
     let current = this.children[index]
     while (current) {

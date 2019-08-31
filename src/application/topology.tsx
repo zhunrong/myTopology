@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { MODE_DEFAULT, MODE_VIEW, MODE_CREATE_EDGE, MODE_AREA_PICK, MODE_CREATE_L, MODE_BORDER } from '../graphics'
-import { Canvas, CircleCanvasNode, RectCanvasNode, RectDomNode, Line as Edge, RectGroup, CircleGroup } from '../graphics'
+import { Canvas, CircleCanvasNode, RectCanvasNode, RectDomNode, Line as Edge, RectGroup, CircleGroup, L } from '../graphics'
 import CustomNode from '../components/node/Node'
 import NodePanel from '../components/nodePanel/nodePanel'
 import { nodeDatas, edgeDatas } from '../data/topoData'
@@ -33,46 +33,84 @@ export default class Topology extends Component<IProps, IState> {
         scale: 1
       })
       this.canvas.eventEmitter.on('canvas:mounted', () => {
-        this.nodes = this.nodeDatas.map((item: any) => {
-          return item.isGroup ? new RectGroup({
-            width: item.width,
-            height: item.height,
-            id: item.id,
-            x: item.x,
-            y: item.y,
-            data: item
-          }) : new CustomNode({
-            x: item.x,
-            y: item.y,
-            id: item.id,
-            text: item.text,
-            zIndex: item.zIndex,
-            data: item
-          })
+        this.canvas.removeAllNode()
+        const topoData = JSON.parse(localStorage.getItem('topoData') || JSON.stringify({ nodes: [], edges: [], zoom: 1 }))
+        this.canvas.setZoom(topoData.zoom || 1)
+        this.nodes = topoData.nodes.map((item: any) => {
+          switch (item.nodeType) {
+            case 'rectGroup':
+              return new RectGroup({
+                width: item.width,
+                height: item.height,
+                id: item.id,
+                x: item.x,
+                y: item.y,
+                data: item,
+                isExpanded: item.isExpanded
+              })
+            case 'circleGroup':
+              return new CircleGroup({
+                radius: item.radius,
+                id: item.id,
+                x: item.x,
+                y: item.y,
+                data: item,
+                isExpanded: item.isExpanded
+              })
+            case 'customNode':
+              return new CustomNode({
+                width: item.width,
+                height: item.height,
+                id: item.id,
+                x: item.x,
+                y: item.y,
+                text: item.text,
+                deviceType: item.deviceType,
+                data: item
+              })
+            default:
+              return new RectGroup({
+                id: 'error',
+                x: 0,
+                y: 0
+              })
+          }
         })
         this.nodes.forEach(node => {
           const parentId = node.data.parentId
-          if (parentId) {
+          if (parentId === 'rootNode') {
+            this.canvas.addNode(node)
+          } else {
             const parent = this.nodes.find(item => item.id === parentId)
             if (parent) {
               parent.addChild(node)
             }
-          } else {
-            this.canvas.addNode(node)
           }
         })
-        this.edgeDatas.forEach((item: any) => {
+        topoData.edges.forEach((item: any) => {
           const { targetId, sourceId, text } = item
           const sourceNode = this.nodes.find(node => node.id === sourceId)
           const targetNode = this.nodes.find(node => node.id === targetId)
           if (sourceNode && targetNode) {
-            const edge = new Edge({
-              sourceNode,
-              targetNode,
-              arrow: true,
-              text
-            })
-            this.canvas.addEdge(edge)
+            if (item.type === 'line') {
+              const edge = new Edge({
+                sourceNode,
+                targetNode,
+                dash: item.dash,
+                arrow: item.arrow,
+                text: item.text
+              })
+              this.canvas.addEdge(edge)
+            } else {
+              const edge = new L({
+                sourceNode,
+                targetNode,
+                dash: item.dash,
+                arrow: item.arrow,
+                text: item.text
+              })
+              this.canvas.addEdge(edge)
+            }
           }
         })
       })
@@ -91,7 +129,7 @@ export default class Topology extends Component<IProps, IState> {
             node = new CustomNode({
               x: coordinate.x - 40,
               y: coordinate.y - 40,
-              id: Math.random() * 10000,
+              id: Math.random(),
               text: type,
               deviceType: type
             })
@@ -102,7 +140,7 @@ export default class Topology extends Component<IProps, IState> {
               height: 100,
               x: coordinate.x - 50,
               y: coordinate.y - 50,
-              id: Math.random() * 10000
+              id: Math.random()
             })
             break
           case 'circle group':
@@ -110,12 +148,12 @@ export default class Topology extends Component<IProps, IState> {
               radius: 50,
               x: coordinate.x - 50,
               y: coordinate.y - 50,
-              id: Math.random() * 10000
+              id: Math.random()
             })
             break
           default:
             node = new CircleCanvasNode({
-              id: Math.random() * 10000,
+              id: Math.random(),
               text: 'new Circle',
               x: coordinate.x - 40,
               y: coordinate.y - 40,
@@ -195,18 +233,95 @@ export default class Topology extends Component<IProps, IState> {
       this.canvas.setMode(type)
     }
   }
+
+  saveData = () => {
+    const nodes: any[] = []
+    const edges: any[] = []
+    const sign = Math.random()
+    this.canvas.rootNode.getDescendantBF(node => {
+      const { x, y } = node.position
+      const parentId = node.parent ? node.parent.id : null
+      if (node instanceof RectGroup) {
+        nodes.push({
+          x,
+          y,
+          id: node.id,
+          parentId,
+          width: node.width,
+          height: node.height,
+          isExpanded: node.isExpanded,
+          nodeType: 'rectGroup'
+        })
+      } else if (node instanceof CircleGroup) {
+        nodes.push({
+          x,
+          y,
+          radius: node.radius,
+          id: node.id,
+          parentId,
+          isExpanded: node.isExpanded,
+          nodeType: 'circleGroup'
+        })
+      } else if (node instanceof CustomNode) {
+        nodes.push({
+          x,
+          y,
+          width: node.width,
+          height: node.height,
+          nodeType: 'customNode',
+          text: node.text,
+          id: node.id,
+          parentId,
+          deviceType: node.deviceType
+        })
+      }
+
+
+      node.edges.forEach(edge => {
+        if (edge.renderSign === sign) return
+        edge.renderSign = sign
+        if (edge instanceof Edge) {
+          edges.push({
+            sourceId: edge.sourceNode.id,
+            targetId: edge.targetNode.id,
+            dash: edge.dash,
+            arrow: edge.arrow,
+            text: edge.text,
+            type: 'line'
+          })
+        } else if (edge instanceof L) {
+          edges.push({
+            sourceId: edge.sourceNode.id,
+            targetId: edge.targetNode.id,
+            dash: edge.dash,
+            arrow: edge.arrow,
+            text: edge.text,
+            type: 'L'
+          })
+        }
+      })
+    })
+
+    localStorage.setItem('topoData', JSON.stringify({
+      nodes,
+      edges,
+      zoom: this.canvas.canvasScale
+    }))
+  }
+
   render() {
     return (
       <div className="topology">
-        <div className="topo-bar">
-          <img draggable={false} onClick={this.modeChange.bind(this, MODE_DEFAULT)} className={`${this.state.mode === MODE_DEFAULT ? 'active' : ''}`} src={require('../assets/pointer.svg')} title="默认模式" />
-          <img draggable={false} onClick={this.modeChange.bind(this, MODE_VIEW)} className={`${this.state.mode === MODE_VIEW ? 'active' : ''}`} src={require('../assets/move.svg')} title="浏览模式" />
-          <img draggable={false} onClick={this.modeChange.bind(this, MODE_AREA_PICK)} className={`${this.state.mode === MODE_AREA_PICK ? 'active' : ''}`} src={require('../assets/area_pick.svg')} title="框选模式" />
-          <img draggable={false} onClick={this.modeChange.bind(this, MODE_BORDER)} className={`${this.state.mode === MODE_BORDER ? 'active' : ''}`} src={require('../assets/box_resize.svg')} title="边框模式" />
-          <img draggable={false} src={require('../assets/zoom_out.svg')} onClick={this.zoomOut} title="缩小" />
-          <img draggable={false} src={require('../assets/zoom_in.svg')} onClick={this.zoomIn} title="放大" />
-          <img draggable={false} onClick={this.modeChange.bind(this, MODE_CREATE_EDGE)} className={`${this.state.mode === MODE_CREATE_EDGE ? 'active' : ''}`} src={require('../assets/line_2.svg')} title="创建连线" />
-          <img draggable={false} onClick={this.modeChange.bind(this, MODE_CREATE_L)} className={`${this.state.mode === MODE_CREATE_L ? 'active' : ''}`} src={require('../assets/L_line.svg')} title="创建L连线" />
+        <div className="topo-bar" draggable={false}>
+          <img onClick={this.modeChange.bind(this, MODE_DEFAULT)} className={`${this.state.mode === MODE_DEFAULT ? 'active' : ''}`} src={require('../assets/pointer.svg')} title="默认模式" />
+          <img onClick={this.modeChange.bind(this, MODE_VIEW)} className={`${this.state.mode === MODE_VIEW ? 'active' : ''}`} src={require('../assets/move.svg')} title="浏览模式" />
+          <img onClick={this.modeChange.bind(this, MODE_AREA_PICK)} className={`${this.state.mode === MODE_AREA_PICK ? 'active' : ''}`} src={require('../assets/area_pick.svg')} title="框选模式" />
+          <img onClick={this.modeChange.bind(this, MODE_BORDER)} className={`${this.state.mode === MODE_BORDER ? 'active' : ''}`} src={require('../assets/box_resize.svg')} title="边框模式" />
+          <img src={require('../assets/zoom_out.svg')} onClick={this.zoomOut} title="缩小" />
+          <img src={require('../assets/zoom_in.svg')} onClick={this.zoomIn} title="放大" />
+          <img onClick={this.modeChange.bind(this, MODE_CREATE_EDGE)} className={`${this.state.mode === MODE_CREATE_EDGE ? 'active' : ''}`} src={require('../assets/line_2.svg')} title="创建连线" />
+          <img onClick={this.modeChange.bind(this, MODE_CREATE_L)} className={`${this.state.mode === MODE_CREATE_L ? 'active' : ''}`} src={require('../assets/L_line.svg')} title="创建L连线" />
+          <img src={require('../assets/save.svg')} onClick={this.saveData} title="保存" />
         </div>
         <NodePanel />
         <div ref={this.containerRef} className="topo-chart" />

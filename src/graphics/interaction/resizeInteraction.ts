@@ -134,8 +134,8 @@ export class ResizeInteraction extends Interaction {
  */
 function resizeRectNode(activeNode: RectCanvasNode, anchorIndex: number, coordinate: Vector2d): void {
   const nodeBoundingRect = activeNode.boundingRect
-  let currentWidth: number = activeNode.width
-  let currentHeight: number = activeNode.height
+  let currentWidth: number = activeNode.getWidth()
+  let currentHeight: number = activeNode.getHeight()
   switch (anchorIndex) {
     case 0: // 西北
       currentWidth = nodeBoundingRect[2].x - coordinate.x
