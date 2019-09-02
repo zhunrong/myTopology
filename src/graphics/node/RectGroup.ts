@@ -1,5 +1,4 @@
 import { RectCanvasNode, IRectCanvasNodeOptions } from './RectCanvasNode'
-import Vector2d from '../utils/vector2d';
 
 export interface IGroupOptions extends IRectCanvasNodeOptions {
   isExpanded?: boolean

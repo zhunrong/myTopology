@@ -109,6 +109,41 @@
       }
     }
 
+    let img
+    // 自定义一个分组
+    class MyGroup extends RectGroup {
+      async update() {
+        if (!this.canvas) return
+        const { graphCanvasCtx } = this.canvas
+        const width = this.getWidth()
+        const height = this.getHeight()
+        const { x, y } = this.getPosition()
+        const center = this.centerPoint
+
+        graphCanvasCtx.beginPath()
+        graphCanvasCtx.rect(x, y, width, height)
+
+        if /*折叠状态*/ (!this.isExpanded) {
+
+          // 绘制折叠状态的图标
+          if (!img) {
+            img = await imgLoad('./images/设备组.svg')
+            canvas.repaint = true
+          }
+          graphCanvasCtx.drawImage(img, center.x - 16, center.y - 16)
+        }
+
+        graphCanvasCtx.save()
+        if (this.active) {
+          graphCanvasCtx.shadowBlur = 5
+          graphCanvasCtx.shadowColor = 'rgba(255,0,0,0.8)'
+        }
+        graphCanvasCtx.strokeStyle = '#066df2'
+        graphCanvasCtx.stroke()
+        graphCanvasCtx.restore()
+      }
+    }
+
     // 监听画布 “挂载”事件, 确保挂载后才能 添加节点或连线
     canvas.eventEmitter.on('canvas:mounted', function () {
 
@@ -144,7 +179,7 @@
       })
 
       // 创建一个矩形分组
-      const group = new RectGroup({
+      const group = new MyGroup({
         width: 200,
         height: 200,
         x: 180,

@@ -69,6 +69,7 @@ export class RectCanvasNode extends CanvasNode {
   isPointIn() {
     const { canvas } = this
     if (!canvas) return false
+    if (!this.visible) return false
     if (!canvas.nativeEvent) return false
     const event = canvas.nativeEvent as MouseEvent
     const point = canvas.viewportToPixelCoordinate(new Vector2d(event.clientX, event.clientY))
