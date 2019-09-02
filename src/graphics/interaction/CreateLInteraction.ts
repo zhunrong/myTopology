@@ -21,7 +21,7 @@ export class CreateLInteraction extends Interaction {
       if (this.targetNode && this.sourceNode &&
         this.targetNode !== this.sourceNode &&
         !this.targetNode.hasDescendant(this.sourceNode) &&
-        this.sourceNode.hasDescendant(this.targetNode)) {
+        !this.sourceNode.hasDescendant(this.targetNode)) {
         this.edge.targetNode = this.targetNode
         this.targetNode.addEdge(this.edge)
         canvas.virtualNode.removeEdge(this.edge)
