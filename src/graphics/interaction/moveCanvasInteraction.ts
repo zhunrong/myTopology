@@ -42,4 +42,4 @@ export class MoveCanvasInteraction extends Interaction {
 }
 
 export const moveCanvasInteraction = new MoveCanvasInteraction()
-export default moveCanvasInteraction
+export default MoveCanvasInteraction

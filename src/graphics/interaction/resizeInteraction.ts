@@ -3,8 +3,8 @@ import Canvas from '../core/Canvas'
 import Node from '../graph/Node'
 import Vector2d from '../utils/vector2d'
 import Math2d from '../utils/math2d'
-import selectInteraction from './selectInteraction'
-import dragInteraction from './dragInteraction'
+import { selectInteraction } from './selectInteraction'
+import { dragInteraction } from './dragInteraction'
 import RectCanvasNode from '../node/RectCanvasNode'
 import CircleCanvasNode from '../node/CircleCanvasNode'
 
@@ -242,4 +242,4 @@ function resizeCircleNode(activeNode: CircleCanvasNode, anchorIndex: number, coo
 }
 
 export const resizeInteraction = new ResizeInteraction()
-export default resizeInteraction
+export default ResizeInteraction

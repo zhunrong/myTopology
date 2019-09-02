@@ -23,4 +23,4 @@ export class CollapseAndExpandInteraction extends Interaction {
 
 export const collapseAndExpandInteraction = new CollapseAndExpandInteraction()
 
-export default collapseAndExpandInteraction
+export default CollapseAndExpandInteraction

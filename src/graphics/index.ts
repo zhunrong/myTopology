@@ -18,6 +18,7 @@ export * from './interaction/moveCanvasInteraction'
 export * from './interaction/wheelZoomInteraction'
 export * from './interaction/Interaction'
 export * from './interaction/areaPickInteraction'
+export * from './interaction/createGroupInteraction'
 // node
 export * from './node/RectDomNode'
 export * from './node/RectCanvasNode'

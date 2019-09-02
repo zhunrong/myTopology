@@ -91,4 +91,4 @@ export class CreateLineInteraction extends Interaction {
 }
 
 export const createEdgeInteraction = new CreateLineInteraction()
-export default createEdgeInteraction
+export default CreateLineInteraction

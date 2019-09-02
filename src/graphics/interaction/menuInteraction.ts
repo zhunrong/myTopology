@@ -39,4 +39,4 @@ export class MenuInteraction extends Interaction {
 }
 
 export const menuInteration = new MenuInteraction()
-export default menuInteration
+export default MenuInteraction

@@ -62,4 +62,4 @@ export class DragInteraction extends Interaction {
 }
 
 export const dragInteraction = new DragInteraction()
-export default dragInteraction
+export default DragInteraction

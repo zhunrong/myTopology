@@ -18,4 +18,4 @@ export class DropInteraction extends Interaction {
 }
 
 export const dropInteraction = new DropInteraction()
-export default dropInteraction
+export default DropInteraction

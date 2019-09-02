@@ -2,8 +2,8 @@ import Graph, { IGraphOptions } from './Graph'
 import { Vector2d } from '../utils/vector2d'
 import Edge from './Edge'
 export interface INodeOptions extends IGraphOptions {
-  x: number
-  y: number
+  x?: number
+  y?: number
   id: number | string
 }
 // export type BoundingRect = [Vector2d,Vector2d,Vector2d,Vector2d]

@@ -1,11 +1,10 @@
 import Interaction from './Interaction'
 import Canvas from '../core/Canvas'
 import RectGroup from '../node/RectGroup'
-import RectDomGroup from '../node/RectDomGroup'
 import Node from '../graph/Node'
 
 interface ICreateGroupInteraction {
-  groupType: string
+  ctor: any
 }
 /**
  * 创建组
@@ -14,11 +13,11 @@ export class CreateGroupInteraction extends Interaction {
   canvas!: Canvas
   // 父节点
   parentNode: Node | undefined
-  groupType: string = 'rectCanvasGroup'
+  ctor: any = RectGroup
   constructor(options?: ICreateGroupInteraction) {
     super()
     if (options) {
-      this.groupType = options.groupType
+      this.ctor = options.ctor
     }
   }
   onContextMenu = (canvas: Canvas, e: Event) => {
@@ -56,19 +55,7 @@ export class CreateGroupInteraction extends Interaction {
     const activeNodes = this.canvas.getActiveNodes()
     if (!activeNodes.length) return
 
-    const group = this.groupType === 'rectDomGroup' ? new RectDomGroup({
-      width: 200,
-      height: 200,
-      id: Math.random(),
-      x: 0,
-      y: 0
-    }) : new RectGroup({
-      width: 200,
-      height: 200,
-      id: Math.random(),
-      x: 0,
-      y: 0
-    })
+    const group = new this.ctor({ id: Math.random() })
 
     let xMin = Number.MAX_SAFE_INTEGER
     let yMin = Number.MAX_SAFE_INTEGER
@@ -91,8 +78,12 @@ export class CreateGroupInteraction extends Interaction {
       })
       group.addChild(node)
     })
-    group.width = xMax - xMin + 40
-    group.height = yMax - yMin + 40
+    if (this.ctor.shape = 'rect') {
+      group.width = xMax - xMin + 40
+      group.height = yMax - yMin + 40
+    } else {
+
+    }
     group.position.x = xMin - 20
     group.position.y = yMin - 20
     if (this.parentNode) {
@@ -106,4 +97,4 @@ export class CreateGroupInteraction extends Interaction {
 
 export const createGroupInteraction = new CreateGroupInteraction()
 
-export default createGroupInteraction
+export default CreateGroupInteraction

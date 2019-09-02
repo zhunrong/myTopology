@@ -142,4 +142,4 @@ export class AreaPickInteraction extends Interaction {
   }
 }
 export const areaPickInteraction = new AreaPickInteraction()
-export default areaPickInteraction
+export default AreaPickInteraction

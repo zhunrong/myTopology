@@ -8,6 +8,7 @@ export interface IRectCanvasGroupOptions extends IRectCanvasNodeOptions {
  * 矩形组
  */
 export class RectGroup extends RectCanvasNode {
+  static shape = 'rect'
   // 是组
   isGroup = true
   // 默认可调接尺寸

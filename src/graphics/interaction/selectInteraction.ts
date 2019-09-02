@@ -40,4 +40,4 @@ export class SelectInteraction extends Interaction {
 }
 
 export const selectInteraction = new SelectInteraction()
-export default selectInteraction
+export default SelectInteraction

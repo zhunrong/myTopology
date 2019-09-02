@@ -10,6 +10,7 @@ export interface IRectDomNodeOptions extends IDomNodeOptions {
   minHeight?: number
 }
 export class RectDomNode extends DomNode {
+  static shape = 'rect'
   shapeType = 'rect'
   width: number
   height: number

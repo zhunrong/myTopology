@@ -75,4 +75,4 @@ export class CreateLInteraction extends Interaction {
 }
 
 export const createLInteraction = new CreateLInteraction()
-export default createLInteraction
+export default CreateLInteraction
