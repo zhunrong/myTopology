@@ -15,24 +15,58 @@ export abstract class Edge extends Graph {
     this.sourceNode = options.sourceNode
   }
   /**
-   * 获取可见的目标节点
+   * 获取目标节点
    */
   getTargetNode(): Node {
-    let node = this.targetNode
-    while (!node.visible && node.parent && node.parent.renderType !== 'NONE') {
-      node = node.parent
+    // let node = this.targetNode
+    // while (!node.visible && node.parent && node.parent.renderType !== 'NONE') {
+    //   node = node.parent
+    // }
+    let parent = this.targetNode.parent
+    let isAllExpanded = true
+    while (parent) {
+      if (!parent.isExpanded) {
+        isAllExpanded = false
+      }
+      parent = parent.parent
     }
-    return node
+    if (isAllExpanded) {
+      return this.targetNode
+    } else {
+      let node = this.targetNode
+      while (!node.visible && node.parent && node.parent.renderType !== 'NONE') {
+        node = node.parent
+      }
+      return node
+    }
+    // return node
   }
   /**
-   * 获取可见的源节点
+   * 获取源节点
    */
   getSourceNode(): Node {
-    let node = this.sourceNode
-    while (!node.visible && node.parent && node.parent.renderType !== 'NONE') {
-      node = node.parent
+    // let node = this.sourceNode
+    // while (!node.visible && node.parent && node.parent.renderType !== 'NONE') {
+    //   node = node.parent
+    // }
+    let parent = this.sourceNode.parent
+    let isAllExpanded = true
+    while (parent) {
+      if (!parent.isExpanded) {
+        isAllExpanded = false
+      }
+      parent = parent.parent
     }
-    return node
+    if (isAllExpanded) {
+      return this.sourceNode
+    } else {
+      let node = this.sourceNode
+      while (!node.visible && node.parent && node.parent.renderType !== 'NONE') {
+        node = node.parent
+      }
+      return node
+    }
+    // return node
   }
 }
 

@@ -1,6 +1,6 @@
 import { RectCanvasNode, IRectCanvasNodeOptions } from './RectCanvasNode'
 
-export interface IGroupOptions extends IRectCanvasNodeOptions {
+export interface IRectCanvasGroupOptions extends IRectCanvasNodeOptions {
   isExpanded?: boolean
 }
 
@@ -13,7 +13,7 @@ export class RectGroup extends RectCanvasNode {
   // 默认可调接尺寸
   canResize = true
 
-  constructor(options: IGroupOptions) {
+  constructor(options: IRectCanvasGroupOptions) {
     super(options)
     if (typeof options.isExpanded === 'boolean') {
       this.isExpanded = options.isExpanded

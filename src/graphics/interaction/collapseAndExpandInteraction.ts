@@ -5,13 +5,19 @@ import Canvas from '../core/Canvas'
  * 折叠与展开操作
  */
 export class CollapseAndExpandInteraction extends Interaction {
-  onDblClick = (canvas: Canvas) => {
-    const activeNode = canvas.getActiveNodes()[0]
-    if (activeNode && activeNode.isGroup) {
-      activeNode.isExpanded = !activeNode.isExpanded
-      activeNode.isUpdate = true
-      canvas.repaint = true
+  lastTimestamp: number = 0
+  onMouseDown = (canvas: Canvas) => {
+    const now = Date.now()
+    if (now - this.lastTimestamp < 300) {
+      const activeNode = canvas.getActiveNodes()[0]
+      if (activeNode && activeNode.isGroup) {
+        activeNode.isExpanded = !activeNode.isExpanded
+        activeNode.isUpdate = true
+        activeNode.render()
+        canvas.repaint = true
+      }
     }
+    this.lastTimestamp = now
   }
 }
 

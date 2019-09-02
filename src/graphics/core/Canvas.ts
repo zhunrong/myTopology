@@ -618,6 +618,7 @@ export class Canvas {
    */
   private renderNodes() {
     this.rootNode.getDescendantBF(node => {
+      const nodeVisible = node.visible
       // 节点连线渲染
       node.edges.forEach(edge => {
         if (edge.renderSign === this._animationFrameId) return
@@ -633,14 +634,15 @@ export class Canvas {
           }
         }
       })
+
       if (node instanceof CanvasNode) {
-        if (node.visible) {
+        if (nodeVisible) {
           // node.render()
           node.update()
         }
       }
       if (node instanceof DomNode) {
-        if (node.visible) {
+        if (nodeVisible) {
           node.mount()
           if (node.isUpdate) {
             // node.render(this)

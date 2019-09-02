@@ -23,6 +23,7 @@ export * from './node/RectDomNode'
 export * from './node/RectCanvasNode'
 export * from './node/CircleCanvasNode'
 export * from './node/RectGroup'
+export * from './node/RectDomGroup'
 export * from './node/CircleGroup'
 // edge
 export * from './edge/Line'

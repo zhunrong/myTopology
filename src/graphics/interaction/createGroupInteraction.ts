@@ -1,8 +1,12 @@
 import Interaction from './Interaction'
 import Canvas from '../core/Canvas'
 import RectGroup from '../node/RectGroup'
+import RectDomGroup from '../node/RectDomGroup'
 import Node from '../graph/Node'
 
+interface ICreateGroupInteraction {
+  groupType: string
+}
 /**
  * 创建组
  */
@@ -10,6 +14,13 @@ export class CreateGroupInteraction extends Interaction {
   canvas!: Canvas
   // 父节点
   parentNode: Node | undefined
+  groupType: string = 'rectCanvasGroup'
+  constructor(options?: ICreateGroupInteraction) {
+    super()
+    if (options) {
+      this.groupType = options.groupType
+    }
+  }
   onContextMenu = (canvas: Canvas, e: Event) => {
     const event = e as MouseEvent
     const activeNodes = canvas.getActiveNodes()
@@ -44,7 +55,14 @@ export class CreateGroupInteraction extends Interaction {
     // const activeNodes = this.canvas.rootNode.children.filter(node => node.active)
     const activeNodes = this.canvas.getActiveNodes()
     if (!activeNodes.length) return
-    const group = new RectGroup({
+
+    const group = this.groupType === 'rectDomGroup' ? new RectDomGroup({
+      width: 200,
+      height: 200,
+      id: Math.random(),
+      x: 0,
+      y: 0
+    }) : new RectGroup({
       width: 200,
       height: 200,
       id: Math.random(),
@@ -77,7 +95,6 @@ export class CreateGroupInteraction extends Interaction {
     group.height = yMax - yMin + 40
     group.position.x = xMin - 20
     group.position.y = yMin - 20
-    console.log(this.parentNode)
     if (this.parentNode) {
       this.parentNode.addChild(group)
       this.canvas.repaint = true
