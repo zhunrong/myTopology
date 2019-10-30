@@ -3,6 +3,7 @@ import { Edge, IEdgeOptions } from '../graph/Edge'
 import { Math2d } from '../utils/math2d'
 import Triangle from '../element/Triangle'
 import Text from '../element/Text'
+import Rect from '../element/Rect'
 
 const ARROW_SIZE = { width: 8, height: 10 }
 
@@ -27,6 +28,11 @@ export class Line extends Edge {
   sourceArrowElement: Triangle = new Triangle(ARROW_SIZE)
   targetArrowElement: Triangle = new Triangle(ARROW_SIZE)
   textElement: Text = new Text('')
+  animateProgress = 0
+  animateElement = new Rect({
+    width: 10,
+    height: 10
+  })
   constructor(options: ILineOptions) {
     super(options)
     this.dash = options.dash || false
@@ -113,6 +119,17 @@ export class Line extends Edge {
         this.targetArrowElement.render(graphCanvasCtx)
       }
 
+      if (this.animateProgress > 1) {
+        this.animateProgress = 0
+      }
+      const animatePoint = Math2d.getLinePoint([this.begin, this.end], this.animateProgress)
+      if (animatePoint) {
+        this.animateElement.fillStyle = 'red'
+        this.animateElement.position.copy(animatePoint)
+        this.animateElement.render(graphCanvasCtx)
+      }
+      this.animateProgress += 0.005
+
       graphCanvasCtx.restore()
     }
   }
@@ -145,7 +162,7 @@ function intersectWithCircle(o: Vector2d, radius: number, point: Vector2d) {
   const line = Vector2d.copy(point).substract(o)
   if (line.magnitude < radius) return undefined
   const angle = line.xAxisAngle()
-  return o.add(new Vector2d(radius * Math.cos(angle), radius * Math.sin(angle)))
+  return Vector2d.copy(o).add(new Vector2d(radius * Math.cos(angle), radius * Math.sin(angle)))
 }
 
 export default Line

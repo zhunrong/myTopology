@@ -3,6 +3,7 @@ import { Edge, IEdgeOptions } from '../graph/Edge'
 import { Math2d } from '../utils/math2d'
 import Triangle from '../element/Triangle'
 import Text from '../element/Text'
+import Rect from '../element/Rect'
 
 export interface ILOptions extends IEdgeOptions {
   // 是否虚线
@@ -38,6 +39,13 @@ export class L extends Edge {
   sourceArrowElement = new Triangle(ARROW_SIZE)
   targetArrowElement = new Triangle(ARROW_SIZE)
   textElement = new Text('')
+
+  animateElement = new Rect({
+    width: 10,
+    height: 10
+  })
+  animateProgress = 0
+
   constructor(options: ILOptions) {
     super(options)
     this.dash = options.dash || false
@@ -168,6 +176,18 @@ export class L extends Edge {
         this.targetArrowElement.rotate = this.rotate
         this.targetArrowElement.render(graphCanvasCtx)
       }
+
+      if (this.animateProgress > 1) {
+        this.animateProgress = 0
+      }
+      const animatePoint = Math2d.getLinePoint([sourceJoinPoint, ...this.middlePoints, targetJoinPoint], this.animateProgress)
+      if (animatePoint) {
+        this.animateElement.fillStyle = 'red'
+        this.animateElement.position.copy(animatePoint)
+        this.animateElement.render(graphCanvasCtx)
+      }
+      this.animateProgress += 0.005
+
       graphCanvasCtx.restore()
     }
   }

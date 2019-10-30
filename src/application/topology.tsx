@@ -37,6 +37,7 @@ export default class Topology extends Component<IProps, IState> {
         container: this.containerRef.current,
         scale: 1
       })
+      this.canvas.animation = true
       this.canvas.eventEmitter.on('canvas:mounted', () => {
         this.canvas.removeAllNode()
         const topoData = JSON.parse(localStorage.getItem('topoData') || JSON.stringify({ nodes: [], edges: [], zoom: 1 }))

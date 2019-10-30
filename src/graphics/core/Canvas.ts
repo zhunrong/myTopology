@@ -33,38 +33,38 @@ export class Canvas {
   private _running: boolean = false
   private _animationFrameId: number = 0
   protected name: string = 'application'
-  public eventEmitter: EventEmitter = new EventEmitter()
-  public nativeEvent: Event | null = null
-  public optimize: boolean = true
+  eventEmitter: EventEmitter = new EventEmitter()
+  nativeEvent: Event | null = null
+  optimize: boolean = true
   // 交互模式
   interactionMode: string = MODE_DEFAULT
   // 最外层div
   protected container: HTMLElement
   // canvas与div的容器
-  public wrapper: HTMLDivElement = document.createElement('div')
-  public containerClientRect: ClientRect | undefined
+  wrapper: HTMLDivElement = document.createElement('div')
+  containerClientRect: ClientRect | undefined
   // 主画布(用于绘制图形) 位于图层最底层
   protected graphCanvas: HTMLCanvasElement = document.createElement('canvas')
-  public graphCanvasCtx: CanvasRenderingContext2D
+  graphCanvasCtx: CanvasRenderingContext2D
   // dom节点画布(用于渲染dom节点) 位于图层中间层
-  public domCanvas: HTMLDivElement = document.createElement('div')
+  domCanvas: HTMLDivElement = document.createElement('div')
   // 交互画布(交互时用到的辅助画布) 位于图层最顶层
-  public topCanvas: HTMLCanvasElement = document.createElement('canvas')
+  topCanvas: HTMLCanvasElement = document.createElement('canvas')
   /**
    * 交互画布是否已挂载
    */
   topCanvasMounted: boolean = false
-  public topCanvasCtx: CanvasRenderingContext2D
+  topCanvasCtx: CanvasRenderingContext2D
   // 辅助节点(不需要实际渲染的)
-  public virtualNode: VirtualNode = new VirtualNode({
+  virtualNode: VirtualNode = new VirtualNode({
     x: 0,
     y: 0,
     id: 'vn'
   })
 
-  public mousedownPosition: Vector2d = new Vector2d(0, 0)
-  public mouseupPosition: Vector2d = new Vector2d(0, 0)
-  public mousemovePosition: Vector2d = new Vector2d(0, 0)
+  mousedownPosition: Vector2d = new Vector2d(0, 0)
+  mouseupPosition: Vector2d = new Vector2d(0, 0)
+  mousemovePosition: Vector2d = new Vector2d(0, 0)
   // resize监听器
   private ro: ResizeObserver
   // 画布
@@ -77,6 +77,8 @@ export class Canvas {
   minScale: number
   // 重绘
   repaint: boolean = false
+  // 开启动画
+  animation = false
   // menu
   contextMenu: ContextMenu = new ContextMenu(this)
   // 根节点
@@ -118,7 +120,7 @@ export class Canvas {
    * 设置缩放
    * @param scale 
    */
-  public setZoom(scale: number) {
+  setZoom(scale: number) {
     this.canvasScale = scale
     this.canvasWidth = this.viewWidth / this.canvasScale
     this.canvasHeight = this.viewHeight / this.canvasScale
@@ -143,7 +145,7 @@ export class Canvas {
   /**
    * 销毁
    */
-  public destroy() {
+  destroy() {
     this.wrapper.removeEventListener('click', this.handleClick)
     this.wrapper.removeEventListener('dblclick', this.handleDblClick)
     this.wrapper.removeEventListener('mousedown', this.handleMouseDown)
@@ -165,7 +167,7 @@ export class Canvas {
    * 添加节点
    * @param node 
    */
-  public addNode(node: Node) {
+  addNode(node: Node) {
     if (this.rootNode.hasChild(node)) return
     node.visible = node.isInRect(this.canvasVisibleRect)
     this.rootNode.addChild(node)
@@ -176,7 +178,7 @@ export class Canvas {
    * 将节点置顶显示
    * @param node 
    */
-  public setNodeTop(node: Node) {
+  setNodeTop(node: Node) {
     const parent = node.parent
     if (!parent) return
     const zIndex = parent.lastChild && parent.lastChild.zIndex || 0
@@ -193,7 +195,7 @@ export class Canvas {
   /**
    * 获取激活状态的节点列表
    */
-  public getActiveNodes(): Node[] {
+  getActiveNodes(): Node[] {
     return this.rootNode.getActiveDescendant()
   }
 
@@ -202,7 +204,7 @@ export class Canvas {
    * @param node 
    * @param destroy 是否销毁,默认true
    */
-  public removeNode(node: Node, destroy: boolean = true) {
+  removeNode(node: Node, destroy: boolean = true) {
     if (!this.rootNode.hasDescendant(node)) return
     if (!node.parent) return
     node.parent.removeChild(node, destroy)
@@ -219,7 +221,7 @@ export class Canvas {
    * 删除所有节点
    * @param destroy 是否销毁,默认true
    */
-  public removeAllNode(destroy: boolean = true) {
+  removeAllNode(destroy: boolean = true) {
     this.rootNode.removeAllChild(destroy)
   }
 
@@ -227,7 +229,7 @@ export class Canvas {
    * 添加边线
    * @param edge 
    */
-  public addEdge(edge: Edge) {
+  addEdge(edge: Edge) {
     edge.sourceNode.addEdge(edge)
     edge.targetNode.addEdge(edge)
     edge.canvas = this
@@ -238,7 +240,7 @@ export class Canvas {
    * 删除边线
    * @param edge 
    */
-  public removeEdge(edge: Edge) {
+  removeEdge(edge: Edge) {
     edge.sourceNode.removeEdge(edge)
     edge.targetNode.removeEdge(edge)
     edge.canvas = undefined
@@ -248,7 +250,7 @@ export class Canvas {
   /**
    * 获取激活状态的边线列表
    */
-  public getActiveEdges(): Edge[] {
+  getActiveEdges(): Edge[] {
     const activeEdges: Edge[] = []
     const sign = Math.random()
     this.rootNode.getDescendantBF(node => {
@@ -594,7 +596,7 @@ export class Canvas {
     if (!this._running) return
     this._animationFrameId = requestAnimationFrame(() => {
       // 判断是否需要重绘
-      if (this.repaint) {
+      if (this.repaint || this.animation) {
         this.graphCanvasCtx.clearRect(0, 0, this.viewWidth, this.viewHeight)
         this.graphCanvasCtx.save()
         this.graphCanvasCtx.scale(this.canvasScale, this.canvasScale)
