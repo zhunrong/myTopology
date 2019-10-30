@@ -4,6 +4,7 @@ import { Math2d } from '../utils/math2d'
 import Triangle from '../element/Triangle'
 import Text from '../element/Text'
 import Rect from '../element/Rect'
+import Image from '../element/Image'
 
 export interface ILOptions extends IEdgeOptions {
   // 是否虚线
@@ -39,11 +40,9 @@ export class L extends Edge {
   sourceArrowElement = new Triangle(ARROW_SIZE)
   targetArrowElement = new Triangle(ARROW_SIZE)
   textElement = new Text('')
+  lastAnimatePoint: Vector2d | undefined
 
-  animateElement = new Rect({
-    width: 10,
-    height: 10
-  })
+  animateElement = new Image(require('../../assets/双箭头.png'))
   animateProgress = 0
 
   constructor(options: ILOptions) {
@@ -182,9 +181,12 @@ export class L extends Edge {
       }
       const animatePoint = Math2d.getLinePoint([sourceJoinPoint, ...this.middlePoints, targetJoinPoint], this.animateProgress)
       if (animatePoint) {
-        this.animateElement.fillStyle = 'red'
-        this.animateElement.position.copy(animatePoint)
-        this.animateElement.render(graphCanvasCtx)
+        if (this.lastAnimatePoint) {
+          this.animateElement.rotate = Vector2d.copy(animatePoint).substract(this.lastAnimatePoint).xAxisAngle()
+          this.animateElement.position.copy(animatePoint)
+          this.animateElement.render(graphCanvasCtx)
+        }
+        this.lastAnimatePoint = animatePoint
       }
       this.animateProgress += 0.005
 

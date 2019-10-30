@@ -2,10 +2,7 @@ export class Vector2d {
   static xAxis = new Vector2d(1, 0)
   static yAxis = new Vector2d(0, 1)
   static copy(target: Vector2d): Vector2d {
-    if (copyIndex > copys.length - 1) {
-      copyIndex = 0
-    }
-    return copys[copyIndex++].copy(target)
+    return target.clone()
   }
 
   x: number
@@ -180,14 +177,6 @@ export class Vector2d {
   clone(): Vector2d {
     return new Vector2d(this.x, this.y)
   }
-}
-
-// 用于copy向量(优化)
-let copyIndex = 0
-let copyCount = 1000
-const copys: Vector2d[] = []
-while (copyCount--) {
-  copys.push(new Vector2d())
 }
 
 export default Vector2d

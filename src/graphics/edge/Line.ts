@@ -4,6 +4,7 @@ import { Math2d } from '../utils/math2d'
 import Triangle from '../element/Triangle'
 import Text from '../element/Text'
 import Rect from '../element/Rect'
+import Image from '../element/Image'
 
 const ARROW_SIZE = { width: 8, height: 10 }
 
@@ -29,10 +30,7 @@ export class Line extends Edge {
   targetArrowElement: Triangle = new Triangle(ARROW_SIZE)
   textElement: Text = new Text('')
   animateProgress = 0
-  animateElement = new Rect({
-    width: 10,
-    height: 10
-  })
+  animateElement = new Image(require('../../assets/双箭头.png'))
   constructor(options: ILineOptions) {
     super(options)
     this.dash = options.dash || false
@@ -124,7 +122,7 @@ export class Line extends Edge {
       }
       const animatePoint = Math2d.getLinePoint([this.begin, this.end], this.animateProgress)
       if (animatePoint) {
-        this.animateElement.fillStyle = 'red'
+        this.animateElement.rotate = this.rotate
         this.animateElement.position.copy(animatePoint)
         this.animateElement.render(graphCanvasCtx)
       }
