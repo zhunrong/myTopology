@@ -243,7 +243,7 @@ export abstract class Node extends Graph {
    * 根据id获取子节点
    * @param id 
    */
-  getChildById(id: string | number): Node | undefined {
+  getChildById(id: Node['id']): Node | undefined {
     return this.children.find(child => child.id === id)
   }
 

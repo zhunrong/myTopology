@@ -4,18 +4,30 @@ export interface IVirtualNodeOptions extends INodeOptions { }
 export class VirtualNode extends Node {
   renderType: string = 'NONE'
   shapeType = 'circle'
-  radius = 0
+  radius = 1
   constructor(options: IVirtualNodeOptions) {
     super(options)
   }
   get vertexes(): Vector2d[] {
-    return [this.position, this.position, this.position, this.position]
+    return this.boundingRect
   }
   get boundingRect(): BoundingRect {
-    return [this.position, this.position, this.position, this.position]
+    const { x, y } = this.position
+    return [
+      new Vector2d(x - this.radius, y - this.radius),
+      new Vector2d(x + this.radius, y - this.radius),
+      new Vector2d(x + this.radius, y + this.radius),
+      new Vector2d(x - this.radius, y + this.radius),
+    ]
   }
   get boundingJoinPoints(): Vector2d[] {
-    return [this.position]
+    const { x, y } = this.position
+    return [
+      new Vector2d(x, y - this.radius),
+      new Vector2d(x + this.radius, y),
+      new Vector2d(x, y + this.radius),
+      new Vector2d(x - this.radius, y)
+    ]
   }
   get joinPoint() {
     return this.position

@@ -3,6 +3,13 @@ import Canvas from '../core/Canvas'
 import Node from '../graph/Node'
 import L from '../edge/L'
 
+export interface ICreateLInteraction {
+  doubleArrow?: boolean
+  arrow?: boolean
+  dash?: boolean
+  text?: string
+}
+
 /**
  * 连线（L型）
  */
@@ -10,6 +17,20 @@ export class CreateLInteraction extends Interaction {
   targetNode: Node | undefined
   sourceNode: Node | undefined
   edge: L | undefined
+
+  doubleArrow = false
+  arrow = false
+  dash = false
+  text = ''
+  constructor(options?: ICreateLInteraction) {
+    super()
+    if (options) {
+      this.doubleArrow = options.doubleArrow || false
+      this.arrow = options.arrow || false
+      this.dash = options.dash || false
+      this.text = options.text || ''
+    }
+  }
   onMouseUp = (canvas: Canvas) => {
     if (this.edge) {
       canvas.rootNode.getDescendantDF(node => {
@@ -25,7 +46,6 @@ export class CreateLInteraction extends Interaction {
         this.edge.targetNode = this.targetNode
         this.targetNode.addEdge(this.edge)
         canvas.virtualNode.removeEdge(this.edge)
-        this.edge.arrow = true
         this.targetNode.isUpdate = true
         this.edge = undefined
         this.targetNode = undefined
@@ -47,9 +67,10 @@ export class CreateLInteraction extends Interaction {
         this.edge = new L({
           sourceNode: this.sourceNode,
           targetNode: canvas.virtualNode,
-          dash: false,
-          arrow: false,
-          text: ''
+          dash: this.dash,
+          arrow: this.arrow,
+          text: this.text,
+          doubleArrow: this.doubleArrow
         })
         canvas.addEdge(this.edge)
       }

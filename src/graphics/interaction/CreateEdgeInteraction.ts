@@ -7,6 +7,7 @@ interface ICreateLineInteraction {
   text?: string
   arrow?: boolean
   dash?: boolean
+  doubleArrow?: boolean
 }
 /**
  * 连线（直线）
@@ -19,12 +20,14 @@ export class CreateLineInteraction extends Interaction {
   text: string = ''
   arrow: boolean = false
   dash: boolean = false
+  doubleArrow: boolean = false
   constructor(options?: ICreateLineInteraction) {
     super()
     if (options) {
       this.text = options.text || ''
       this.arrow = options.arrow || false
       this.dash = options.dash || false
+      this.doubleArrow = options.doubleArrow || false
     }
   }
   onMouseUp = (canvas: Canvas) => {
@@ -65,7 +68,8 @@ export class CreateLineInteraction extends Interaction {
           targetNode: canvas.virtualNode,
           arrow: this.arrow,
           text: this.text,
-          dash: this.dash
+          dash: this.dash,
+          doubleArrow: this.doubleArrow
         })
         canvas.addEdge(this.edge)
       }

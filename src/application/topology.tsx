@@ -4,6 +4,11 @@ import { Canvas, CircleCanvasNode, RectCanvasNode, RectDomNode, Line as Edge, Re
 import CustomNode from '../components/node/Node'
 import NodePanel from '../components/nodePanel/nodePanel'
 import { nodeDatas, edgeDatas } from '../data/topoData'
+import { Menu, Dropdown, Icon } from 'antd'
+import {
+  MODE_CREATE_EDGE_DOUBLE_ARROW,
+  MODE_CREATE_L_DOUBLE_ARROW
+} from './modes'
 import "./topology.scss"
 // import "./treeTest"
 interface IProps { }
@@ -310,6 +315,27 @@ export default class Topology extends Component<IProps, IState> {
   }
 
   render() {
+    const { mode } = this.state
+    const edgeMenu = (
+      <Menu onClick={(params: any) => this.modeChange(params.key)}>
+        <Menu.Item key={MODE_CREATE_EDGE}>
+          单箭头
+        </Menu.Item>
+        <Menu.Item key={MODE_CREATE_EDGE_DOUBLE_ARROW}>
+          双箭头
+        </Menu.Item>
+      </Menu>
+    )
+    const edgeMenu2 = (
+      <Menu onClick={(params: any) => this.modeChange(params.key)}>
+        <Menu.Item key={MODE_CREATE_L}>
+          单箭头
+        </Menu.Item>
+        <Menu.Item key={MODE_CREATE_L_DOUBLE_ARROW}>
+          双箭头
+        </Menu.Item>
+      </Menu>
+    )
     return (
       <div className="topology">
         <div className="topo-bar" draggable={false}>
@@ -319,8 +345,17 @@ export default class Topology extends Component<IProps, IState> {
           <img onClick={this.modeChange.bind(this, MODE_BORDER)} className={`${this.state.mode === MODE_BORDER ? 'active' : ''}`} src={require('../assets/box_resize.svg')} title="边框模式" />
           <img src={require('../assets/zoom_out.svg')} onClick={this.zoomOut} title="缩小" />
           <img src={require('../assets/zoom_in.svg')} onClick={this.zoomIn} title="放大" />
-          <img onClick={this.modeChange.bind(this, MODE_CREATE_EDGE)} className={`${this.state.mode === MODE_CREATE_EDGE ? 'active' : ''}`} src={require('../assets/line_2.svg')} title="创建连线" />
-          <img onClick={this.modeChange.bind(this, MODE_CREATE_L)} className={`${this.state.mode === MODE_CREATE_L ? 'active' : ''}`} src={require('../assets/L_line.svg')} title="创建L连线" />
+          <Dropdown overlay={edgeMenu} placement="bottomCenter">
+            <div className={`menu-item ${[MODE_CREATE_EDGE, MODE_CREATE_EDGE_DOUBLE_ARROW].includes(mode) ? 'active' : ''}`}>
+              <img src={require('../assets/line_2.svg')} title="创建连线" />
+              {/* <span>单箭头</span> */}
+            </div>
+          </Dropdown>
+          <Dropdown overlay={edgeMenu2} placement="bottomCenter">
+            <div className={`menu-item ${[MODE_CREATE_L, MODE_CREATE_L_DOUBLE_ARROW].includes(mode) ? 'active' : ''}`}>
+              <img src={require('../assets/L_line.svg')} title="创建L连线" />
+            </div>
+          </Dropdown>
           <img src={require('../assets/save.svg')} onClick={this.saveData} title="保存" />
         </div>
         <NodePanel />

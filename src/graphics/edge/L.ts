@@ -1,6 +1,8 @@
 import { Vector2d } from '../utils/vector2d'
 import { Edge, IEdgeOptions } from '../graph/Edge'
 import { Math2d } from '../utils/math2d'
+import Triangle from '../element/Triangle'
+import Text from '../element/Text'
 
 export interface ILOptions extends IEdgeOptions {
   // 是否虚线
@@ -9,11 +11,15 @@ export interface ILOptions extends IEdgeOptions {
   text?: string
   // 显示箭头
   arrow?: boolean
+  // 双箭头
+  doubleArrow?: boolean
 }
 
-let sourceJoinPointCopy = new Vector2d()
-let targetNodeCenterCopy = new Vector2d()
-let pixelCoordinateCopy = new Vector2d()
+const sourceJoinPointCopy = new Vector2d()
+const targetNodeCenterCopy = new Vector2d()
+const pixelCoordinateCopy = new Vector2d()
+
+const ARROW_SIZE = { width: 8, height: 10 }
 
 /**
  * L型线段
@@ -22,17 +28,23 @@ export class L extends Edge {
   dash: boolean
   text: string
   arrow: boolean
+  doubleArrow: boolean
   arrowStart: Vector2d | undefined
   rotate: number = 0
   middlePoints: Vector2d[] = []
   centerPoint: Vector2d | null = null
   sourceJoinPoint: Vector2d | undefined
   targetJoinPoint: Vector2d | undefined
+  sourceArrowElement = new Triangle(ARROW_SIZE)
+  targetArrowElement = new Triangle(ARROW_SIZE)
+  textElement = new Text('')
   constructor(options: ILOptions) {
     super(options)
     this.dash = options.dash || false
     this.text = options.text || ''
     this.arrow = options.arrow || false
+    this.doubleArrow = options.doubleArrow || false
+    this.textElement.text = this.text
   }
   isInRect = () => {
     return true
@@ -48,31 +60,17 @@ export class L extends Edge {
     const event = canvas.nativeEvent as MouseEvent
     const viewCoordinate = new Vector2d(event.clientX, event.clientY)
     const pixelCoordinate = canvas.viewportToPixelCoordinate(viewCoordinate)
-    pixelCoordinateCopy.copy(pixelCoordinate)
     // 判断点是否在线上
     if (Math2d.isPointInPolyline(pixelCoordinate, [this.sourceJoinPoint, ...this.middlePoints, this.targetJoinPoint], 0.1)) return true
     // 判断点是否在箭头上
-    if (this.arrow && this.arrowStart) {
-      const p0 = new Vector2d(0, 0).rotate(this.rotate)
-      const p1 = new Vector2d(- 10, + 4).rotate(this.rotate)
-      const p2 = new Vector2d(- 10, - 4).rotate(this.rotate)
-      if (Math2d.isPointInTriangle(pixelCoordinateCopy.substract(this.arrowStart), p0, p1, p2)) return true
+    if (this.doubleArrow) {
+      if (this.targetArrowElement.isPointIn(pixelCoordinate)) return true
+      if (this.sourceArrowElement.isPointIn(pixelCoordinate)) return true
+    } else if (this.arrow) {
+      if (this.targetArrowElement.isPointIn(pixelCoordinate)) return true
     }
     // 判断是否在文字上
-    if (this.text && this.centerPoint) {
-      const { graphCanvasCtx } = canvas
-      graphCanvasCtx.font = '14px sans-serif'
-      const textRectWidth = graphCanvasCtx.measureText(this.text).width
-      const textLeft = this.centerPoint.x - textRectWidth / 2
-      const textTop = this.centerPoint.y - 7
-      const textRect = [
-        new Vector2d(textLeft, textTop),
-        new Vector2d(textLeft + textRectWidth, textTop),
-        new Vector2d(textLeft + textRectWidth, textTop + 14),
-        new Vector2d(textLeft, textTop + 14)
-      ]
-      if (Math2d.isPointInPolygon(pixelCoordinate, textRect)) return true
-    }
+    if (this.text && this.textElement.isPointIn(pixelCoordinate)) return true
     return false
   }
   render() {
@@ -143,34 +141,32 @@ export class L extends Edge {
       if/* 文本 */ (this.text) {
         this.centerPoint = Math2d.getLinePoint([sourceJoinPoint, ...this.middlePoints, targetJoinPoint], 0.5)
         if (this.centerPoint) {
-          graphCanvasCtx.beginPath()
-          graphCanvasCtx.font = '14px sans-serif'
-          // graphCanvasCtx.textAlign = 'center'
-          graphCanvasCtx.textBaseline = 'top'
-          const textRectWidth = graphCanvasCtx.measureText(this.text).width
-          const textLeft = this.centerPoint.x - textRectWidth / 2
-          const textTop = this.centerPoint.y - 7
-          graphCanvasCtx.rect(textLeft, textTop, textRectWidth, 14)
-          graphCanvasCtx.fillStyle = '#fff'
-          graphCanvasCtx.fill()
           graphCanvasCtx.fillStyle = this.active ? '#e96160' : '#29c1f8'
-          graphCanvasCtx.fillText(this.text, textLeft, textTop)
+          this.textElement.text = this.text
+          this.textElement.font = '14px sans-serif'
+          this.textElement.backgroundColor = 'rgba(255,255,255,0.8)'
+          this.textElement.position.copy(this.centerPoint)
+          this.textElement.render(graphCanvasCtx)
         }
       }
-      if/**箭头 */ (this.arrow) {
+      if/* 双向箭头 */(this.doubleArrow) {
         this.arrowStart = targetJoinPoint
         this.rotate = inDirection.xAxisAngle()
-        graphCanvasCtx.beginPath()
-        graphCanvasCtx.save()
-        graphCanvasCtx.translate(this.arrowStart.x, this.arrowStart.y)
-        graphCanvasCtx.rotate(this.rotate)
-        graphCanvasCtx.moveTo(0, 0)
-        graphCanvasCtx.lineTo(- 10, + 4)
-        graphCanvasCtx.lineTo(- 10, - 4)
-        graphCanvasCtx.closePath()
         graphCanvasCtx.fillStyle = this.active ? '#e96160' : '#29c1f8'
-        graphCanvasCtx.fill()
-        graphCanvasCtx.restore()
+        this.targetArrowElement.position.copy(targetJoinPoint)
+        this.targetArrowElement.rotate = this.rotate
+        this.targetArrowElement.render(graphCanvasCtx)
+
+        this.sourceArrowElement.position.copy(sourceJoinPoint)
+        this.sourceArrowElement.rotate = outDirection.xAxisAngle() + Math.PI
+        this.sourceArrowElement.render(graphCanvasCtx)
+      } else if/* 单向箭头 */ (this.arrow) {
+        this.arrowStart = targetJoinPoint
+        this.rotate = inDirection.xAxisAngle()
+        graphCanvasCtx.fillStyle = this.active ? '#e96160' : '#29c1f8'
+        this.targetArrowElement.position.copy(targetJoinPoint)
+        this.targetArrowElement.rotate = this.rotate
+        this.targetArrowElement.render(graphCanvasCtx)
       }
       graphCanvasCtx.restore()
     }

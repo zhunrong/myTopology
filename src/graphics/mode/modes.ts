@@ -90,7 +90,9 @@ modeManager.registerMode(MODE_CREATE_EDGE, [
 modeManager.registerMode(MODE_CREATE_L, [
   new SelectInteraction(),
   new WheelZoomInteraction(),
-  new CreateLInteraction(),
+  new CreateLInteraction({
+    arrow: true
+  }),
   new MoveCanvasInteraction()
 ])
 modeManager.registerMode(MODE_AREA_PICK, [
