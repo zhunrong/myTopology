@@ -3,8 +3,8 @@ import { Edge, IEdgeOptions } from '../graph/Edge'
 import { Math2d } from '../utils/math2d'
 import Triangle from '../element/Triangle'
 import Text from '../element/Text'
-import Rect from '../element/Rect'
 import Image from '../element/Image'
+import PathAnimate from '../animate/PathAnimate'
 
 const ARROW_SIZE = { width: 8, height: 10 }
 
@@ -23,14 +23,12 @@ export class Line extends Edge {
   text: string
   arrow: boolean
   doubleArrow: boolean
-  rotate: number = 0
   begin: Vector2d | undefined
   end: Vector2d | undefined
   sourceArrowElement: Triangle = new Triangle(ARROW_SIZE)
   targetArrowElement: Triangle = new Triangle(ARROW_SIZE)
   textElement: Text = new Text('')
-  animateProgress = 0
-  animateElement = new Image(require('../../assets/双箭头.png'))
+  animateManager = new PathAnimate()
   constructor(options: ILineOptions) {
     super(options)
     this.dash = options.dash || false
@@ -94,39 +92,32 @@ export class Line extends Edge {
         graphCanvasCtx.setLineDash([4, 4])
       }
       graphCanvasCtx.stroke()
-      this.rotate = sourceToTarget.xAxisAngle()
+      const rotate = sourceToTarget.xAxisAngle()
 
       if /* 文本 */ (this.text) {
         this.textElement.text = this.text
         const lineCenter = Vector2d.copy(this.begin).add(Vector2d.copy(sourceToTarget).scale(1 / 2))
         this.textElement.position.copy(lineCenter)
-        this.textElement.rotate = (-Math.PI / 2 <= this.rotate && this.rotate < Math.PI / 2) ? this.rotate : this.rotate - Math.PI
+        this.textElement.rotate = (-Math.PI / 2 <= rotate && rotate < Math.PI / 2) ? rotate : rotate - Math.PI
         this.textElement.render(graphCanvasCtx)
       }
 
       if /* 双向箭头 */ (this.doubleArrow) {
         this.sourceArrowElement.position.copy(this.begin)
-        this.sourceArrowElement.rotate = this.rotate + Math.PI
+        this.sourceArrowElement.rotate = rotate + Math.PI
         this.sourceArrowElement.render(graphCanvasCtx)
         this.targetArrowElement.position.copy(this.end)
-        this.targetArrowElement.rotate = this.rotate
+        this.targetArrowElement.rotate = rotate
         this.targetArrowElement.render(graphCanvasCtx)
       } else if /* 单向箭头 */ (this.arrow) {
         this.targetArrowElement.position.copy(this.end)
-        this.targetArrowElement.rotate = this.rotate
+        this.targetArrowElement.rotate = rotate
         this.targetArrowElement.render(graphCanvasCtx)
       }
 
-      if (this.animateProgress > 1) {
-        this.animateProgress = 0
-      }
-      const animatePoint = Math2d.getLinePoint([this.begin, this.end], this.animateProgress)
-      if (animatePoint) {
-        this.animateElement.rotate = this.rotate
-        this.animateElement.position.copy(animatePoint)
-        this.animateElement.render(graphCanvasCtx)
-      }
-      this.animateProgress += 0.005
+      this.animateManager.path = [this.begin, this.end]
+      this.animateManager.update()
+      this.animateManager.render(graphCanvasCtx)
 
       graphCanvasCtx.restore()
     }

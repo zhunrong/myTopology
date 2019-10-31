@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { MODE_DEFAULT, MODE_VIEW, MODE_CREATE_EDGE, MODE_AREA_PICK, MODE_CREATE_L, MODE_BORDER } from '../graphics'
-import { Canvas, CircleCanvasNode, RectCanvasNode, RectDomNode, Line as Edge, RectGroup, RectDomGroup, CircleGroup, L } from '../graphics'
+import { Canvas, CircleCanvasNode, RectCanvasNode, RectDomNode, Line as Edge, RectGroup, RectDomGroup, CircleGroup, L, Image } from '../graphics'
 import CustomNode from '../components/node/Node'
 import NodePanel from '../components/nodePanel/nodePanel'
 import { nodeDatas, edgeDatas } from '../data/topoData'
@@ -106,6 +106,8 @@ export default class Topology extends Component<IProps, IState> {
                 arrow: item.arrow,
                 text: item.text
               })
+              edge.animateManager.element = new Image(require('../assets/双箭头.png'))
+              edge.animateManager.duration = 5000
               this.canvas.addEdge(edge)
             } else {
               const edge = new L({
@@ -115,6 +117,8 @@ export default class Topology extends Component<IProps, IState> {
                 arrow: item.arrow,
                 text: item.text
               })
+              edge.animateManager.element = new Image(require('../assets/绿箭头.png'))
+              edge.animateManager.duration = 4000
               this.canvas.addEdge(edge)
             }
           }

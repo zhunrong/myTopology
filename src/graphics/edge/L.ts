@@ -3,8 +3,8 @@ import { Edge, IEdgeOptions } from '../graph/Edge'
 import { Math2d } from '../utils/math2d'
 import Triangle from '../element/Triangle'
 import Text from '../element/Text'
-import Rect from '../element/Rect'
 import Image from '../element/Image'
+import PathAnimate from '../animate/PathAnimate'
 
 export interface ILOptions extends IEdgeOptions {
   // 是否虚线
@@ -32,7 +32,6 @@ export class L extends Edge {
   arrow: boolean
   doubleArrow: boolean
   arrowStart: Vector2d | undefined
-  rotate: number = 0
   middlePoints: Vector2d[] = []
   centerPoint: Vector2d | null = null
   sourceJoinPoint: Vector2d | undefined
@@ -40,10 +39,8 @@ export class L extends Edge {
   sourceArrowElement = new Triangle(ARROW_SIZE)
   targetArrowElement = new Triangle(ARROW_SIZE)
   textElement = new Text('')
-  lastAnimatePoint: Vector2d | undefined
 
-  animateElement = new Image(require('../../assets/双箭头.png'))
-  animateProgress = 0
+  animateManager = new PathAnimate()
 
   constructor(options: ILOptions) {
     super(options)
@@ -158,10 +155,9 @@ export class L extends Edge {
       }
       if/* 双向箭头 */(this.doubleArrow) {
         this.arrowStart = targetJoinPoint
-        this.rotate = inDirection.xAxisAngle()
         graphCanvasCtx.fillStyle = this.active ? '#e96160' : '#29c1f8'
         this.targetArrowElement.position.copy(targetJoinPoint)
-        this.targetArrowElement.rotate = this.rotate
+        this.targetArrowElement.rotate = inDirection.xAxisAngle()
         this.targetArrowElement.render(graphCanvasCtx)
 
         this.sourceArrowElement.position.copy(sourceJoinPoint)
@@ -169,26 +165,15 @@ export class L extends Edge {
         this.sourceArrowElement.render(graphCanvasCtx)
       } else if/* 单向箭头 */ (this.arrow) {
         this.arrowStart = targetJoinPoint
-        this.rotate = inDirection.xAxisAngle()
         graphCanvasCtx.fillStyle = this.active ? '#e96160' : '#29c1f8'
         this.targetArrowElement.position.copy(targetJoinPoint)
-        this.targetArrowElement.rotate = this.rotate
+        this.targetArrowElement.rotate = inDirection.xAxisAngle()
         this.targetArrowElement.render(graphCanvasCtx)
       }
 
-      if (this.animateProgress > 1) {
-        this.animateProgress = 0
-      }
-      const animatePoint = Math2d.getLinePoint([sourceJoinPoint, ...this.middlePoints, targetJoinPoint], this.animateProgress)
-      if (animatePoint) {
-        if (this.lastAnimatePoint) {
-          this.animateElement.rotate = Vector2d.copy(animatePoint).substract(this.lastAnimatePoint).xAxisAngle()
-          this.animateElement.position.copy(animatePoint)
-          this.animateElement.render(graphCanvasCtx)
-        }
-        this.lastAnimatePoint = animatePoint
-      }
-      this.animateProgress += 0.005
+      this.animateManager.path = [sourceJoinPoint, ...this.middlePoints, targetJoinPoint]
+      this.animateManager.update()
+      this.animateManager.render(graphCanvasCtx)
 
       graphCanvasCtx.restore()
     }

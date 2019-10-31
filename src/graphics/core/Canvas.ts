@@ -10,6 +10,7 @@ import Node from '../graph/Node'
 import VirtualNode from '../graph/VirtualNode'
 import Interaction from '../interaction/Interaction'
 import modeManager, { MODE_DEFAULT } from '../mode/modes'
+import { globalClock } from './Clock'
 import style from './canvas.less'
 import config from '../config/config'
 export interface ICanvasOptions {
@@ -595,6 +596,7 @@ export class Canvas {
   loop() {
     if (!this._running) return
     this._animationFrameId = requestAnimationFrame(() => {
+      globalClock.update()
       // 判断是否需要重绘
       if (this.repaint || this.animation) {
         this.graphCanvasCtx.clearRect(0, 0, this.viewWidth, this.viewHeight)

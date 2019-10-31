@@ -1,14 +1,13 @@
+import Element from './Element'
 import { imgLoad } from '../utils/utils'
 import { Vector2d } from '../utils/vector2d'
 import { Math2d } from '../utils/math2d'
 
-export class Image {
+export class Image extends Element {
 
   image: CanvasImageSource | undefined
-  position: Vector2d = new Vector2d()
-  offset: Vector2d = new Vector2d()
-  rotate = 0
   constructor(source: string | CanvasImageSource) {
+    super()
     if (typeof source === 'string') {
       (async () => {
         try {

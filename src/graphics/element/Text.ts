@@ -1,10 +1,11 @@
+import Element from './Element'
 import { Vector2d } from '../utils/vector2d'
 import { Math2d } from '../utils/math2d'
 import Rect from './Rect'
 
 const ctx = document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D
 
-export class Text {
+export class Text extends Element {
   text: string
   font: string = '14px sans-serif'
   backgroundColor: string = ''
@@ -14,11 +15,9 @@ export class Text {
     width: 0,
     height: 0
   })
-  position: Vector2d = new Vector2d()
-  offset: Vector2d = new Vector2d()
-  rotate: number = 0
 
   constructor(text: string) {
+    super()
     this.text = text
   }
 

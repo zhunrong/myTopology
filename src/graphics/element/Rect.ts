@@ -1,3 +1,4 @@
+import Element from './Element'
 import { Vector2d } from '../utils/vector2d'
 import { Math2d } from '../utils/math2d'
 
@@ -6,16 +7,14 @@ interface IRectOptions {
   height: number
 }
 
-export class Rect {
+export class Rect extends Element {
   width: number
   height: number
   fillStyle = ''
   strokeStyle = ''
-  position = new Vector2d()
-  offset = new Vector2d()
-  rotate = 0
 
   constructor(options: IRectOptions) {
+    super()
     this.width = options.width
     this.height = options.height
   }

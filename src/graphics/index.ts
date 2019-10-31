@@ -34,3 +34,8 @@ export * from './utils/math2d'
 export * from './utils/vector2d'
 export * from './utils/utils'
 export * from './utils/tree'
+// element
+export * from './element/Image'
+export * from './element/Rect'
+export * from './element/Text'
+export * from './element/Triangle'
