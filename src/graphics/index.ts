@@ -39,3 +39,5 @@ export * from './element/Image'
 export * from './element/Rect'
 export * from './element/Text'
 export * from './element/Triangle'
+// miniMap
+export * from './miniMap/MiniMap'

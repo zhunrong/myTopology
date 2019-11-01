@@ -61,7 +61,12 @@ export abstract class Graph {
   /**
    * hook:渲染时调用
    */
-  render() { }
+  render(ctx?: CanvasRenderingContext2D) { }
+
+  /**
+   * 绘制缩略图
+   */
+  drawThumbnail(ctx: CanvasRenderingContext2D) { }
 
   /**
    * hook:更新时调用

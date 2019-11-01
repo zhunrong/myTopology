@@ -54,7 +54,7 @@ export abstract class Node extends Graph {
   abstract get boundingJoinPoints(): Vector2d[]
 
   /**
-   * 边界盒子
+   * 边界盒子 [左上,右上,右下,左下]
    */
   abstract get boundingRect(): Vector2d[]
 

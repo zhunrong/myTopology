@@ -165,6 +165,18 @@ export class RectDomNode extends DomNode {
       boxShadow: active ? '0 0 5px 0 rgba(255,0,0,0.8)' : 'none'
     })
   }
+
+  drawThumbnail(ctx: CanvasRenderingContext2D) {
+    const { x, y } = this.getPosition()
+    const width = this.getWidth()
+    const height = this.getHeight()
+    ctx.save()
+    ctx.beginPath()
+    ctx.rect(x, y, width, height)
+    ctx.fill()
+    ctx.restore()
+  }
+  
 }
 
 // applyMixins(RectDomNode, [RectShape])

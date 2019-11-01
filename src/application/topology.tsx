@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { MODE_DEFAULT, MODE_VIEW, MODE_CREATE_EDGE, MODE_AREA_PICK, MODE_CREATE_L, MODE_BORDER } from '../graphics'
-import { Canvas, CircleCanvasNode, RectCanvasNode, RectDomNode, Line as Edge, RectGroup, RectDomGroup, CircleGroup, L, Image } from '../graphics'
+import { Canvas, CircleCanvasNode, RectCanvasNode, RectDomNode, Line as Edge, RectGroup, RectDomGroup, CircleGroup, L, Image, MiniMap } from '../graphics'
 import CustomNode from '../components/node/Node'
 import NodePanel from '../components/nodePanel/nodePanel'
 import { nodeDatas, edgeDatas } from '../data/topoData'
@@ -24,6 +24,7 @@ export default class Topology extends Component<IProps, IState> {
   nodes: Node[] = []
   edges: Edge[] = []
   containerRef: React.RefObject<HTMLDivElement> = React.createRef()
+  miniMapRef = React.createRef<HTMLDivElement>()
   canvas!: Canvas
   state = {
     mode: MODE_DEFAULT
@@ -38,6 +39,12 @@ export default class Topology extends Component<IProps, IState> {
         scale: 1
       })
       this.canvas.animation = true
+
+      // mini map
+      const map = new MiniMap()
+      map.mount(this.miniMapRef.current as HTMLElement)
+      map.connect(this.canvas)
+
       this.canvas.eventEmitter.on('canvas:mounted', () => {
         this.canvas.removeAllNode()
         const topoData = JSON.parse(localStorage.getItem('topoData') || JSON.stringify({ nodes: [], edges: [], zoom: 1 }))
@@ -123,6 +130,7 @@ export default class Topology extends Component<IProps, IState> {
             }
           }
         })
+
       })
       this.canvas.eventEmitter.on('canvas:drop', (params) => {
         const { coordinate, dataTransfer } = params
@@ -365,6 +373,7 @@ export default class Topology extends Component<IProps, IState> {
         </div>
         <NodePanel />
         <div ref={this.containerRef} className="topo-chart" />
+        <div ref={this.miniMapRef} className="mini-map"></div>
       </div>
     )
   }

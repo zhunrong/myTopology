@@ -54,6 +54,7 @@ export abstract class DomNode extends Node {
     this.beforeDestroy()
     this.unmount()
   }
+
 }
 
 export default DomNode

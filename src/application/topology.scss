@@ -89,4 +89,14 @@
     // border-left: 1px solid #ccc;
     // border-right: 1px solid #ccc;
   }
+
+  .mini-map{
+    position: fixed;
+    width: 320px;
+    height: 240px;
+    box-shadow: 0 6px 5px rgba(0, 0, 0, 0.175);
+    top: 80px;
+    right: 30px;
+    background: white;
+  }
 }

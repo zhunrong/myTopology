@@ -275,6 +275,30 @@ export class Canvas {
   }
 
   /**
+   * 获取画布内容边界盒
+   */
+  getContentBoundingRect() {
+    const leftTop = new Vector2d(0, 0)
+    const rightBottom = new Vector2d(this.canvasWidth, this.canvasHeight)
+    this.rootNode.getDescendantBF(node => {
+      const boundingRect = node.boundingRect
+      if (boundingRect[0].x < leftTop.x) {
+        leftTop.x = boundingRect[0].x
+      }
+      if (boundingRect[0].y < leftTop.y) {
+        leftTop.y = boundingRect[0].y
+      }
+      if (boundingRect[2].x > rightBottom.x) {
+        rightBottom.x = boundingRect[2].x
+      }
+      if (boundingRect[2].y > rightBottom.y) {
+        rightBottom.y = boundingRect[2].y
+      }
+    })
+    return [leftTop, new Vector2d(rightBottom.x, leftTop.y), rightBottom, new Vector2d(leftTop.x, rightBottom.y)]
+  }
+
+  /**
    * 将视口坐标转换成画布坐标。注：不考虑缩放
    * @param coordinate 鼠标位于视口的坐标
    */

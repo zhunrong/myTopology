@@ -65,7 +65,7 @@ export class Line extends Edge {
     if (this.text && this.textElement.isPointIn(pixelCoordinate)) return true
     return false
   }
-  render() {
+  render(ctx?: CanvasRenderingContext2D) {
     if (!this.canvas) return
     const { graphCanvasCtx } = this.canvas
     const targetNode = this.getTargetNode()

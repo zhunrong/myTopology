@@ -15,7 +15,7 @@ export class PathAnimate {
     if (this.duration <= 0) return
     const timeDelta = globalClock.getDelta()
     this.progress += timeDelta / this.duration
-    this.progress = this.progress % 1
+    this.progress %= 1
     const currentPoint = Math2d.getLinePoint(this.path, this.progress)
     if (!currentPoint) return
     if (this._lastPoint) {
