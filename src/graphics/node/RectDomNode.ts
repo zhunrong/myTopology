@@ -173,12 +173,11 @@ export class RectDomNode extends DomNode {
     ctx.save()
     ctx.beginPath()
     ctx.rect(x, y, width, height)
+    ctx.fillStyle = '#29c1f8'
     ctx.fill()
     ctx.restore()
   }
-  
-}
 
-// applyMixins(RectDomNode, [RectShape])
+}
 
 export default RectDomNode

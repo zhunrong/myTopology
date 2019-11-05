@@ -18,10 +18,6 @@ export abstract class Edge extends Graph {
    * 获取目标节点
    */
   getTargetNode(): Node {
-    // let node = this.targetNode
-    // while (!node.visible && node.parent && node.parent.renderType !== 'NONE') {
-    //   node = node.parent
-    // }
     let parent = this.targetNode.parent
     let isAllExpanded = true
     while (parent) {
@@ -39,16 +35,11 @@ export abstract class Edge extends Graph {
       }
       return node
     }
-    // return node
   }
   /**
    * 获取源节点
    */
   getSourceNode(): Node {
-    // let node = this.sourceNode
-    // while (!node.visible && node.parent && node.parent.renderType !== 'NONE') {
-    //   node = node.parent
-    // }
     let parent = this.sourceNode.parent
     let isAllExpanded = true
     while (parent) {
@@ -66,7 +57,6 @@ export abstract class Edge extends Graph {
       }
       return node
     }
-    // return node
   }
 }
 

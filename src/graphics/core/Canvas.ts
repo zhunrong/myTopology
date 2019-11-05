@@ -665,7 +665,6 @@ export class Canvas {
 
       if (node instanceof CanvasNode) {
         if (nodeVisible) {
-          // node.render()
           node.update()
         }
       }
@@ -673,7 +672,6 @@ export class Canvas {
         if (nodeVisible) {
           node.mount()
           if (node.isUpdate) {
-            // node.render(this)
             node.update()
             node.isUpdate = false
           }

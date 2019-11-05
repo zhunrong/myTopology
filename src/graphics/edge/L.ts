@@ -77,9 +77,10 @@ export class L extends Edge {
     if (this.text && this.textElement.isPointIn(pixelCoordinate)) return true
     return false
   }
-  render() {
+  render(ctx?: CanvasRenderingContext2D) {
     if (!this.canvas) return
     const { graphCanvasCtx } = this.canvas
+    ctx = ctx || graphCanvasCtx
     // const { sourceNode, targetNode } = this
     const sourceNode = this.getSourceNode()
     const targetNode = this.getTargetNode()
@@ -127,56 +128,61 @@ export class L extends Edge {
         }
       }
 
-      graphCanvasCtx.save()
+      ctx.save()
       if/* 虚线 */ (this.dash) {
-        graphCanvasCtx.setLineDash([4, 4])
+        ctx.setLineDash([4, 4])
       }
 
-      graphCanvasCtx.beginPath()
-      graphCanvasCtx.moveTo(sourceJoinPoint.x, sourceJoinPoint.y)
+      ctx.beginPath()
+      ctx.moveTo(sourceJoinPoint.x, sourceJoinPoint.y)
       this.middlePoints.forEach(point => {
-        graphCanvasCtx.lineTo(point.x, point.y)
+        if (!ctx) return
+        ctx.lineTo(point.x, point.y)
       })
-      graphCanvasCtx.lineTo(targetJoinPoint.x, targetJoinPoint.y)
-      graphCanvasCtx.strokeStyle = this.active ? '#e96160' : '#29c1f8'
-      graphCanvasCtx.stroke()
+      ctx.lineTo(targetJoinPoint.x, targetJoinPoint.y)
+      ctx.strokeStyle = this.active ? '#e96160' : '#29c1f8'
+      ctx.stroke()
 
 
       if/* 文本 */ (this.text) {
         this.centerPoint = Math2d.getLinePoint([sourceJoinPoint, ...this.middlePoints, targetJoinPoint], 0.5)
         if (this.centerPoint) {
-          graphCanvasCtx.fillStyle = this.active ? '#e96160' : '#29c1f8'
+          ctx.fillStyle = this.active ? '#e96160' : '#29c1f8'
           this.textElement.text = this.text
           this.textElement.font = '14px sans-serif'
           this.textElement.backgroundColor = 'rgba(255,255,255,0.8)'
           this.textElement.position.copy(this.centerPoint)
-          this.textElement.render(graphCanvasCtx)
+          this.textElement.render(ctx)
         }
       }
       if/* 双向箭头 */(this.doubleArrow) {
         this.arrowStart = targetJoinPoint
-        graphCanvasCtx.fillStyle = this.active ? '#e96160' : '#29c1f8'
+        ctx.fillStyle = this.active ? '#e96160' : '#29c1f8'
         this.targetArrowElement.position.copy(targetJoinPoint)
         this.targetArrowElement.rotate = inDirection.xAxisAngle()
-        this.targetArrowElement.render(graphCanvasCtx)
+        this.targetArrowElement.render(ctx)
 
         this.sourceArrowElement.position.copy(sourceJoinPoint)
         this.sourceArrowElement.rotate = outDirection.xAxisAngle() + Math.PI
-        this.sourceArrowElement.render(graphCanvasCtx)
+        this.sourceArrowElement.render(ctx)
       } else if/* 单向箭头 */ (this.arrow) {
         this.arrowStart = targetJoinPoint
-        graphCanvasCtx.fillStyle = this.active ? '#e96160' : '#29c1f8'
+        ctx.fillStyle = this.active ? '#e96160' : '#29c1f8'
         this.targetArrowElement.position.copy(targetJoinPoint)
         this.targetArrowElement.rotate = inDirection.xAxisAngle()
-        this.targetArrowElement.render(graphCanvasCtx)
+        this.targetArrowElement.render(ctx)
       }
 
       this.animateManager.path = [sourceJoinPoint, ...this.middlePoints, targetJoinPoint]
       this.animateManager.update()
-      this.animateManager.render(graphCanvasCtx)
+      this.animateManager.render(ctx)
 
-      graphCanvasCtx.restore()
+      ctx.restore()
     }
+  }
+
+  drawThumbnail(ctx: CanvasRenderingContext2D) {
+    this.render(ctx)
   }
 }
 

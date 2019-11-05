@@ -21,36 +21,39 @@ export class RectGroup extends RectCanvasNode {
     }
   }
 
-  render() {}
+  render(ctx?: CanvasRenderingContext2D) { }
 
-  update() {
+  update(ctx?: CanvasRenderingContext2D) {
     if (!this.canvas) return
     const { graphCanvasCtx } = this.canvas
+    ctx = ctx || graphCanvasCtx
     const width = this.getWidth()
     const height = this.getHeight()
     const { x, y } = this.getPosition()
     const center = this.centerPoint
 
-    graphCanvasCtx.beginPath()
-    graphCanvasCtx.rect(x, y, width, height)
+    ctx.beginPath()
+    ctx.rect(x, y, width, height)
 
     if (!this.isExpanded) {
-      graphCanvasCtx.moveTo(center.x, center.y - 10)
-      graphCanvasCtx.lineTo(center.x, center.y + 10)
-      graphCanvasCtx.moveTo(center.x - 10, center.y)
-      graphCanvasCtx.lineTo(center.x + 10, center.y)
+      ctx.moveTo(center.x, center.y - 10)
+      ctx.lineTo(center.x, center.y + 10)
+      ctx.moveTo(center.x - 10, center.y)
+      ctx.lineTo(center.x + 10, center.y)
     }
 
-    // graphCanvasCtx.drawImage(this.cacheCanvas, x - 2, y - 2)
-    graphCanvasCtx.save()
+    ctx.save()
     if (this.active) {
-      graphCanvasCtx.shadowBlur = 5
-      graphCanvasCtx.shadowColor = 'rgba(255,0,0,0.8)'
+      ctx.shadowBlur = 5
+      ctx.shadowColor = 'rgba(255,0,0,0.8)'
     }
-    graphCanvasCtx.strokeStyle = '#066df2'
-    graphCanvasCtx.stroke()
-    graphCanvasCtx.restore()
+    ctx.strokeStyle = '#066df2'
+    ctx.stroke()
+    ctx.restore()
+  }
 
+  drawThumbnail(ctx: CanvasRenderingContext2D) {
+    this.update(ctx)
   }
 }
 

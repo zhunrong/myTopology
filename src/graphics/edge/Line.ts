@@ -68,6 +68,7 @@ export class Line extends Edge {
   render(ctx?: CanvasRenderingContext2D) {
     if (!this.canvas) return
     const { graphCanvasCtx } = this.canvas
+    ctx = ctx || graphCanvasCtx
     const targetNode = this.getTargetNode()
     const sourceNode = this.getSourceNode()
     if (sourceNode.visible || targetNode.visible) {
@@ -81,17 +82,17 @@ export class Line extends Edge {
       if (!this.end) return
 
       const sourceToTarget = Vector2d.copy(this.end).substract(this.begin)
-      graphCanvasCtx.save()
-      graphCanvasCtx.beginPath()
+      ctx.save()
+      ctx.beginPath()
       // 画线
-      graphCanvasCtx.moveTo(this.begin.x, this.begin.y)
-      graphCanvasCtx.lineTo(this.end.x, this.end.y)
-      graphCanvasCtx.strokeStyle = this.active ? '#e96160' : '#29c1f8'
-      graphCanvasCtx.fillStyle = this.active ? '#e96160' : '#29c1f8'
+      ctx.moveTo(this.begin.x, this.begin.y)
+      ctx.lineTo(this.end.x, this.end.y)
+      ctx.strokeStyle = this.active ? '#e96160' : '#29c1f8'
+      ctx.fillStyle = this.active ? '#e96160' : '#29c1f8'
       if /* 虚线 */ (this.dash) {
-        graphCanvasCtx.setLineDash([4, 4])
+        ctx.setLineDash([4, 4])
       }
-      graphCanvasCtx.stroke()
+      ctx.stroke()
       const rotate = sourceToTarget.xAxisAngle()
 
       if /* 文本 */ (this.text) {
@@ -99,28 +100,32 @@ export class Line extends Edge {
         const lineCenter = Vector2d.copy(this.begin).add(Vector2d.copy(sourceToTarget).scale(1 / 2))
         this.textElement.position.copy(lineCenter)
         this.textElement.rotate = (-Math.PI / 2 <= rotate && rotate < Math.PI / 2) ? rotate : rotate - Math.PI
-        this.textElement.render(graphCanvasCtx)
+        this.textElement.render(ctx)
       }
 
       if /* 双向箭头 */ (this.doubleArrow) {
         this.sourceArrowElement.position.copy(this.begin)
         this.sourceArrowElement.rotate = rotate + Math.PI
-        this.sourceArrowElement.render(graphCanvasCtx)
+        this.sourceArrowElement.render(ctx)
         this.targetArrowElement.position.copy(this.end)
         this.targetArrowElement.rotate = rotate
-        this.targetArrowElement.render(graphCanvasCtx)
+        this.targetArrowElement.render(ctx)
       } else if /* 单向箭头 */ (this.arrow) {
         this.targetArrowElement.position.copy(this.end)
         this.targetArrowElement.rotate = rotate
-        this.targetArrowElement.render(graphCanvasCtx)
+        this.targetArrowElement.render(ctx)
       }
 
       this.animateManager.path = [this.begin, this.end]
       this.animateManager.update()
-      this.animateManager.render(graphCanvasCtx)
+      this.animateManager.render(ctx)
 
-      graphCanvasCtx.restore()
+      ctx.restore()
     }
+  }
+
+  drawThumbnail(ctx:CanvasRenderingContext2D){
+    this.render(ctx)
   }
 }
 

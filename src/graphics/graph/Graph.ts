@@ -20,6 +20,12 @@ export abstract class Graph {
   set visible(visible: boolean) {
     this._visible = visible
   }
+  /**
+   * 在鹰眼地图上是否可见
+   */
+  get miniMapVisible(): boolean {
+    return this.visible
+  }
   // 渲染层级
   zIndex: number
   // 是否更新
@@ -35,11 +41,13 @@ export abstract class Graph {
     this.zIndex = options.zIndex || 0
     this.data = options.data
   }
+
   /**
    * 判断点是否在图形内
    * @param canvas 
    */
   abstract isPointIn(): boolean
+
   /**
    * 是否在一个矩形内
    * @param points 
@@ -47,6 +55,7 @@ export abstract class Graph {
   isInRect(points: Vector2d[]): boolean {
     return false
   }
+
   /**
    * 是否被指定矩形包围
    * @param rect 
@@ -59,19 +68,19 @@ export abstract class Graph {
   isWrappedInCircle(): boolean { return false }
 
   /**
-   * hook:渲染时调用
-   */
-  render(ctx?: CanvasRenderingContext2D) { }
-
-  /**
    * 绘制缩略图
    */
   drawThumbnail(ctx: CanvasRenderingContext2D) { }
 
   /**
+   * hook:渲染时调用
+   */
+  render(ctx?: CanvasRenderingContext2D) { }
+
+  /**
    * hook:更新时调用
    */
-  update() { }
+  update(ctx?: CanvasRenderingContext2D) { }
 
   /**
    * hook:销毁时调用

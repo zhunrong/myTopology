@@ -38,6 +38,11 @@ export abstract class Node extends Graph {
     this._visible = visible
   }
 
+  get miniMapVisible(): boolean {
+    if (this.parent && (!this.parent.miniMapVisible || !this.parent.isExpanded)) return false
+    return true
+  }
+
   /**
    * 顶点坐标数组
    */
