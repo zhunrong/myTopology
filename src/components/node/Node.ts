@@ -1,4 +1,5 @@
-import { Vector2d, RectDomNode, IRectDomNodeOptions } from '../../graphics/index'
+import { IRectDomNodeOptions } from '../../graphics/index'
+import RectDomNode from '../../graphics/node/RectDomNode'
 import style from './node.less'
 
 const deviceMap: { [key: string]: string } = {

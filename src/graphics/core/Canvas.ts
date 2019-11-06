@@ -1,8 +1,6 @@
 import { ContextMenu } from '../contextMenu/ContextMenu'
 import { EventEmitter } from '../events/eventEmitter'
 import { Vector2d } from '../utils/vector2d'
-import { CanvasNode } from '../graph/CanvasNode'
-import { DomNode } from '../graph/DomNode'
 import { Edge } from '../graph/Edge'
 import { throttle } from '../utils/utils'
 import ResizeObserver from 'resize-observer-polyfill'
@@ -13,6 +11,7 @@ import modeManager, { MODE_DEFAULT } from '../mode/modes'
 import { globalClock } from './Clock'
 import style from './canvas.less'
 import config from '../config/config'
+
 export interface ICanvasOptions {
   container: HTMLElement
   scale?: number
@@ -186,10 +185,8 @@ export class Canvas {
     node.zIndex = Math.max(zIndex, node.zIndex)
     parent.removeChild(node, false)
     parent.addChild(node)
-    if (node instanceof DomNode) {
-      node.unmount()
-      node.mount()
-    }
+    node.unmount()
+    node.mount()
     this.repaint = true
   }
 
@@ -663,12 +660,12 @@ export class Canvas {
         }
       })
 
-      if (node instanceof CanvasNode) {
+      if (node.renderType === 'CANVAS') {
         if (nodeVisible) {
           node.update()
         }
       }
-      if (node instanceof DomNode) {
+      if (node.renderType === 'DOM') {
         if (nodeVisible) {
           node.mount()
           if (node.isUpdate) {

@@ -1,7 +1,49 @@
+import Node, { INodeOptions } from './Node'
 import Vector2d from '../utils/vector2d'
-export class CircleShape {
-  position!: Vector2d
-  radius!: number
+import Math2d from '../utils/math2d'
+
+export interface ICircleNodeOptions extends INodeOptions {
+  radius?: number
+  minRadius?: number
+  text?: string
+}
+
+export abstract class CircleNode extends Node {
+  shapeType = 'circle'
+  radius: number
+  minRadius: number
+  text: string
+
+  get boundingJoinPoints(): Vector2d[] {
+    return this.getBoundingJoinPoints()
+  }
+  get boundingRect(): Vector2d[] {
+    return this.getBoundingRect()
+  }
+  get centerPoint(): Vector2d {
+    return this.getCenterPoint()
+  }
+  get vertexes(): Vector2d[] {
+    return this.getBoundingRect()
+  }
+
+  constructor(options: ICircleNodeOptions) {
+    super(options)
+    this.radius = options.radius || 50
+    this.minRadius = options.minRadius || 30
+    this.text = options.text || ''
+  }
+
+  isPointIn() {
+    const { canvas, centerPoint, radius } = this
+    if (!canvas) return false
+    if (!this.visible) return false
+    if (!canvas.nativeEvent) return false
+    const event = canvas.nativeEvent as MouseEvent
+    const point = canvas.viewportToPixelCoordinate(new Vector2d(event.clientX, event.clientY))
+    return Math2d.isPointInCircle(point, centerPoint, radius)
+  }
+
   /**
    * 边界矩形坐标数组
    */
@@ -59,6 +101,16 @@ export class CircleShape {
     const vertexes = this.getBoundingRect()
     return rect[0].x <= vertexes[0].x && rect[0].y <= vertexes[0].y && rect[2].x >= vertexes[2].x && rect[2].y >= vertexes[2].y
   }
+
+  drawThumbnail(ctx: CanvasRenderingContext2D) {
+    const { x, y } = this.centerPoint
+    ctx.save()
+    ctx.beginPath()
+    ctx.arc(x, y, this.radius, 0, Math.PI * 2)
+    ctx.fillStyle = '#29c1f8'
+    ctx.fill()
+    ctx.restore()
+  }
 }
 
-export default CircleShape
+export default CircleNode

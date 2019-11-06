@@ -22,6 +22,11 @@ export abstract class Node extends Graph {
   position: Vector2d
 
   /**
+   * 是否已挂载(只对DOM节点有效)
+   */
+  mounted = false
+
+  /**
    * 获取位置
    */
   getPosition() {
@@ -356,6 +361,22 @@ export abstract class Node extends Graph {
    */
   get lastChild(): Node | undefined {
     return this.children[this.children.length - 1]
+  }
+
+  /**
+   * 挂载（只对DOM节点有效）
+   */
+  mount(): void { }
+
+  /**
+   * 卸载（只对DOM节点有效）
+   */
+  unmount(): void { }
+
+  destroy() {
+    this.removeAllChild()
+    this.beforeDestroy()
+    this.unmount()
   }
 }
 

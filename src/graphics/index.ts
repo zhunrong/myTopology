@@ -1,8 +1,6 @@
 export * from './core/Canvas'
 export * from './contextMenu/ContextMenu'
 export * from './events/eventEmitter'
-export * from './graph/CanvasNode'
-export * from './graph/DomNode'
 export * from './graph/Edge'
 export * from './graph/Node'
 // 模式

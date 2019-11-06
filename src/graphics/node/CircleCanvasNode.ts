@@ -1,47 +1,19 @@
-import CanvasNode, { ICanvasNodeOptions } from '../graph/CanvasNode'
-import CircleShape from '../shape/CircleShape'
-import Vector2d from '../utils/vector2d'
-import Math2d from '../utils/math2d'
-import { applyMixins } from '../utils/utils'
+import Circle, { ICircleNodeOptions } from '../graph/CircleNode'
 
-export interface ICircleCanvasNodeOptions extends ICanvasNodeOptions {
-  radius?: number
-  minRadius?: number
+export interface ICircleCanvasNodeOptions extends ICircleNodeOptions {
   text?: string
 }
 
-export class CircleCanvasNode extends CanvasNode implements CircleShape {
-  shapeType = 'circle'
-  radius: number
-  minRadius: number
+export class CircleCanvasNode extends Circle {
+  renderType = 'CANVAS'
+  cacheCanvas = document.createElement('canvas')
   text: string
-  get boundingJoinPoints(): Vector2d[] {
-    return this.getBoundingJoinPoints()
-  }
-  get boundingRect(): Vector2d[] {
-    return this.getBoundingRect()
-  }
-  get centerPoint(): Vector2d {
-    return this.getCenterPoint()
-  }
-  get vertexes(): Vector2d[] {
-    return this.getBoundingRect()
-  }
+
   constructor(options: ICircleCanvasNodeOptions) {
     super(options)
-    this.radius = options.radius || 50
-    this.minRadius = options.minRadius || 30
     this.text = options.text || ''
   }
-  isPointIn() {
-    const { canvas, centerPoint, radius } = this
-    if (!canvas) return false
-    if (!this.visible) return false
-    if (!canvas.nativeEvent) return false
-    const event = canvas.nativeEvent as MouseEvent
-    const point = canvas.viewportToPixelCoordinate(new Vector2d(event.clientX, event.clientY))
-    return Math2d.isPointInCircle(point, centerPoint, radius)
-  }
+
   render() {
     const { radius, canvas, active } = this
     if (!canvas) return
@@ -83,18 +55,6 @@ export class CircleCanvasNode extends CanvasNode implements CircleShape {
     graphCanvasCtx.drawImage(this.cacheCanvas, x - 1, y - 1)
     graphCanvasCtx.restore()
   }
-
-  // CircleShape mixins
-  getBoundingJoinPoints(): Vector2d[] {
-    return []
-  }
-  getBoundingRect(): Vector2d[] {
-    return []
-  }
-  getCenterPoint(): Vector2d {
-    return new Vector2d(0, 0)
-  }
 }
 
-applyMixins(CircleCanvasNode, [CircleShape])
 export default CircleCanvasNode

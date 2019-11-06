@@ -34,6 +34,7 @@ export abstract class Graph {
   graphId: number = graphId++
   // 携带的数据
   data: any
+  
   // 渲染签名,用于判断在同一个渲染周期内，图元是否已渲染
   renderSign: any
   constructor(options: IGraphOptions) {
@@ -70,7 +71,7 @@ export abstract class Graph {
   /**
    * 绘制缩略图
    */
-  drawThumbnail(ctx: CanvasRenderingContext2D) { }
+  abstract drawThumbnail(ctx: CanvasRenderingContext2D): void
 
   /**
    * hook:渲染时调用
