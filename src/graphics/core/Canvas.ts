@@ -170,6 +170,11 @@ export class Canvas {
     this.eventEmitter.clear()
     this.unmount()
     this.removeAllNode()
+    // 销毁插件
+    while (this.plugins.length) {
+      const plugin = this.plugins.pop()
+      plugin && plugin.destroy()
+    }
   }
 
   /**
@@ -558,7 +563,7 @@ export class Canvas {
   }
 
   use(plugin: Plugin) {
-    plugin.canvas = this
+    plugin.install(this)
     this.plugins.push(plugin)
   }
 

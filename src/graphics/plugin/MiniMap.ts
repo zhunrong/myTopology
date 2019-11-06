@@ -1,9 +1,19 @@
 import Plugin from './Plugin'
+import Canvas from '../core/Canvas'
+import Vector2d from '../utils/vector2d'
+import { throttle } from '../utils/utils'
+
+const lastPoint = new Vector2d()
+const currentPoint = new Vector2d()
+const offset = new Vector2d()
 
 export class MiniMap extends Plugin {
 
   canvasElement = document.createElement('canvas')
 
+  /**
+   * 地图宽度
+   */
   get width() {
     return this.canvasElement.width
   }
@@ -12,6 +22,9 @@ export class MiniMap extends Plugin {
     this.canvasElement.width = value
   }
 
+  /**
+   * 地图高度
+   */
   get height() {
     return this.canvasElement.height
   }
@@ -26,9 +39,13 @@ export class MiniMap extends Plugin {
     this.canvasElement.height = height
   }
 
-  install() { }
+  install(canvas: Canvas) {
+    this.canvas = canvas
+    this.canvasElement.addEventListener('mousemove', this.handleMouseMove)
+  }
 
   destroy() {
+    this.canvasElement.removeEventListener('mousemove', this.handleMouseMove)
     this.canvas = null
   }
 
@@ -41,6 +58,7 @@ export class MiniMap extends Plugin {
     const boundingRect = this.canvas.getContentBoundingRect()
     const width = boundingRect[2].x - boundingRect[0].x
     const height = boundingRect[2].y - boundingRect[0].y
+    // scale = 地图尺寸 / 画布尺寸
     const scale = Math.min(this.width / width, this.height / height)
     const ctx = this.canvasElement.getContext('2d') as CanvasRenderingContext2D
     const offsetX = (this.width / scale - width) / 2 - boundingRect[0].x
@@ -82,6 +100,26 @@ export class MiniMap extends Plugin {
     ctx.fill('evenodd')
     ctx.restore()
   }
+
+  handleMouseMove = throttle(e => {
+    if (e.buttons !== 1 || !this.canvas || lastPoint.magnitude === 0) {
+      lastPoint.x = e.offsetX
+      lastPoint.y = e.offsetY
+      return
+    }
+    currentPoint.x = e.offsetX
+    currentPoint.y = e.offsetY
+    // do...
+    const boundingRect = this.canvas.getContentBoundingRect()
+    const width = boundingRect[2].x - boundingRect[0].x
+    const height = boundingRect[2].y - boundingRect[0].y
+    const scale = Math.max(width / this.width, height / this.height)
+    offset.copy(currentPoint).substract(lastPoint).scale(-scale)
+    this.canvas.rootNode.translate(offset)
+    this.canvas.repaint = true
+    // done
+    lastPoint.copy(currentPoint)
+  })
 
   /**
    * 挂载

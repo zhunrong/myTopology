@@ -12,7 +12,7 @@ export abstract class Plugin {
   /**
    * 安装
    */
-  abstract install(): void
+  abstract install(canvas:Canvas): void
   /**
    * 销毁
    */
