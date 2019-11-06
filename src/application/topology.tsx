@@ -114,8 +114,8 @@ export default class Topology extends Component<IProps, IState> {
                 arrow: item.arrow,
                 text: item.text
               })
-              edge.animateManager.element = new Image(require('../assets/双箭头.png'))
-              edge.animateManager.duration = 5000
+              edge.animate.element = new Image(require('../assets/双箭头.png'))
+              edge.animate.duration = 5000
               this.canvas.addEdge(edge)
             } else {
               const edge = new L({
@@ -125,8 +125,8 @@ export default class Topology extends Component<IProps, IState> {
                 arrow: item.arrow,
                 text: item.text
               })
-              edge.animateManager.element = new Image(require('../assets/绿箭头.png'))
-              edge.animateManager.duration = 4000
+              edge.animate.element = new Image(require('../assets/绿箭头.png'))
+              edge.animate.duration = 4000
               this.canvas.addEdge(edge)
             }
           }
@@ -374,7 +374,7 @@ export default class Topology extends Component<IProps, IState> {
         </div>
         <NodePanel />
         <div ref={this.containerRef} className="topo-chart" />
-        <div ref={this.miniMapRef} className="mini-map"></div>
+        <div ref={this.miniMapRef} className="mini-map" draggable={false}></div>
       </div>
     )
   }

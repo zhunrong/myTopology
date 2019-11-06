@@ -1,9 +1,11 @@
-import { Vector2d } from '../utils/vector2d'
+import { IStyle } from '../graph/Graph'
+import Vector2d from '../utils/vector2d'
 import { Edge, IEdgeOptions } from '../graph/Edge'
-import { Math2d } from '../utils/math2d'
+import Math2d from '../utils/math2d'
+import Element from '../element/Element'
 import Triangle from '../element/Triangle'
 import Text from '../element/Text'
-import Image from '../element/Image'
+import Polyline from '../element/Polyline'
 import PathAnimate from '../animate/PathAnimate'
 
 const ARROW_SIZE = { width: 8, height: 10 }
@@ -17,7 +19,14 @@ export interface ILineOptions extends IEdgeOptions {
   arrow?: boolean
   // 双箭头
   doubleArrow?: boolean
+  // 动画元素
+  animateElement?: Element
 }
+
+export interface ILineStyle extends IStyle {
+  lineWidth: number
+}
+
 export class Line extends Edge {
   dash: boolean
   text: string
@@ -25,10 +34,11 @@ export class Line extends Edge {
   doubleArrow: boolean
   begin: Vector2d | undefined
   end: Vector2d | undefined
+  lineElement = new Polyline()
   sourceArrowElement: Triangle = new Triangle(ARROW_SIZE)
   targetArrowElement: Triangle = new Triangle(ARROW_SIZE)
   textElement: Text = new Text('')
-  animateManager = new PathAnimate()
+  animate = new PathAnimate()
   constructor(options: ILineOptions) {
     super(options)
     this.dash = options.dash || false
@@ -37,6 +47,8 @@ export class Line extends Edge {
     this.doubleArrow = options.doubleArrow || false
     this.textElement.text = this.text
     this.textElement.offset.y = -10
+    this.style.lineWidth = 2
+    this.animate.element = options.animateElement || null
   }
   isInRect() {
     return true
@@ -53,7 +65,7 @@ export class Line extends Edge {
     const viewCoordinate = new Vector2d(event.clientX, event.clientY)
     const pixelCoordinate = canvas.viewportToPixelCoordinate(viewCoordinate)
     // 判断点是否在线上
-    if (Math2d.isPointInLineSegment(pixelCoordinate, [this.begin, this.end], 0.1)) return true
+    if (this.lineElement.isPointIn(pixelCoordinate)) return true
     // 判断点是否在箭头上
     if (this.doubleArrow) {
       if (this.sourceArrowElement.isPointIn(pixelCoordinate)) return true
@@ -83,16 +95,17 @@ export class Line extends Edge {
 
       const sourceToTarget = Vector2d.copy(this.end).substract(this.begin)
       ctx.save()
-      ctx.beginPath()
-      // 画线
-      ctx.moveTo(this.begin.x, this.begin.y)
-      ctx.lineTo(this.end.x, this.end.y)
-      ctx.strokeStyle = this.active ? '#e96160' : '#29c1f8'
-      ctx.fillStyle = this.active ? '#e96160' : '#29c1f8'
+      ctx.strokeStyle = this.active ? this.style.activeColor : this.style.color
+      ctx.fillStyle = this.active ? this.style.activeColor : this.style.color
       if /* 虚线 */ (this.dash) {
         ctx.setLineDash([4, 4])
       }
-      ctx.stroke()
+
+      // 画线
+      this.lineElement.lineWidth = this.style.lineWidth
+      this.lineElement.points = [this.begin, this.end]
+      this.lineElement.render(ctx)
+
       const rotate = sourceToTarget.xAxisAngle()
 
       if /* 文本 */ (this.text) {
@@ -116,15 +129,15 @@ export class Line extends Edge {
         this.targetArrowElement.render(ctx)
       }
 
-      this.animateManager.path = [this.begin, this.end]
-      this.animateManager.update()
-      this.animateManager.render(ctx)
+      this.animate.path = [this.begin, this.end]
+      this.animate.update()
+      this.animate.render(ctx)
 
       ctx.restore()
     }
   }
 
-  drawThumbnail(ctx:CanvasRenderingContext2D){
+  drawThumbnail(ctx: CanvasRenderingContext2D) {
     this.render(ctx)
   }
 }

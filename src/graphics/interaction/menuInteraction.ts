@@ -21,6 +21,10 @@ export class MenuInteraction extends Interaction {
     } else if (activeEdges.length) {
       canvas.contextMenu.menu = [
         {
+          label: '重命名',
+          command: 'rename'
+        },
+        {
           label: '删除',
           command: 'remove'
         }

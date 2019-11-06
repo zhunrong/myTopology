@@ -4,6 +4,7 @@ import { Canvas } from '../core/Canvas'
 export interface IStyle {
   color: string
   activeColor: string
+  lineWidth: number
   [key: string]: any
 }
 
@@ -50,7 +51,8 @@ export abstract class Graph {
    */
   style: IStyle = {
     color: '#29c1f8',
-    activeColor: '#e96160'
+    activeColor: '#e96160',
+    lineWidth: 2
   }
 
   // 渲染签名,用于判断在同一个渲染周期内，图元是否已渲染

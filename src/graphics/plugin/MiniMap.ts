@@ -37,6 +37,7 @@ export class MiniMap extends Plugin {
     super()
     this.canvasElement.width = width
     this.canvasElement.height = height
+    this.canvasElement.draggable = false
   }
 
   install(canvas: Canvas) {

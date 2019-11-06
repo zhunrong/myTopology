@@ -3,7 +3,8 @@ import { Edge, IEdgeOptions } from '../graph/Edge'
 import { Math2d } from '../utils/math2d'
 import Triangle from '../element/Triangle'
 import Text from '../element/Text'
-import Image from '../element/Image'
+import Element from '../element/Element'
+import Polyline from '../element/Polyline'
 import PathAnimate from '../animate/PathAnimate'
 
 export interface ILOptions extends IEdgeOptions {
@@ -15,6 +16,8 @@ export interface ILOptions extends IEdgeOptions {
   arrow?: boolean
   // 双箭头
   doubleArrow?: boolean
+  // 动画元素
+  animateElement?: Element
 }
 
 const sourceJoinPointCopy = new Vector2d()
@@ -39,8 +42,9 @@ export class L extends Edge {
   sourceArrowElement = new Triangle(ARROW_SIZE)
   targetArrowElement = new Triangle(ARROW_SIZE)
   textElement = new Text('')
+  lineElement = new Polyline()
 
-  animateManager = new PathAnimate()
+  animate = new PathAnimate()
 
   constructor(options: ILOptions) {
     super(options)
@@ -48,7 +52,9 @@ export class L extends Edge {
     this.text = options.text || ''
     this.arrow = options.arrow || false
     this.doubleArrow = options.doubleArrow || false
+    this.style.lineWidth = 2
     this.textElement.text = this.text
+    this.animate.element = options.animateElement || null
   }
   isInRect = () => {
     return true
@@ -65,7 +71,7 @@ export class L extends Edge {
     const viewCoordinate = new Vector2d(event.clientX, event.clientY)
     const pixelCoordinate = canvas.viewportToPixelCoordinate(viewCoordinate)
     // 判断点是否在线上
-    if (Math2d.isPointInPolyline(pixelCoordinate, [this.sourceJoinPoint, ...this.middlePoints, this.targetJoinPoint], 0.1)) return true
+    if (this.lineElement.isPointIn(pixelCoordinate)) return true
     // 判断点是否在箭头上
     if (this.doubleArrow) {
       if (this.targetArrowElement.isPointIn(pixelCoordinate)) return true
@@ -129,25 +135,19 @@ export class L extends Edge {
       }
 
       ctx.save()
+      ctx.strokeStyle = this.active ? this.style.activeColor : this.style.color
+      ctx.fillStyle = this.active ? this.style.activeColor : this.style.color
       if/* 虚线 */ (this.dash) {
         ctx.setLineDash([4, 4])
       }
 
-      ctx.beginPath()
-      ctx.moveTo(sourceJoinPoint.x, sourceJoinPoint.y)
-      this.middlePoints.forEach(point => {
-        if (!ctx) return
-        ctx.lineTo(point.x, point.y)
-      })
-      ctx.lineTo(targetJoinPoint.x, targetJoinPoint.y)
-      ctx.strokeStyle = this.active ? '#e96160' : '#29c1f8'
-      ctx.stroke()
-
+      this.lineElement.lineWidth = this.style.lineWidth
+      this.lineElement.points = [sourceJoinPoint, ...this.middlePoints, targetJoinPoint]
+      this.lineElement.render(ctx)
 
       if/* 文本 */ (this.text) {
         this.centerPoint = Math2d.getLinePoint([sourceJoinPoint, ...this.middlePoints, targetJoinPoint], 0.5)
         if (this.centerPoint) {
-          ctx.fillStyle = this.active ? '#e96160' : '#29c1f8'
           this.textElement.text = this.text
           this.textElement.font = '14px sans-serif'
           this.textElement.backgroundColor = 'rgba(255,255,255,0.8)'
@@ -157,7 +157,6 @@ export class L extends Edge {
       }
       if/* 双向箭头 */(this.doubleArrow) {
         this.arrowStart = targetJoinPoint
-        ctx.fillStyle = this.active ? '#e96160' : '#29c1f8'
         this.targetArrowElement.position.copy(targetJoinPoint)
         this.targetArrowElement.rotate = inDirection.xAxisAngle()
         this.targetArrowElement.render(ctx)
@@ -167,15 +166,14 @@ export class L extends Edge {
         this.sourceArrowElement.render(ctx)
       } else if/* 单向箭头 */ (this.arrow) {
         this.arrowStart = targetJoinPoint
-        ctx.fillStyle = this.active ? '#e96160' : '#29c1f8'
         this.targetArrowElement.position.copy(targetJoinPoint)
         this.targetArrowElement.rotate = inDirection.xAxisAngle()
         this.targetArrowElement.render(ctx)
       }
 
-      this.animateManager.path = [sourceJoinPoint, ...this.middlePoints, targetJoinPoint]
-      this.animateManager.update()
-      this.animateManager.render(ctx)
+      this.animate.path = [sourceJoinPoint, ...this.middlePoints, targetJoinPoint]
+      this.animate.update()
+      this.animate.render(ctx)
 
       ctx.restore()
     }
