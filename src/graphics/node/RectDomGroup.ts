@@ -26,6 +26,19 @@ export class RectDomGroup extends RectDomNode {
                             ${this.isExpanded?'':'...'}
                           </div>`
   }
+
+  drawThumbnail(ctx: CanvasRenderingContext2D) {
+    const { x, y } = this.getPosition()
+    const width = this.getWidth()
+    const height = this.getHeight()
+    ctx.save()
+    ctx.beginPath()
+    ctx.rect(x, y, width, height)
+    ctx.strokeStyle = this.active ? this.style.activeColor : this.style.color
+    ctx.lineWidth = 3
+    ctx.stroke()
+    ctx.restore()
+  }
 }
 
 export default RectDomGroup

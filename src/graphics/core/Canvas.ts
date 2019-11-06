@@ -8,6 +8,7 @@ import Node from '../graph/Node'
 import VirtualNode from '../graph/VirtualNode'
 import Interaction from '../interaction/Interaction'
 import modeManager, { MODE_DEFAULT } from '../mode/modes'
+import Plugin from '../plugin/Plugin'
 import { globalClock } from './Clock'
 import style from './canvas.less'
 import config from '../config/config'
@@ -81,12 +82,20 @@ export class Canvas {
   animation = false
   // menu
   contextMenu: ContextMenu = new ContextMenu(this)
-  // 根节点
+
+  /**
+   * 画布根节点（虚拟节点，不可见）
+   */
   rootNode: VirtualNode = new VirtualNode({
     x: 0,
     y: 0,
     id: 'rootNode'
   })
+
+  /**
+   * 插件列表
+   */
+  plugins: Plugin[] = []
 
   constructor(options: ICanvasOptions) {
     this.container = options.container
@@ -407,22 +416,18 @@ export class Canvas {
    */
   setMode(mode: string) {
     if (!modeManager.hasMode(mode)) {
-      console.log(`该模式不存在:${mode}`)
+      console.warn(`该模式不存在:${mode}`)
       return
     }
     let interactions = modeManager.use(this.interactionMode)
-    if (interactions) {
-      interactions.forEach(action => {
-        action.onUninstall(this)
-      })
-    }
+    interactions.forEach(action => {
+      action.onUninstall(this)
+    })
     this.interactionMode = mode
     interactions = modeManager.use(this.interactionMode)
-    if (interactions) {
-      interactions.forEach(action => {
-        action.onInstall(this)
-      })
-    }
+    interactions.forEach(action => {
+      action.onInstall(this)
+    })
   }
 
   /**
@@ -438,11 +443,9 @@ export class Canvas {
   private handleClick = (e: MouseEvent) => {
     this.nativeEvent = e
     const interactions = modeManager.use(this.interactionMode)
-    if (interactions) {
-      interactions.forEach(action => {
-        action.onClick(this, e)
-      })
-    }
+    interactions.forEach(action => {
+      action.onClick(this, e)
+    })
     this.eventEmitter.emit('canvas:click', e)
   }
 
@@ -452,11 +455,9 @@ export class Canvas {
   private handleDblClick = (e: MouseEvent) => {
     this.nativeEvent = e
     const interactions = modeManager.use(this.interactionMode)
-    if (interactions) {
-      interactions.forEach(action => {
-        action.onDblClick(this, e)
-      })
-    }
+    interactions.forEach(action => {
+      action.onDblClick(this, e)
+    })
     this.eventEmitter.emit('canvas:dblclick')
   }
 
@@ -465,11 +466,9 @@ export class Canvas {
    */
   private handleWheel = (e: Event) => {
     const interactions = modeManager.use(this.interactionMode)
-    if (interactions) {
-      interactions.forEach(action => {
-        action.onWheel(this, e)
-      })
-    }
+    interactions.forEach(action => {
+      action.onWheel(this, e)
+    })
     this.eventEmitter.emit('canvas:wheel', e)
   }
 
@@ -481,11 +480,9 @@ export class Canvas {
     this.mousedownPosition = new Vector2d(e.clientX, e.clientY)
     this.getBoundingClientRect()
     const interactions = modeManager.use(this.interactionMode)
-    if (interactions) {
-      interactions.forEach(action => {
-        action.onMouseDown(this, e)
-      })
-    }
+    interactions.forEach(action => {
+      action.onMouseDown(this, e)
+    })
     this.eventEmitter.emit('canvas:mousedown', e)
   }
 
@@ -497,11 +494,9 @@ export class Canvas {
     this.mousemovePosition = new Vector2d(e.clientX, e.clientY)
 
     const interactions = modeManager.use(this.interactionMode)
-    if (interactions) {
-      interactions.forEach(action => {
-        action.onMouseMove(this, e)
-      })
-    }
+    interactions.forEach(action => {
+      action.onMouseMove(this, e)
+    })
     this.optimizeNode()
     this.eventEmitter.emit('canvas:mousemove', e)
   })
@@ -513,11 +508,9 @@ export class Canvas {
     this.nativeEvent = e
     this.mouseupPosition = new Vector2d(e.clientX, e.clientY)
     const interactions = modeManager.use(this.interactionMode)
-    if (interactions) {
-      interactions.forEach(action => {
-        action.onMouseUp(this, e)
-      })
-    }
+    interactions.forEach(action => {
+      action.onMouseUp(this, e)
+    })
     this.eventEmitter.emit('canvas:mouseup', e)
   }
 
@@ -526,11 +519,9 @@ export class Canvas {
    */
   private handleDragOver = (e: DragEvent) => {
     const interactions = modeManager.use(this.interactionMode)
-    if (interactions) {
-      interactions.forEach(action => {
-        action.onDragOver(this, e)
-      })
-    }
+    interactions.forEach(action => {
+      action.onDragOver(this, e)
+    })
   }
 
   /**
@@ -539,21 +530,17 @@ export class Canvas {
   private handleDrop = (e: DragEvent) => {
     this.getBoundingClientRect()
     const interactions = modeManager.use(this.interactionMode)
-    if (interactions) {
-      interactions.forEach(action => {
-        action.onDrop(this, e)
-      })
-    }
+    interactions.forEach(action => {
+      action.onDrop(this, e)
+    })
   }
 
   private handleContextMenu = (e: MouseEvent) => {
     e.preventDefault()
     const interactions = modeManager.use(this.interactionMode)
-    if (interactions) {
-      interactions.forEach(action => {
-        action.onContextMenu(this, e)
-      })
-    }
+    interactions.forEach(action => {
+      action.onContextMenu(this, e)
+    })
   }
 
   /**
@@ -568,6 +555,11 @@ export class Canvas {
     nodes.forEach(node => {
       node.visible = node.isInRect(canvasRect)
     })
+  }
+
+  use(plugin: Plugin) {
+    plugin.canvas = this
+    this.plugins.push(plugin)
   }
 
   render() {
@@ -627,11 +619,13 @@ export class Canvas {
         this.graphCanvasCtx.restore()
         // 交互onUpdate钩子
         const interactions = modeManager.use(this.interactionMode)
-        if (interactions) {
-          interactions.forEach(action => {
-            action.onUpdate(this)
-          })
-        }
+        interactions.forEach(action => {
+          action.onUpdate(this)
+        })
+        // 插件更新
+        this.plugins.forEach(plugin => {
+          plugin.enable && plugin.update()
+        })
         this.repaint = false
       }
       this.loop()

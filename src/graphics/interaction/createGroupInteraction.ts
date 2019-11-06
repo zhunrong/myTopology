@@ -1,6 +1,6 @@
 import Interaction from './Interaction'
 import Canvas from '../core/Canvas'
-import RectGroup from '../node/RectGroup'
+import RectGroup from '../node/RectCanvasGroup'
 import Node from '../graph/Node'
 
 interface ICreateGroupInteraction {

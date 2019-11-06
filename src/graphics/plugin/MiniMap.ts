@@ -1,38 +1,39 @@
-import Canvas from '../core/Canvas'
+import Plugin from './Plugin'
 
-export class MiniMap {
+export class MiniMap extends Plugin {
 
-  rootElement = document.createElement('div')
   canvasElement = document.createElement('canvas')
-  container: HTMLElement | null = null
-  width = 320
-  height = 240
-  canvas: Canvas | null = null
-  private _frameRequestId = 0
 
-  constructor() {
-    this.rootElement.appendChild(this.canvasElement)
+  get width() {
+    return this.canvasElement.width
   }
 
-  mount(container: HTMLElement) {
-    this.container = container
-    this.container.appendChild(this.rootElement)
-    this.canvasElement.width = this.width
-    this.canvasElement.height = this.height
+  set width(value: number) {
+    this.canvasElement.width = value
   }
 
-  /**
-   * 连接到画布
-   * @param canvas 
-   */
-  connect(canvas: Canvas) {
-    this.canvas = canvas
-    this.update()
+  get height() {
+    return this.canvasElement.height
   }
 
-  update = () => {
+  set height(value: number) {
+    this.canvasElement.height = value
+  }
+
+  constructor(width = 200, height = 200) {
+    super()
+    this.canvasElement.width = width
+    this.canvasElement.height = height
+  }
+
+  install() { }
+
+  destroy() {
+    this.canvas = null
+  }
+
+  update() {
     this.render()
-    this._frameRequestId = requestAnimationFrame(this.update)
   }
 
   render() {
@@ -83,14 +84,22 @@ export class MiniMap {
   }
 
   /**
-   * 销毁
+   * 挂载
+   * @param container 
    */
-  destroy() {
-    cancelAnimationFrame(this._frameRequestId)
-    if (this.container) {
-      this.container.removeChild(this.rootElement)
+  mount(container: HTMLElement) {
+    container.appendChild(this.canvasElement)
+  }
+
+  /**
+   * 卸载
+   */
+  unmount() {
+    if (this.canvasElement.parentElement) {
+      this.canvasElement.parentElement.removeChild(this.canvasElement)
     }
   }
+
 }
 
 export default MiniMap

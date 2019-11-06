@@ -71,12 +71,12 @@ export abstract class Node extends Graph {
   /**
    * 渲染类型
    */
-  abstract renderType: string
+  abstract readonly renderType: string
 
   /**
    * 形状
    */
-  abstract shapeType: string
+  abstract readonly shapeType: string
 
   /**
    * 是否为组

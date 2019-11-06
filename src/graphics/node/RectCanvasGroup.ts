@@ -53,7 +53,16 @@ export class RectGroup extends RectCanvasNode {
   }
 
   drawThumbnail(ctx: CanvasRenderingContext2D) {
-    this.update(ctx)
+    const { x, y } = this.getPosition()
+    const width = this.getWidth()
+    const height = this.getHeight()
+    ctx.save()
+    ctx.beginPath()
+    ctx.rect(x, y, width, height)
+    ctx.strokeStyle = this.active ? this.style.activeColor : this.style.color
+    ctx.lineWidth = 3
+    ctx.stroke()
+    ctx.restore()
   }
 }
 

@@ -1,12 +1,19 @@
 import { Vector2d } from '../utils/vector2d'
 import { Canvas } from '../core/Canvas'
 
+export interface IStyle {
+  color: string
+  activeColor: string
+  [key: string]: any
+}
+
 export interface IGraphOptions {
   visible?: boolean
   zIndex?: number
   data?: any
 }
 let graphId = 1
+
 export abstract class Graph {
   canvas: Canvas | undefined
   active: boolean = false
@@ -32,9 +39,20 @@ export abstract class Graph {
   isUpdate: boolean = true
   // 图元id
   graphId: number = graphId++
-  // 携带的数据
+
+  /**
+   * 用户数据
+   */
   data: any
-  
+
+  /**
+   * 样式属性
+   */
+  style: IStyle = {
+    color: '#29c1f8',
+    activeColor: '#e96160'
+  }
+
   // 渲染签名,用于判断在同一个渲染周期内，图元是否已渲染
   renderSign: any
   constructor(options: IGraphOptions) {
@@ -92,6 +110,11 @@ export abstract class Graph {
    * hook:销毁前调用
    */
   beforeDestroy() { }
+
+  /**
+   * 导出配置json
+   */
+  exportJson(): any { }
 }
 
 export default Graph

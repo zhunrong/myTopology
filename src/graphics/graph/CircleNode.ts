@@ -107,7 +107,7 @@ export abstract class CircleNode extends Node {
     ctx.save()
     ctx.beginPath()
     ctx.arc(x, y, this.radius, 0, Math.PI * 2)
-    ctx.fillStyle = '#29c1f8'
+    ctx.fillStyle = this.active ? this.style.activeColor : this.style.color
     ctx.fill()
     ctx.restore()
   }

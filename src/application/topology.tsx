@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { MODE_DEFAULT, MODE_VIEW, MODE_CREATE_EDGE, MODE_AREA_PICK, MODE_CREATE_L, MODE_BORDER } from '../graphics'
 import { Canvas, CircleCanvasNode, RectCanvasNode, RectDomNode, Line as Edge, RectGroup, RectDomGroup, CircleGroup, L, Image, MiniMap } from '../graphics'
 import CustomNode from '../components/node/Node'
-import CustomCanvasNode from '../components/node/CanvasNode'
+// import CustomCanvasNode from '../components/node/CanvasNode'
 import NodePanel from '../components/nodePanel/nodePanel'
 import { nodeDatas, edgeDatas } from '../data/topoData'
 import { Menu, Dropdown } from 'antd'
@@ -44,7 +44,7 @@ export default class Topology extends Component<IProps, IState> {
       // mini map
       const map = new MiniMap()
       map.mount(this.miniMapRef.current as HTMLElement)
-      map.connect(this.canvas)
+      this.canvas.use(map)
 
       this.canvas.eventEmitter.on('canvas:mounted', () => {
         this.canvas.removeAllNode()
@@ -72,7 +72,7 @@ export default class Topology extends Component<IProps, IState> {
                 isExpanded: item.isExpanded
               })
             case 'customNode':
-              return new CustomCanvasNode({
+              return new CustomNode({
                 width: item.width,
                 height: item.height,
                 id: item.id,

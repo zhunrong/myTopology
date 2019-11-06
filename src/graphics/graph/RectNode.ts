@@ -169,7 +169,7 @@ export abstract class RectNode extends Node {
     ctx.save()
     ctx.beginPath()
     ctx.rect(x, y, width, height)
-    ctx.fillStyle = '#29c1f8'
+    ctx.fillStyle = this.active ? this.style.activeColor : this.style.color
     ctx.fill()
     ctx.restore()
   }

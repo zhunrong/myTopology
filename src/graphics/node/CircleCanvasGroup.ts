@@ -38,6 +38,18 @@ export class CircleGroup extends CircleCanvasNode {
     graphCanvasCtx.stroke()
     graphCanvasCtx.restore()
   }
+
+  drawThumbnail(ctx: CanvasRenderingContext2D) {
+    const { x, y } = this.centerPoint
+    ctx.save()
+    ctx.beginPath()
+    ctx.arc(x, y, this.radius, 0, Math.PI * 2)
+    ctx.strokeStyle = this.active ? this.style.activeColor : this.style.color
+    ctx.lineWidth = 3
+    ctx.stroke()
+    ctx.restore()
+  }
+
 }
 
 export default CircleGroup
