@@ -97,7 +97,7 @@ export class MiniMap extends Plugin {
     ctx.rect(0, 0, this.width / scale, this.height / scale)
     // 绘制画布可视区域在小地图上的映射窗口
     ctx.rect(offsetX, offsetY, this.canvas.canvasWidth, this.canvas.canvasHeight)
-    ctx.fillStyle = 'rgba(0,0,0,0.5)'
+    ctx.fillStyle = 'rgba(0,0,0,0.3)'
     ctx.fill('evenodd')
     ctx.beginPath()
     ctx.rect(offsetX, offsetY, this.canvas.canvasWidth, this.canvas.canvasHeight)

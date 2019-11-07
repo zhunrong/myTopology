@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { MODE_DEFAULT, MODE_VIEW, MODE_CREATE_EDGE, MODE_AREA_PICK, MODE_CREATE_L, MODE_BORDER } from '../graphics'
-import { Canvas, CircleCanvasNode, RectCanvasNode, RectDomNode, Line as Edge, RectGroup, RectDomGroup, CircleGroup, L, Image, MiniMap } from '../graphics'
+import { Canvas, CircleCanvasNode, RectCanvasNode, RectDomNode, Line as Edge, RectGroup, RectDomGroup, CircleGroup, L, Image, Node } from '../graphics'
+// plugins
+import { MiniMap, ContextMenu, IMenu } from '../graphics'
 import CustomNode from '../components/node/Node'
 // import CustomCanvasNode from '../components/node/CanvasNode'
 import NodePanel from '../components/nodePanel/nodePanel'
@@ -17,7 +19,7 @@ interface IState {
   mode: string
 }
 
-type Node = CircleCanvasNode | RectCanvasNode | RectDomNode | CustomNode
+// type Node = CircleCanvasNode | RectCanvasNode | RectDomNode | CustomNode
 
 export default class Topology extends Component<IProps, IState> {
   nodeDatas: any[] = nodeDatas
@@ -45,6 +47,25 @@ export default class Topology extends Component<IProps, IState> {
       const map = new MiniMap()
       map.mount(this.miniMapRef.current as HTMLElement)
       this.canvas.use(map)
+
+      // context menu
+      const menu = new ContextMenu()
+      this.canvas.use(menu)
+      menu.onContextMenu = function (instance, target, activeNodes, activeEdges) {
+        const menu: IMenu[] = []
+        if (target) {
+          menu.push({
+            label: '重命名',
+            command: 'rename',
+            target
+          }, {
+            label: '删除',
+            command: 'remove',
+            target
+          })
+        }
+        return menu
+      }
 
       this.canvas.eventEmitter.on('canvas:mounted', () => {
         this.canvas.removeAllNode()
@@ -184,50 +205,28 @@ export default class Topology extends Component<IProps, IState> {
           this.canvas.addNode(node)
         }
       })
-      this.canvas.eventEmitter.on('canvas:menu', ({ command }) => {
-        const activeNodes = this.canvas.getActiveNodes()
-        const activeEdges = this.canvas.getActiveEdges()
-        switch (command) {
+      this.canvas.eventEmitter.on('canvas:menu', (menu: IMenu) => {
+        switch (menu.command) {
           case 'rename':
-            if (activeEdges.length) {
-              const edge = activeEdges[0] as Edge
-              setTimeout(() => {
-                const result = prompt('请输入新名称', edge.text)
-                if (result && this.canvas) {
-                  edge.text = result
-                  this.canvas.repaint = true
-                }
-              }, 100)
-              return
-            }
-            if (activeNodes.length) {
-              const node = activeNodes[0] as Node
-              setTimeout(() => {
-                const result = prompt('请输入新名称', node.text)
-                if (result && this.canvas) {
-                  node.text = result
-                  // node.isUpdate = true
-                  node.render()
-                  this.canvas.repaint = true
-                }
-              }, 100)
-              return
-            }
+            setTimeout(() => {
+              const newName = prompt('请输入新名称', menu.target.text)
+              menu.target.text = newName
+              if (menu.target instanceof Node) {
+                menu.target.render()
+              }
+              this.canvas.repaint = true
+            }, 200)
             break
           case 'remove':
-            if (activeEdges.length) {
-              const edge = activeEdges[0] as Edge
-              this.canvas.removeEdge(edge)
-              return
-            }
-            if (activeNodes.length) {
-              const node = activeNodes[0] as Node
-              this.canvas.removeNode(node)
-              return
+            if (menu.target instanceof Node) {
+              this.canvas.removeNode(menu.target)
+            } else if (menu.target instanceof Edge) {
+              this.canvas.removeEdge(menu.target)
             }
             break
         }
       })
+
       this.canvas.start()
       const w = window as any
       w.canvas = this.canvas

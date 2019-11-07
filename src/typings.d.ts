@@ -2,7 +2,7 @@ interface NodeModule {
   hot: any
 }
 
-declare module '*.scss' {
+declare module '*.less' {
   interface IStyle {
     [key: string]: string
   }

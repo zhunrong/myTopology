@@ -72,7 +72,7 @@ modeManager.registerMode(MODE_DEFAULT, [
   new DragInteraction(),
   new DropInteraction(),
   new WheelZoomInteraction(),
-  new MenuInteraction(),
+  // new MenuInteraction(),
   new CollapseAndExpandInteraction()
 ])
 modeManager.registerMode(MODE_VIEW, [

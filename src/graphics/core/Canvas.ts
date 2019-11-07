@@ -1,4 +1,3 @@
-import { ContextMenu } from '../contextMenu/ContextMenu'
 import { EventEmitter } from '../events/eventEmitter'
 import Vector2d from '../utils/Vector2d'
 import { Edge } from '../graph/Edge'
@@ -80,8 +79,6 @@ export class Canvas {
   repaint: boolean = false
   // 开启动画
   animation = false
-  // menu
-  contextMenu: ContextMenu = new ContextMenu(this)
 
   /**
    * 画布根节点（虚拟节点，不可见）
@@ -540,12 +537,16 @@ export class Canvas {
     })
   }
 
+  /**
+   * 上下文菜单事件
+   */
   private handleContextMenu = (e: MouseEvent) => {
     e.preventDefault()
     const interactions = modeManager.use(this.interactionMode)
     interactions.forEach(action => {
       action.onContextMenu(this, e)
     })
+    this.eventEmitter.emit('canvas:contextmenu')
   }
 
   /**

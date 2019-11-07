@@ -1,5 +1,4 @@
 export * from './core/Canvas'
-export * from './contextMenu/ContextMenu'
 export * from './events/eventEmitter'
 export * from './graph/Edge'
 export * from './graph/Node'
@@ -39,3 +38,4 @@ export * from './element/Triangle'
 export * from './element/Polyline'
 // plugin
 export * from './plugin/MiniMap'
+export * from './plugin/ContextMenu'
