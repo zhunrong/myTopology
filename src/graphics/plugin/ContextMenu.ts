@@ -80,6 +80,7 @@ export class ContextMenu extends Plugin {
     const activeEdges = this.canvas.getActiveEdges()
     let target = activeNodes.find(node => node.isPointIn()) || activeEdges.find(edge => edge.isPointIn()) || null
     this.menu = this.onContextMenu(this, target, activeNodes, activeEdges)
+    this.hide()
     this.show(this.menu)
   }
 
