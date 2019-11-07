@@ -1,4 +1,4 @@
-import Vector2d from '../utils/vector2d'
+import Vector2d from '../utils/Vector2d'
 
 export abstract class Element {
   position = new Vector2d()

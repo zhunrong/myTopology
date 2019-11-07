@@ -24,9 +24,9 @@ export class RectGroup extends RectCanvasNode {
   render(ctx?: CanvasRenderingContext2D) { }
 
   update(ctx?: CanvasRenderingContext2D) {
-    if (!this.canvas) return
-    const { graphCanvasCtx } = this.canvas
-    ctx = ctx || graphCanvasCtx
+    ctx = ctx || (this.canvas && this.canvas.graphCanvasCtx)
+    if (!ctx) return
+
     const width = this.getWidth()
     const height = this.getHeight()
     const { x, y } = this.getPosition()
@@ -45,9 +45,9 @@ export class RectGroup extends RectCanvasNode {
     ctx.save()
     if (this.active) {
       ctx.shadowBlur = 5
-      ctx.shadowColor = 'rgba(255,0,0,0.8)'
+      ctx.shadowColor = this.active ? this.style.activeColor : this.style.color
     }
-    ctx.strokeStyle = '#066df2'
+    ctx.strokeStyle = this.active ? this.style.activeColor : this.style.color
     ctx.stroke()
     ctx.restore()
   }

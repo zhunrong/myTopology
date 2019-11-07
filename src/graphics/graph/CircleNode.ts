@@ -1,6 +1,6 @@
 import Node, { INodeOptions } from './Node'
-import Vector2d from '../utils/vector2d'
-import Math2d from '../utils/math2d'
+import Vector2d from '../utils/Vector2d'
+import Math2d from '../utils/Math2d'
 
 export interface ICircleNodeOptions extends INodeOptions {
   radius?: number

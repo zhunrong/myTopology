@@ -1,5 +1,5 @@
 import style from './style.less'
-import { Vector2d } from '../utils/vector2d'
+import Vector2d from '../utils/Vector2d'
 import { Canvas } from '../core/Canvas'
 const menu = [{
   label: '放大',

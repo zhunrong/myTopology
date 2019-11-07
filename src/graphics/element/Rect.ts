@@ -1,6 +1,6 @@
 import Element from './Element'
-import { Vector2d } from '../utils/vector2d'
-import { Math2d } from '../utils/math2d'
+import Vector2d from '../utils/Vector2d'
+import Math2d from '../utils/Math2d'
 
 interface IRectOptions {
   width: number

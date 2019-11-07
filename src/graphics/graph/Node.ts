@@ -1,5 +1,5 @@
 import Graph, { IGraphOptions } from './Graph'
-import { Vector2d } from '../utils/vector2d'
+import Vector2d from '../utils/Vector2d'
 import Edge from './Edge'
 export interface INodeOptions extends IGraphOptions {
   x?: number

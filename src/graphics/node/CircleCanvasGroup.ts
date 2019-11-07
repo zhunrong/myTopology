@@ -19,24 +19,23 @@ export class CircleGroup extends CircleCanvasNode {
     }
   }
 
-  render() { }
+  render(ctx?: CanvasRenderingContext2D) { }
 
-  update() {
-    if (!this.canvas) return
-    const { graphCanvasCtx } = this.canvas
+  update(ctx?: CanvasRenderingContext2D) {
+    ctx = ctx || (this.canvas && this.canvas.graphCanvasCtx)
+    if (!ctx) return
+
     const { x, y } = this.getPosition()
-
-    graphCanvasCtx.beginPath()
-    graphCanvasCtx.arc(x + this.radius, y + this.radius, this.radius, 0, 2 * Math.PI)
-    // graphCanvasCtx.drawImage(this.cacheCanvas, x - 2, y - 2)
-    graphCanvasCtx.save()
+    ctx.beginPath()
+    ctx.arc(x + this.radius, y + this.radius, this.radius, 0, 2 * Math.PI)
+    ctx.save()
     if (this.active) {
-      graphCanvasCtx.shadowBlur = 5
-      graphCanvasCtx.shadowColor = 'rgba(255,0,0,0.8)'
+      ctx.shadowBlur = 5
+      ctx.shadowColor = this.active ? this.style.activeColor : this.style.color
     }
-    graphCanvasCtx.strokeStyle = '#066df2'
-    graphCanvasCtx.stroke()
-    graphCanvasCtx.restore()
+    ctx.strokeStyle = this.active ? this.style.activeColor : this.style.color
+    ctx.stroke()
+    ctx.restore()
   }
 
   drawThumbnail(ctx: CanvasRenderingContext2D) {

@@ -1,6 +1,6 @@
 import { ContextMenu } from '../contextMenu/ContextMenu'
 import { EventEmitter } from '../events/eventEmitter'
-import { Vector2d } from '../utils/vector2d'
+import Vector2d from '../utils/Vector2d'
 import { Edge } from '../graph/Edge'
 import { throttle } from '../utils/utils'
 import ResizeObserver from 'resize-observer-polyfill'

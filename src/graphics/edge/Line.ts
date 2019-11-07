@@ -1,7 +1,7 @@
 import { IStyle } from '../graph/Graph'
-import Vector2d from '../utils/vector2d'
+import Vector2d from '../utils/Vector2d'
 import { Edge, IEdgeOptions } from '../graph/Edge'
-import Math2d from '../utils/math2d'
+import Math2d from '../utils/Math2d'
 import Element from '../element/Element'
 import Triangle from '../element/Triangle'
 import Text from '../element/Text'
@@ -78,9 +78,9 @@ export class Line extends Edge {
     return false
   }
   render(ctx?: CanvasRenderingContext2D) {
-    if (!this.canvas) return
-    const { graphCanvasCtx } = this.canvas
-    ctx = ctx || graphCanvasCtx
+    ctx = ctx || (this.canvas && this.canvas.graphCanvasCtx)
+    if (!ctx) return
+
     const targetNode = this.getTargetNode()
     const sourceNode = this.getSourceNode()
     if (sourceNode.visible || targetNode.visible) {

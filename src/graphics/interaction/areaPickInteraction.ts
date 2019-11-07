@@ -1,6 +1,6 @@
 import Interaction from './Interaction'
 import Canvas from '../core/Canvas'
-import Vector2d from '../utils/vector2d'
+import Vector2d from '../utils/Vector2d'
 import Node from '../graph/Node'
 import { DragInteraction } from './dragInteraction'
 import { selectInteraction } from './selectInteraction'

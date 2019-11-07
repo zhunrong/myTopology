@@ -1,5 +1,5 @@
 import Node, { INodeOptions, BoundingRect } from './Node'
-import { Vector2d } from '../utils/vector2d'
+import Vector2d from '../utils/Vector2d'
 export interface IVirtualNodeOptions extends INodeOptions { }
 export class VirtualNode extends Node {
   renderType: string = 'NONE'
@@ -46,5 +46,6 @@ export class VirtualNode extends Node {
   destroy() { }
   updatePosition() { }
   updateRender() { }
+  drawThumbnail(){}
 }
 export default VirtualNode

@@ -6,6 +6,7 @@ export * from './graph/Node'
 // 模式
 export * from './mode/modes'
 // 交互
+export * from './interaction/Interaction'
 export * from './interaction/selectInteraction'
 export * from './interaction/createEdgeInteraction'
 export * from './interaction/createLInteraction'
@@ -14,7 +15,6 @@ export * from './interaction/dropInteraction'
 export * from './interaction/menuInteraction'
 export * from './interaction/moveCanvasInteraction'
 export * from './interaction/wheelZoomInteraction'
-export * from './interaction/Interaction'
 export * from './interaction/areaPickInteraction'
 export * from './interaction/createGroupInteraction'
 // node
@@ -28,14 +28,14 @@ export * from './node/CircleCanvasGroup'
 export * from './edge/Line'
 export * from './edge/L'
 // utils
-export * from './utils/math2d'
-export * from './utils/vector2d'
+export * from './utils/Math2d'
+export * from './utils/Vector2d'
 export * from './utils/utils'
-export * from './utils/tree'
 // element
 export * from './element/Image'
 export * from './element/Rect'
 export * from './element/Text'
 export * from './element/Triangle'
+export * from './element/Polyline'
 // plugin
 export * from './plugin/MiniMap'

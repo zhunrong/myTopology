@@ -1,7 +1,7 @@
 import Interaction from './Interaction'
 import Canvas from '../core/Canvas'
 import Node from '../graph/Node'
-import Vector2d from '../utils/vector2d'
+import Vector2d from '../utils/Vector2d'
 
 /**
  * 可拖拽图元或整个画布

@@ -1,6 +1,6 @@
 import Plugin from './Plugin'
 import Canvas from '../core/Canvas'
-import Vector2d from '../utils/vector2d'
+import Vector2d from '../utils/Vector2d'
 import { throttle } from '../utils/utils'
 
 const lastPoint = new Vector2d()
@@ -97,8 +97,13 @@ export class MiniMap extends Plugin {
     ctx.rect(0, 0, this.width / scale, this.height / scale)
     // 绘制画布可视区域在小地图上的映射窗口
     ctx.rect(offsetX, offsetY, this.canvas.canvasWidth, this.canvas.canvasHeight)
-    ctx.fillStyle = 'rgba(0,0,0,0.3)'
+    ctx.fillStyle = 'rgba(0,0,0,0.5)'
     ctx.fill('evenodd')
+    ctx.beginPath()
+    ctx.rect(offsetX, offsetY, this.canvas.canvasWidth, this.canvas.canvasHeight)
+    ctx.strokeStyle = '#29c1f8'
+    ctx.lineWidth = 1 / scale
+    ctx.stroke()
     ctx.restore()
   }
 
@@ -110,7 +115,7 @@ export class MiniMap extends Plugin {
     }
     currentPoint.x = e.offsetX
     currentPoint.y = e.offsetY
-    // do...
+    // move...
     const boundingRect = this.canvas.getContentBoundingRect()
     const width = boundingRect[2].x - boundingRect[0].x
     const height = boundingRect[2].y - boundingRect[0].y

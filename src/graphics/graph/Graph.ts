@@ -1,5 +1,5 @@
-import { Vector2d } from '../utils/vector2d'
-import { Canvas } from '../core/Canvas'
+import Vector2d from '../utils/Vector2d'
+import Canvas from '../core/Canvas'
 
 export interface IStyle {
   color: string

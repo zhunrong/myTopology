@@ -1,6 +1,6 @@
-import { Vector2d } from '../utils/vector2d'
+import { Vector2d } from '../utils/Vector2d'
 import { Edge, IEdgeOptions } from '../graph/Edge'
-import { Math2d } from '../utils/math2d'
+import Math2d from '../utils/Math2d'
 import Triangle from '../element/Triangle'
 import Text from '../element/Text'
 import Element from '../element/Element'
@@ -84,12 +84,11 @@ export class L extends Edge {
     return false
   }
   render(ctx?: CanvasRenderingContext2D) {
-    if (!this.canvas) return
-    const { graphCanvasCtx } = this.canvas
-    ctx = ctx || graphCanvasCtx
-    // const { sourceNode, targetNode } = this
+    ctx = ctx || (this.canvas && this.canvas.graphCanvasCtx)
+    if (!ctx) return
     const sourceNode = this.getSourceNode()
     const targetNode = this.getTargetNode()
+    
     // 两端节点都存在且至少有一个是可见的
     if (sourceNode.visible || targetNode.visible) {
 

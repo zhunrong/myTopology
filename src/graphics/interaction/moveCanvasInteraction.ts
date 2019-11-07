@@ -1,6 +1,6 @@
 import Interaction from './Interaction'
-import { Canvas } from '../core/Canvas'
-import { Vector2d } from '../utils/vector2d'
+import Canvas from '../core/Canvas'
+import Vector2d from '../utils/Vector2d'
 
 /**
  * 拖动整个画布
