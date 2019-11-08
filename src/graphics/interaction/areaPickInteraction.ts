@@ -2,10 +2,7 @@ import Interaction from './Interaction'
 import Canvas from '../core/Canvas'
 import Vector2d from '../utils/Vector2d'
 import Node from '../graph/Node'
-import { DragInteraction } from './dragInteraction'
-import { selectInteraction } from './selectInteraction'
 
-const dragInteraction = new DragInteraction()
 /**
  * 框选交互
  */
@@ -139,6 +136,19 @@ export class AreaPickInteraction extends Interaction {
     const { topCanvasCtx, viewWidth, viewHeight } = canvas
     this.mouseDown = false
     topCanvasCtx.clearRect(0, 0, viewWidth, viewHeight)
+  }
+  handleEvent(canvas: Canvas, event: Event) {
+    switch (event.type) {
+      case 'mousedown':
+        this.onMouseDown(canvas, event)
+        break
+      case 'mousemove':
+        this.onMouseMove(canvas, event)
+        break
+      case 'mouseup':
+        this.onMouseUp(canvas, event)
+        break
+    }
   }
 }
 export const areaPickInteraction = new AreaPickInteraction()

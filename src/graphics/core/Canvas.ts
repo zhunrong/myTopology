@@ -12,6 +12,20 @@ import { globalClock } from './Clock'
 import style from './canvas.less'
 import config from '../config/config'
 
+/**
+ * 原生事件监听列表
+ */
+const nativeEvents = [
+  'click',
+  'dblclick',
+  'mousedown',
+  'wheel',
+  'dragover',
+  'drop',
+  'contextmenu',
+  'mouseenter'
+]
+
 export interface ICanvasOptions {
   container: HTMLElement
   scale?: number
@@ -62,9 +76,9 @@ export class Canvas {
     id: 'vn'
   })
 
-  mousedownPosition: Vector2d = new Vector2d(0, 0)
-  mouseupPosition: Vector2d = new Vector2d(0, 0)
-  mousemovePosition: Vector2d = new Vector2d(0, 0)
+  mousedownPosition = new Vector2d()
+  mouseupPosition = new Vector2d()
+  mousemovePosition = new Vector2d()
   // resize监听器
   private ro: ResizeObserver
   // 画布
@@ -136,32 +150,22 @@ export class Canvas {
   }
   // 原生事件监听
   protected nativeEventInit() {
-    this.wrapper.addEventListener('click', this.handleClick)
-    this.wrapper.addEventListener('dblclick', this.handleDblClick)
-    this.wrapper.addEventListener('mousedown', this.handleMouseDown)
-    this.wrapper.addEventListener('wheel', this.handleWheel)
-    this.wrapper.addEventListener('dragover', this.handleDragOver)
-    this.wrapper.addEventListener('drop', this.handleDrop)
-    this.wrapper.addEventListener('contextmenu', this.handleContextMenu)
-    this.wrapper.addEventListener('mouseenter', this.handleMouseEnter)
-    document.addEventListener('mousemove', this.handleMouseMove)
-    document.addEventListener('mouseup', this.handleMouseUp)
+    nativeEvents.forEach(eventType => {
+      this.wrapper.addEventListener(eventType, this.handleNativeEvent)
+    })
+    document.addEventListener('mousemove', this.handleNativeEvent)
+    document.addEventListener('mouseup', this.handleNativeEvent)
   }
 
   /**
    * 销毁
    */
   destroy() {
-    this.wrapper.removeEventListener('click', this.handleClick)
-    this.wrapper.removeEventListener('dblclick', this.handleDblClick)
-    this.wrapper.removeEventListener('mousedown', this.handleMouseDown)
-    this.wrapper.removeEventListener('wheel', this.handleWheel)
-    this.wrapper.removeEventListener('dragover', this.handleDragOver)
-    this.wrapper.removeEventListener('drop', this.handleDrop)
-    this.wrapper.removeEventListener('contextmenu', this.handleContextMenu)
-    this.wrapper.removeEventListener('mouseenter', this.handleMouseEnter)
-    document.removeEventListener('mousemove', this.handleMouseMove)
-    document.removeEventListener('mouseup', this.handleMouseUp)
+    nativeEvents.forEach(eventType => {
+      this.wrapper.removeEventListener(eventType, this.handleNativeEvent)
+    })
+    document.removeEventListener('mousemove', this.handleNativeEvent)
+    document.removeEventListener('mouseup', this.handleNativeEvent)
     this.ro.unobserve(this.container)
     this.ro.disconnect()
     this.eventEmitter.clear()
@@ -172,6 +176,52 @@ export class Canvas {
       const plugin = this.plugins.pop()
       plugin && plugin.destroy()
     }
+  }
+
+  /**
+   * 原生事件分发处理
+   */
+  handleNativeEvent = (event: Event) => {
+    this.nativeEvent = event
+    switch (event.type) {
+      case 'mousedown':
+        {
+          const { clientX, clientY } = event as MouseEvent
+          this.mousedownPosition.x = clientX
+          this.mousedownPosition.y = clientY
+          this.getBoundingClientRect()
+          break
+        }
+      case 'mousemove':
+        {
+          const { clientY, clientX } = event as MouseEvent
+          this.mousemovePosition.x = clientX
+          this.mousemovePosition.y = clientY
+          this.optimizeNode()
+          break
+        }
+      case 'mouseup':
+        {
+          const { clientX, clientY } = event as MouseEvent
+          this.mouseupPosition.x = clientX
+          this.mouseupPosition.y = clientY
+          break
+        }
+      case 'mouseenter':
+      case 'drop':
+        this.getBoundingClientRect()
+        break
+      case 'contextmenu':
+        event.preventDefault()
+        break
+    }
+    this.plugins.forEach(plugin => {
+      plugin.handleEvent(event)
+    })
+    modeManager.use(this.interactionMode).forEach(interaction => {
+      interaction.handleEvent(this, event)
+    })
+    this.eventEmitter.emit(event.type, event)
   }
 
   /**
@@ -433,123 +483,6 @@ export class Canvas {
   }
 
   /**
-   * mouseenter
-   */
-  private handleMouseEnter = (e: MouseEvent) => {
-    this.getBoundingClientRect()
-  }
-
-  /**
-   * 点击事件
-   */
-  private handleClick = (e: MouseEvent) => {
-    this.nativeEvent = e
-    const interactions = modeManager.use(this.interactionMode)
-    interactions.forEach(action => {
-      action.onClick(this, e)
-    })
-    this.eventEmitter.emit('canvas:click', e)
-  }
-
-  /**
-   * 双击事件
-   */
-  private handleDblClick = (e: MouseEvent) => {
-    this.nativeEvent = e
-    const interactions = modeManager.use(this.interactionMode)
-    interactions.forEach(action => {
-      action.onDblClick(this, e)
-    })
-    this.eventEmitter.emit('canvas:dblclick')
-  }
-
-  /**
-   * 滚轮事件
-   */
-  private handleWheel = (e: Event) => {
-    const interactions = modeManager.use(this.interactionMode)
-    interactions.forEach(action => {
-      action.onWheel(this, e)
-    })
-    this.eventEmitter.emit('canvas:wheel', e)
-  }
-
-  /**
-   * 鼠标按下
-   */
-  private handleMouseDown = (e: MouseEvent) => {
-    this.nativeEvent = e
-    this.mousedownPosition = new Vector2d(e.clientX, e.clientY)
-    this.getBoundingClientRect()
-    const interactions = modeManager.use(this.interactionMode)
-    interactions.forEach(action => {
-      action.onMouseDown(this, e)
-    })
-    this.eventEmitter.emit('canvas:mousedown', e)
-  }
-
-  /**
-   * 鼠标移动
-   */
-  private handleMouseMove = throttle((e: MouseEvent) => {
-    this.nativeEvent = e
-    this.mousemovePosition = new Vector2d(e.clientX, e.clientY)
-
-    const interactions = modeManager.use(this.interactionMode)
-    interactions.forEach(action => {
-      action.onMouseMove(this, e)
-    })
-    this.optimizeNode()
-    this.eventEmitter.emit('canvas:mousemove', e)
-  })
-
-  /**
-   * 鼠标按键释放
-   */
-  private handleMouseUp = (e: MouseEvent) => {
-    this.nativeEvent = e
-    this.mouseupPosition = new Vector2d(e.clientX, e.clientY)
-    const interactions = modeManager.use(this.interactionMode)
-    interactions.forEach(action => {
-      action.onMouseUp(this, e)
-    })
-    this.eventEmitter.emit('canvas:mouseup', e)
-  }
-
-  /**
-   * 拖拽over事件
-   */
-  private handleDragOver = (e: DragEvent) => {
-    const interactions = modeManager.use(this.interactionMode)
-    interactions.forEach(action => {
-      action.onDragOver(this, e)
-    })
-  }
-
-  /**
-   * 拖拽释放事件
-   */
-  private handleDrop = (e: DragEvent) => {
-    this.getBoundingClientRect()
-    const interactions = modeManager.use(this.interactionMode)
-    interactions.forEach(action => {
-      action.onDrop(this, e)
-    })
-  }
-
-  /**
-   * 上下文菜单事件
-   */
-  private handleContextMenu = (e: MouseEvent) => {
-    e.preventDefault()
-    const interactions = modeManager.use(this.interactionMode)
-    interactions.forEach(action => {
-      action.onContextMenu(this, e)
-    })
-    this.eventEmitter.emit('canvas:contextmenu')
-  }
-
-  /**
    * 优化节点显示
    */
   optimizeNode() {
@@ -563,6 +496,10 @@ export class Canvas {
     })
   }
 
+  /**
+   * 使用插件
+   * @param plugin 
+   */
   use(plugin: Plugin) {
     plugin.install(this)
     this.plugins.push(plugin)

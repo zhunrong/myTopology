@@ -93,6 +93,16 @@ export class CreateLInteraction extends Interaction {
     }
     canvas.repaint = true
   }
+  handleEvent(canvas: Canvas, event: Event) {
+    switch (event.type) {
+      case 'mouseup':
+        this.onMouseUp(canvas)
+        break
+      case 'mousemove':
+        this.onMouseMove(canvas)
+        break
+    }
+  }
 }
 
 export const createLInteraction = new CreateLInteraction()

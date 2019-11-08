@@ -22,27 +22,30 @@ export class ContextMenu extends Plugin {
     this.container.className = style.menu
   }
 
+  handleEvent(event: Event) {
+    if (event.type === 'contextmenu') {
+      this.handleContextMenu(event as MouseEvent)
+    }
+  }
+
   install(canvas: Canvas) {
     this.canvas = canvas
-    this.canvas.wrapper.addEventListener('contextmenu', this.handleContextMenu)
     this.container.addEventListener('click', this.handleClick)
     document.addEventListener('click', this.hide)
   }
 
   destroy() {
     if (!this.canvas) return
-    this.canvas.wrapper.removeEventListener('contextmenu', this.handleContextMenu)
     this.container.removeEventListener('click', this.handleClick)
     document.removeEventListener('click', this.hide)
     this.canvas = null
   }
 
-  update() { }
-
   /**
    * 显示
    */
   show(menu: IMenu[] = [], left?: number, top?: number) {
+    this.hide()
     if (!menu.length) return
     this.menu = menu
     let { x, y } = this.position
@@ -79,9 +82,8 @@ export class ContextMenu extends Plugin {
     const activeNodes = this.canvas.getActiveNodes()
     const activeEdges = this.canvas.getActiveEdges()
     let target = activeNodes.find(node => node.isPointIn()) || activeEdges.find(edge => edge.isPointIn()) || null
-    this.menu = this.onContextMenu(this, target, activeNodes, activeEdges)
-    this.hide()
-    this.show(this.menu)
+    const menu = this.onContextMenu(this, target, activeNodes, activeEdges)
+    this.show(menu)
   }
 
   /**

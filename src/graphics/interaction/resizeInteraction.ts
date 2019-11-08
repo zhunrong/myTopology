@@ -124,6 +124,20 @@ export class ResizeInteraction extends Interaction {
     if (!anchor) return -1
     return index
   }
+
+  handleEvent(canvas: Canvas, event: Event) {
+    switch (event.type) {
+      case 'mousedown':
+        this.onMouseDown(canvas)
+        break
+      case 'mousemove':
+        this.onMouseMove(canvas, event)
+        break
+      case 'mouseup':
+        this.onMouseUp(canvas)
+        break
+    }
+  }
 }
 
 /**

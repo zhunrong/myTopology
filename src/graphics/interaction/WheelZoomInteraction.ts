@@ -14,6 +14,14 @@ export class WheelZoomInteraction extends Interaction {
       canvas.zoomIn(new Vector2d(clientX, clientY))
     }
   }
+
+  handleEvent(canvas: Canvas, event: Event) {
+    switch (event.type) {
+      case 'wheel':
+        this.onWheel(canvas, event)
+        break
+    }
+  }
 }
 
 export const wheelZoomInteraction = new WheelZoomInteraction()

@@ -2,6 +2,7 @@ import Interaction from './Interaction'
 import Canvas from '../core/Canvas'
 import RectGroup from '../node/RectCanvasGroup'
 import Node from '../graph/Node'
+import ContextMenu from '../plugin/ContextMenu'
 
 interface ICreateGroupInteraction {
   ctor: any
@@ -21,9 +22,10 @@ export class CreateGroupInteraction extends Interaction {
     }
   }
   onContextMenu = (canvas: Canvas, e: Event) => {
-    const event = e as MouseEvent
+    const contextMenu = canvas.plugins.find(plugin => plugin instanceof ContextMenu) as ContextMenu | undefined
+    if (!contextMenu) return
     const activeNodes = canvas.getActiveNodes()
-    canvas.contextMenu.hide()
+    const event = e as MouseEvent
     if (activeNodes.length) {
       this.parentNode = undefined
       const index = activeNodes.findIndex(node => {
@@ -33,11 +35,12 @@ export class CreateGroupInteraction extends Interaction {
         return false
       })
       if (index === -1) {
-        canvas.contextMenu.menu = [{
-          label: '添加到组',
-          command: 'addToGroup'
-        }]
-        canvas.contextMenu.show(event.clientX, event.clientY)
+        contextMenu.show([
+          {
+            label: '添加到组',
+            command: 'addToGroup'
+          }
+        ], event.clientX, event.clientY)
       }
     }
   }
@@ -91,6 +94,14 @@ export class CreateGroupInteraction extends Interaction {
       this.canvas.repaint = true
     } else {
       this.canvas.addNode(group)
+    }
+  }
+
+  handleEvent(canvas:Canvas,event:Event){
+    switch(event.type){
+      case 'contextmenu':
+        this.onContextMenu(canvas,event)
+        break
     }
   }
 }

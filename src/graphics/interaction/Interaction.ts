@@ -1,22 +1,19 @@
 import { Canvas } from '../core/Canvas'
-function noop(canvas: Canvas, e: Event) { }
-function noop2(canvas: Canvas) { }
+function noop(canvas: Canvas, e?: Event) { }
 export abstract class Interaction {
-  onClick = noop
-  onMouseDown = noop
-  onMouseMove = noop
-  onMouseUp = noop
-  onDrop = noop
-  onDragOver = noop
-  onWheel = noop
-  onContextMenu = noop
-  onDblClick = noop
   // 模式安装
-  onInstall = noop2
+  onInstall = noop
   // 模式卸载
-  onUninstall = noop2
+  onUninstall = noop
   // 渲染更新
-  onUpdate  = noop2
+  onUpdate = noop
+
+  /**
+   * 处理画布事件
+   * @param canvas 
+   * @param event 
+   */
+  handleEvent(canvas: Canvas, event: Event) { }
 }
 
 export default Interaction

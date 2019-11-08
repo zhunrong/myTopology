@@ -33,6 +33,19 @@ export class MoveCanvasInteraction extends Interaction {
       this.move = false
     }
   }
+  handleEvent(canvas: Canvas, event: Event) {
+    switch (event.type) {
+      case 'mousedown':
+        this.onMouseDown(canvas)
+        break
+      case 'mousemove':
+        this.onMouseMove(canvas)
+        break
+      case 'mouseup':
+        this.onMouseUp(canvas)
+        break
+    }
+  }
 }
 
 export const moveCanvasInteraction = new MoveCanvasInteraction()

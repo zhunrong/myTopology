@@ -51,7 +51,8 @@ export default class Topology extends Component<IProps, IState> {
       // context menu
       const menu = new ContextMenu()
       this.canvas.use(menu)
-      menu.onContextMenu = function (instance, target, activeNodes, activeEdges) {
+      menu.onContextMenu = (instance, target, activeNodes, activeEdges) => {
+        if (this.canvas.interactionMode !== MODE_DEFAULT) return []
         const menu: IMenu[] = []
         if (target) {
           menu.push({

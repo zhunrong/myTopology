@@ -15,6 +15,16 @@ export class DropInteraction extends Interaction {
   onDragOver = (canvas: Canvas, e: Event) => {
     e.preventDefault()
   }
+  handleEvent(canvas: Canvas, event: Event) {
+    switch (event.type) {
+      case 'drop':
+        this.onDrop(canvas, event)
+        break
+      case 'dragover':
+        this.onDragOver(canvas, event)
+        break
+    }
+  }
 }
 
 export const dropInteraction = new DropInteraction()

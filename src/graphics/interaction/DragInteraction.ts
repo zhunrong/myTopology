@@ -59,6 +59,19 @@ export class DragInteraction extends Interaction {
     this.moveNodes = []
     this.mousedown = false
   }
+  handleEvent(canvas: Canvas, event: Event) {
+    switch (event.type) {
+      case 'mousedown':
+        this.onMouseDown(canvas)
+        break
+      case 'mousemove':
+        this.onMouseMove(canvas)
+        break
+      case 'mouseup':
+        this.onMouseUp(canvas)
+        break
+    }
+  }
 }
 
 export const dragInteraction = new DragInteraction()

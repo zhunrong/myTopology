@@ -19,6 +19,13 @@ export class CollapseAndExpandInteraction extends Interaction {
     }
     this.lastTimestamp = now
   }
+  handleEvent(canvas: Canvas, event: Event) {
+    switch (event.type) {
+      case 'mousedown':
+        this.onMouseDown(canvas)
+        break
+    }
+  }
 }
 
 export const collapseAndExpandInteraction = new CollapseAndExpandInteraction()

@@ -37,6 +37,14 @@ export class SelectInteraction extends Interaction {
     })
     canvas.repaint = true
   }
+  
+  handleEvent(canvas: Canvas, event: Event) {
+    switch (event.type) {
+      case 'mousedown':
+        this.onMouseDown(canvas)
+        break
+    }
+  }
 }
 
 export const selectInteraction = new SelectInteraction()
