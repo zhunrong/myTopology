@@ -143,7 +143,10 @@ export class Canvas {
     this.optimizeNode()
     this.repaint = true
   }
-  // 原生事件监听
+
+  /**
+   * 原生事件监听
+   */
   protected nativeEventInit() {
     nativeEvents.forEach(eventType => {
       this.wrapper.addEventListener(eventType, this.handleNativeEvent)
@@ -169,7 +172,10 @@ export class Canvas {
     // 销毁插件
     while (this.plugins.length) {
       const plugin = this.plugins.pop()
-      plugin && plugin.destroy()
+      if (plugin) {
+        plugin.canvas = null
+        plugin.destroy()
+      }
     }
   }
 
@@ -511,6 +517,10 @@ export class Canvas {
     this.graphCanvas.width = this.topCanvas.width = this.viewWidth
     this.graphCanvas.height = this.topCanvas.height = this.viewHeight
   }
+
+  /**
+   * 挂载
+   */
   mount() {
     if (this.mounted) return
     this.wrapper.appendChild(this.graphCanvas)
@@ -519,21 +529,34 @@ export class Canvas {
     this.eventEmitter.emit('canvas:mounted')
     this.mounted = true
   }
-  topCanvasMount() {
-    if (this.topCanvasMounted) return
-    this.wrapper.appendChild(this.topCanvas)
-    this.topCanvasMounted = true
-  }
-  topCanvasUnmount() {
-    if (!this.topCanvasMounted) return
-    this.wrapper.removeChild(this.topCanvas)
-    this.topCanvasMounted = false
-  }
+
+  /**
+   * 卸载
+   */
   unmount() {
     if (!this.mounted) return
     this.container.removeChild(this.wrapper)
     this.mounted = false
   }
+
+  /**
+   * 交互画布挂载
+   */
+  topCanvasMount() {
+    if (this.topCanvasMounted) return
+    this.wrapper.appendChild(this.topCanvas)
+    this.topCanvasMounted = true
+  }
+
+  /**
+   * 交互画布卸载
+   */
+  topCanvasUnmount() {
+    if (!this.topCanvasMounted) return
+    this.wrapper.removeChild(this.topCanvas)
+    this.topCanvasMounted = false
+  }
+  
   start() {
     if (this._running) return
     this._running = true

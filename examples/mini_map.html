@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>鹰眼地图示例</title>
+  <style>
+    #topology {
+      width: 800px;
+      height: 500px;
+      border: 1px solid #ccc;
+    }
+
+    .node-list {
+      position: fixed;
+      left: 815px;
+      top: 33px;
+      width: 60px;
+      text-align: center;
+      border: 1px dashed #999;
+      padding: 10px;
+    }
+
+    .node-list img {
+      height: 40px;
+    }
+
+    .mini-map {
+      position: fixed;
+      left: 900px;
+      top: 33px;
+    }
+
+    .my-node {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      user-select: none;
+      justify-content: center;
+      background: white;
+    }
+
+    .my-node img {
+      height: 40px;
+    }
+
+    .my-node span {
+      font-size: 12px;
+      color: #999;
+      line-height: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <button onclick="changeMode(MODE_DEFAULT)">默认模式</button>
+  <button onclick="changeMode(MODE_CREATE_EDGE)">连线模式</button>
+  <button onclick="changeMode(MODE_BORDER)">边框模式</button>
+  <div class="node-list">
+    <img ondragstart="dragStart(event)" data-type="host" draggable="true" src="./images/windows主机.png">
+    <img ondragstart="dragStart(event)" data-type="server" draggable="true" src="./images/服务器.png">
+  </div>
+  <div class="mini-map"></div>
+  <div id="topology"></div>
+
+  <script src="./lib/graphics.js"></script>
+  <script>
+    // 创建一个画布
+    const canvas = new Canvas({
+      container: document.getElementById('topology')
+    })
+
+    // 上下文菜单插件
+    const contextMenu = new ContextMenu()
+    // 使用插件
+    canvas.use(contextMenu)
+    // 用户鼠标右键时执行
+    // 返回一个数组来控制菜单选项
+    contextMenu.onContextMenu = function (instance, target, activeNodes, activeEdges) {
+      const menu = []
+      if (target) {
+        menu.push({
+          label: '重命名',
+          command: 'rename',
+          target
+        }, {
+          label: '删除',
+          command: 'remove',
+          target
+        })
+      }
+      return menu
+    }
+
+    // 鹰眼地图
+    const miniMap = new MiniMap()
+    canvas.use(miniMap)
+    miniMap.width = 200
+    miniMap.height = 200
+    miniMap.mount(document.querySelector('.mini-map'))
+
+    // 切换模式
+    const changeMode = function (mode) {
+      canvas.setMode(mode)
+    }
+
+    const dragStart = function (e) {
+      // 设置类型
+      e.dataTransfer.setData('deviceType', e.target.dataset.type)
+    }
+
+    // 自定义一个节点
+    class MyNode extends RectDomNode {
+      deviceType = ''
+      canResize = true
+      constructor(options) {
+        super(options)
+        this.deviceType = options.deviceType || 'host'
+      }
+      render() {
+        let img = ''
+        switch (this.deviceType) {
+          case 'host':
+            img = './images/windows主机.png'
+            break
+          case 'server':
+            img = './images/服务器.png'
+            break
+        }
+        // this.$el 是节点的容器元素
+        this.$el.innerHTML = `
+          <div class="my-node">
+            <img draggable="false" src="${img}" />
+            <span>${this.text}</span>  
+          </div>
+        `
+      }
+
+      // 注销前调用
+      beforeDestroy() {
+        console.log('before destroy')
+      }
+    }
+
+    // 监听画布 “挂载”事件, 确保挂载后才能 添加节点或连线
+    canvas.eventEmitter.on('canvas:mounted', function () {
+
+      // 实例化节点
+      const node1 = new MyNode({
+        id: 1,
+        width: 70,
+        height: 70,
+        x: 10,
+        y: 10,
+        text: '主机',
+        deviceType: 'host'
+      })
+
+      const node2 = new MyNode({
+        id: 2,
+        width: 70,
+        height: 70,
+        x: 200,
+        y: 200,
+        text: '服务器',
+        deviceType: 'server'
+      })
+
+      // 实例化连线
+      const line = new Line({
+        sourceNode: node1,
+        targetNode: node2,
+        arrow: true
+      })
+
+      // 添加节点
+      canvas.addNode(node1)
+      canvas.addNode(node2)
+      // 添加连线
+      canvas.addEdge(line)
+    })
+
+    // 监听“拖拽释放”事件，添加节点
+    canvas.eventEmitter.on('canvas:drop', function (e) {
+      // coordinate 是鼠标释放坐标位置
+      // dataTransfer
+      const { coordinate, dataTransfer } = e
+      let node
+      switch (dataTransfer.getData('deviceType')) {
+        case 'host':
+          node = new MyNode({
+            id: Math.random(),
+            width: 70,
+            height: 70,
+            x: coordinate.x - 35,
+            y: coordinate.y - 35,
+            text: 'host',
+            deviceType: 'host'
+          })
+          canvas.addNode(node)
+          break
+        case 'server':
+          node = new MyNode({
+            id: Math.random(),
+            width: 70,
+            height: 70,
+            x: coordinate.x - 35,
+            y: coordinate.y - 35,
+            text: 'server',
+            deviceType: 'server'
+          })
+          canvas.addNode(node)
+          break
+      }
+    })
+
+    canvas.eventEmitter.on('canvas:menu', function (e) {
+      const target = e.target
+      switch (e.command) {
+        case 'rename':
+          if (target) {
+            setTimeout(() => {
+              const result = prompt('输入新名称', target.text)
+              target.text = result
+            }, 300)
+          }
+          break
+        case 'remove':
+          if (target instanceof Node) {
+            canvas.removeNode(target)
+          }
+          if (target instanceof Edge) {
+            canvas.removeEdge(target)
+          }
+          break
+      }
+
+    })
+
+    canvas.start()
+
+  </script>
+</body>
+
+</html>
