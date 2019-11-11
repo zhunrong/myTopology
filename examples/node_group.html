@@ -60,12 +60,16 @@
   </div>
   <div id="topology"></div>
 
-  <script src="../lib/graphics.js"></script>
+  <script src="./lib/graphics.js"></script>
   <script>
     // 创建一个画布
     const canvas = new Canvas({
       container: document.getElementById('topology')
     })
+
+    // 上下文菜单插件（使用框选模式时，必须添加此插件）
+    const contextMenu = new ContextMenu()
+    canvas.use(contextMenu)
 
     // 切换模式
     const changeMode = function (mode) {
@@ -243,38 +247,6 @@
           canvas.addNode(node)
           break
       }
-    })
-
-    canvas.eventEmitter.on('canvas:menu', function (e) {
-      // 获取激活状态的节点
-      const activeNodes = canvas.getActiveNodes()
-      // 获取激活状态的边线
-      const activeEdges = canvas.getActiveEdges()
-      switch (e.command) {
-        case 'rename':
-          const node = activeNodes[0]
-          if (node) {
-            setTimeout(() => {
-              const result = prompt(node.text)
-              node.text = result
-              node.render()
-            }, 300)
-          }
-          break
-        case 'remove':
-          if (activeNodes.length) {
-            activeNodes.forEach(item => {
-              canvas.removeNode(item)
-            })
-          }
-          if (activeEdges.length) {
-            activeEdges.forEach(item => {
-              canvas.removeEdge(item)
-            })
-          }
-          break
-      }
-
     })
 
     canvas.start()

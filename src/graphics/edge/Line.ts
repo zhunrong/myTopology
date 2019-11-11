@@ -19,6 +19,10 @@ export interface ILineOptions extends IEdgeOptions {
   doubleArrow?: boolean
   // 动画元素
   animateElement?: Element
+  /**
+   * 动画持续时间
+   */
+  animateDuration?: number
 }
 
 export interface ILineStyle extends IStyle {
@@ -45,6 +49,7 @@ export class Line extends Edge {
     this.textElement.offset.y = -10
     this.style.lineWidth = 2
     this.animate.element = options.animateElement || null
+    this.animate.duration = options.animateDuration || 0
   }
   isInRect() {
     return true

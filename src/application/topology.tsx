@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { MODE_DEFAULT, MODE_VIEW, MODE_CREATE_EDGE, MODE_AREA_PICK, MODE_CREATE_L, MODE_BORDER } from '../graphics'
-import { Canvas, CircleCanvasNode, RectCanvasNode, RectDomNode, Line as Edge, RectGroup, RectDomGroup, CircleGroup, L, Image, Node } from '../graphics'
+import { Canvas, CircleCanvasNode, RectCanvasNode, RectDomNode, Line as Edge, RectGroup, RectDomGroup, CircleGroup, L, Img, Node } from '../graphics'
 // plugins
 import { MiniMap, ContextMenu, IMenu } from '../graphics'
 import CustomNode from '../components/node/Node'
@@ -41,7 +41,7 @@ export default class Topology extends Component<IProps, IState> {
         container: this.containerRef.current,
         scale: 1
       })
-      this.canvas.animation = true
+      this.canvas.animate = true
 
       // mini map
       const map = new MiniMap()
@@ -136,7 +136,7 @@ export default class Topology extends Component<IProps, IState> {
                 arrow: item.arrow,
                 text: item.text
               })
-              edge.animate.element = new Image(require('../assets/双箭头.png'))
+              edge.animate.element = new Img(require('../assets/双箭头.png'))
               edge.animate.duration = 5000
               this.canvas.addEdge(edge)
             } else {
@@ -147,7 +147,7 @@ export default class Topology extends Component<IProps, IState> {
                 arrow: item.arrow,
                 text: item.text
               })
-              edge.animate.element = new Image(require('../assets/绿箭头.png'))
+              edge.animate.element = new Img(require('../assets/绿箭头.png'))
               edge.animate.duration = 4000
               this.canvas.addEdge(edge)
             }

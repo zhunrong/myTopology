@@ -3,7 +3,7 @@ import { imgLoad } from '../utils/utils'
 import Vector2d from '../utils/Vector2d'
 import Math2d from '../utils/Math2d'
 
-export class Image extends Element {
+export class Img extends Element {
 
   image: CanvasImageSource | undefined
   constructor(source: string | CanvasImageSource) {
@@ -46,4 +46,4 @@ export class Image extends Element {
 
 }
 
-export default Image
+export default Img

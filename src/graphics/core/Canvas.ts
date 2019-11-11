@@ -32,6 +32,7 @@ export interface ICanvasOptions {
   maxScale?: number
   minScale?: number
   mode?: string
+  animate?: boolean
 }
 export class Canvas {
   /**
@@ -88,7 +89,7 @@ export class Canvas {
   // 重绘
   repaint: boolean = false
   // 开启动画
-  animation = false
+  animate = false
 
   /**
    * 画布根节点（虚拟节点，不可见）
@@ -108,6 +109,7 @@ export class Canvas {
     this.canvasScale = options.scale || 1
     this.maxScale = options.maxScale || 5
     this.minScale = options.minScale || 0.1
+    this.animate = options.animate || false
     this.rootNode.canvas = this
     this.virtualNode.maxDepth = true
     this.ro = new ResizeObserver((entries, observer) => {
@@ -547,7 +549,7 @@ export class Canvas {
     this._animationFrameId = requestAnimationFrame(() => {
       globalClock.update()
       // 判断是否需要重绘
-      if (this.repaint || this.animation) {
+      if (this.repaint || this.animate) {
         this.graphCanvasCtx.clearRect(0, 0, this.viewWidth, this.viewHeight)
         this.graphCanvasCtx.save()
         this.graphCanvasCtx.scale(this.canvasScale, this.canvasScale)

@@ -1,7 +1,6 @@
 const path = require('path')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
-const webpack = require('webpack')
+const FileManagerPlugin = require('filemanager-webpack-plugin')
 
 const root = path.resolve(__dirname, '../')
 module.exports = NODE_ENV => ({
@@ -121,15 +120,15 @@ module.exports = NODE_ENV => ({
     new CleanWebpackPlugin([path.resolve(__dirname, '../lib')], {
       root: root // 设置项目根目录，根目录之外的文件会跳过删除
     }),
-    // copy文件
-    new CopyWebpackPlugin([{
-      from: path.resolve(root, 'static'),
-      to: path.resolve(root, 'lib/static')
-    }]),
-    new webpack.ProvidePlugin({
-      // 'editormd': 'editor.md/editormd.min.js'
+    new FileManagerPlugin({
+      onEnd: {
+        copy: [
+          {
+            source: path.resolve(root, 'lib/*'),
+            destination: path.resolve(root, 'examples/lib')
+          }
+        ]
+      }
     })
-  ],
-  externals: {
-  }
+  ]
 })

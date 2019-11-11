@@ -18,6 +18,10 @@ export interface ILOptions extends IEdgeOptions {
   doubleArrow?: boolean
   // 动画元素
   animateElement?: Element
+  /**
+   * 动画持续时间
+   */
+  animateDuration?: number
 }
 
 const sourceJoinPointCopy = new Vector2d()
@@ -53,6 +57,7 @@ export class L extends Edge {
     this.style.lineWidth = 2
     this.textElement.text = this.text
     this.animate.element = options.animateElement || null
+    this.animate.duration = options.animateDuration || 0
   }
   isInRect = () => {
     return true

@@ -51,7 +51,7 @@
 
 <body>
   <button onclick="changeMode(MODE_DEFAULT)">默认模式</button>
-  <button onclick="changeMode(MODE_CUSTOM_1)">创建连线（虚线、无箭头）</button>
+  <button onclick="changeMode(MODE_CUSTOM_1)">创建连线（虚线、双箭头）</button>
   <button onclick="changeMode(MODE_CUSTOM_2)">创建连线（实线、有箭头）</button>
   <div class="node-list">
     <img ondragstart="dragStart(event)" data-type="host" draggable="true" src="./images/windows主机.png">
@@ -59,7 +59,7 @@
   </div>
   <div id="topology"></div>
 
-  <script src="../lib/graphics.js"></script>
+  <script src="./lib/graphics.js"></script>
   <script>
     // 创建一个画布
     const canvas = new Canvas({
@@ -77,31 +77,19 @@
       onUninstall = (canvas) => {
         console.log('onUninstall', canvas, this)
       }
-      // 点击画布
-      onClick = (canvas, e) => { }
-      // 在画布中点击鼠标右键
-      onContextMenu = (canvas, e) => {
-        const activeNodes = canvas.getActiveNodes()
-        if (activeNodes.length) {
-          // 定义菜单
-          canvas.contextMenu.menu = [{
-            label: '自定义菜单一',
-            command: 'command1'
-          }]
-          // 显示右键菜单，需要传入显示位置
-          canvas.contextMenu.show(e.clientX, e.clientY)
+      // 处理画布的原生事件,例如click,mousedown,mousemove,mouseup等等
+      handleEvent(canvas, event) {
+        switch(event.type){
+          case 'mousedown':
+            // do ...
+            break
+          case 'mousemove':
+            // do ...
+            break
         }
       }
-      //  双击画布
-      onDblClick = (canvas, e) => { }
-      // 鼠标按下
-      onMouseDown = (canvas, e) => { }
-      // 鼠标移动
-      onMouseMove = (canvas, e) => { }
-      // 鼠标按键释放
-      onMouseUp = (canvas, e) => { }
     }
-    const MODE_CUSTOM_1 = '创建连线（虚线、无箭头）'
+    const MODE_CUSTOM_1 = '创建连线（虚线、双箭头）'
     const MODE_CUSTOM_2 = '创建连线（实线、有箭头）'
 
     // 注册一个自定义的模式
@@ -114,6 +102,7 @@
       new CreateLineInteraction({
         dash: true,
         arrow: false,
+        doubleArrow: true,
         text: 'text'
       }),
       new MyInteraction() // 自定义交互
@@ -195,8 +184,7 @@
       // 实例化连线
       const line = new Line({
         sourceNode: node1,
-        targetNode: node2,
-        arrow: true
+        targetNode: node2
       })
 
       // 添加节点

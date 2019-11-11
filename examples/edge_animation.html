@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>基础示例</title>
+  <style>
+    #topology {
+      width: 800px;
+      height: 500px;
+      border: 1px solid #ccc;
+    }
+
+    .node-list {
+      position: fixed;
+      left: 815px;
+      top: 33px;
+      width: 60px;
+      text-align: center;
+      border: 1px dashed #999;
+      padding: 10px;
+    }
+
+    .node-list img {
+      height: 40px;
+    }
+
+    .my-node {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      user-select: none;
+      justify-content: center;
+    }
+
+    .my-node img {
+      height: 40px;
+    }
+
+    .my-node span {
+      font-size: 12px;
+      color: #999;
+      line-height: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <button>默认模式</button>
+  <div id="topology"></div>
+
+  <script src="./lib/graphics.js"></script>
+  <script>
+    // 创建一个画布
+    const canvas = new Canvas({
+      container: document.getElementById('topology'),
+      animate: true
+    })
+
+    // 自定义一个节点
+    class MyNode extends RectDomNode {
+      deviceType = ''
+      canResize = true
+      constructor(options) {
+        super(options)
+        this.deviceType = options.deviceType || 'host'
+      }
+      render() {
+        let img = ''
+        switch (this.deviceType) {
+          case 'host':
+            img = './images/windows主机.png'
+            break
+          case 'server':
+            img = './images/服务器.png'
+            break
+        }
+        // this.$el 是节点的容器元素
+        this.$el.innerHTML = `
+          <div class="my-node">
+            <img draggable="false" src="${img}" />
+            <span>${this.text}</span>  
+          </div>
+        `
+      }
+
+      // 注销前调用
+      beforeDestroy() {
+        console.log('before destroy')
+      }
+    }
+
+    // 监听画布 “挂载”事件, 确保挂载后才能 添加节点或连线
+    canvas.eventEmitter.on('canvas:mounted', function () {
+
+      // 实例化节点
+      const node1 = new MyNode({
+        id: 1,
+        width: 70,
+        height: 70,
+        x: 10,
+        y: 10,
+        text: '主机1',
+        deviceType: 'host'
+      })
+
+      const node2 = new MyNode({
+        id: 2,
+        width: 70,
+        height: 70,
+        x: 200,
+        y: 200,
+        text: '服务器',
+        deviceType: 'server'
+      })
+
+      const node3 = new MyNode({
+        id: 3,
+        width: 70,
+        height: 70,
+        x: 300,
+        y: 10,
+        text: '主机2',
+        deviceType: 'host'
+      })
+
+      // 实例化连线
+      const line1 = new Line({
+        sourceNode: node1,
+        targetNode: node2,
+        arrow: true,
+        // 自定义的动画图片
+        animateElement: new Img('./images/dog.png'),
+        // 动画持续时间
+        animateDuration: 5000
+      })
+
+      const line2 = new Line({
+        sourceNode: node3,
+        targetNode: node2,
+        arrow: true,
+        // 自定义的动画图片
+        animateElement: new Img('./images/cat.png'),
+        // 动画持续时间
+        animateDuration: 5000
+      })
+
+      // 添加节点
+      canvas.addNode(node1)
+      canvas.addNode(node2)
+      canvas.addNode(node3)
+      // 添加连线
+      canvas.addEdge(line1)
+      canvas.addEdge(line2)
+    })
+
+    canvas.start()
+
+  </script>
+</body>
+
+</html>
