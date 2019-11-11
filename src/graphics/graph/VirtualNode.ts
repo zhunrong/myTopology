@@ -1,11 +1,12 @@
 import Node, { INodeOptions, BoundingRect } from './Node'
 import Vector2d from '../utils/Vector2d'
-export interface IVirtualNodeOptions extends INodeOptions { }
+
 export class VirtualNode extends Node {
+  maxDepth = false
   renderType: string = 'NONE'
   shapeType = 'circle'
   radius = 1
-  constructor(options: IVirtualNodeOptions) {
+  constructor(options: INodeOptions) {
     super(options)
   }
   get vertexes(): Vector2d[] {
@@ -37,7 +38,7 @@ export class VirtualNode extends Node {
   }
 
   get depth(): number {
-    return Number.MAX_SAFE_INTEGER
+    return this.maxDepth ? Number.MAX_SAFE_INTEGER : (this.parent ? this.parent.depth + 1 : 0)
   }
 
   isInRect() { return false }
@@ -46,6 +47,6 @@ export class VirtualNode extends Node {
   destroy() { }
   updatePosition() { }
   updateRender() { }
-  drawThumbnail(){}
+  drawThumbnail() { }
 }
 export default VirtualNode

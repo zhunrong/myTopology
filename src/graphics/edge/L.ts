@@ -31,7 +31,6 @@ const ARROW_SIZE = { width: 8, height: 10 }
  */
 export class L extends Edge {
   dash: boolean
-  text: string
   arrow: boolean
   doubleArrow: boolean
   arrowStart: Vector2d | undefined
@@ -49,7 +48,6 @@ export class L extends Edge {
   constructor(options: ILOptions) {
     super(options)
     this.dash = options.dash || false
-    this.text = options.text || ''
     this.arrow = options.arrow || false
     this.doubleArrow = options.doubleArrow || false
     this.style.lineWidth = 2

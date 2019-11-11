@@ -1,17 +1,13 @@
 import RectNode, { IRectNodeOptions } from '../graph/RectNode'
 
-export interface IRectCanvasNodeOptions extends IRectNodeOptions {
-  text?: string
-}
+export interface IRectCanvasNodeOptions extends IRectNodeOptions { }
 
 export class RectCanvasNode extends RectNode {
   renderType = 'CANVAS'
-  text: string
   cacheCanvas = document.createElement('canvas')
 
   constructor(options: IRectCanvasNodeOptions) {
     super(options)
-    this.text = options.text || ''
   }
 
   render(ctx?: CanvasRenderingContext2D) {

@@ -1,17 +1,13 @@
 import Circle, { ICircleNodeOptions } from '../graph/CircleNode'
 
-export interface ICircleCanvasNodeOptions extends ICircleNodeOptions {
-  text?: string
-}
+export interface ICircleCanvasNodeOptions extends ICircleNodeOptions { }
 
 export class CircleCanvasNode extends Circle {
   renderType = 'CANVAS'
   cacheCanvas = document.createElement('canvas')
-  text: string
 
   constructor(options: ICircleCanvasNodeOptions) {
     super(options)
-    this.text = options.text || ''
   }
 
   render() {

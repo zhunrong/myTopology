@@ -170,7 +170,6 @@ export default class Topology extends Component<IProps, IState> {
             node = new CustomNode({
               x: coordinate.x - 40,
               y: coordinate.y - 40,
-              id: Math.random(),
               text: type,
               deviceType: type
             })
@@ -181,7 +180,6 @@ export default class Topology extends Component<IProps, IState> {
               height: 100,
               x: coordinate.x - 50,
               y: coordinate.y - 50,
-              id: Math.random()
             })
             break
           case 'circle group':
@@ -189,12 +187,10 @@ export default class Topology extends Component<IProps, IState> {
               radius: 50,
               x: coordinate.x - 50,
               y: coordinate.y - 50,
-              id: Math.random()
             })
             break
           default:
             node = new CircleCanvasNode({
-              id: Math.random(),
               text: 'new Circle',
               x: coordinate.x - 40,
               y: coordinate.y - 40,
@@ -212,10 +208,10 @@ export default class Topology extends Component<IProps, IState> {
             setTimeout(() => {
               const newName = prompt('请输入新名称', menu.target.text)
               menu.target.text = newName
-              if (menu.target instanceof Node) {
-                menu.target.render()
-              }
-              this.canvas.repaint = true
+              // if (menu.target instanceof Node) {
+              //   menu.target.render()
+              // }
+              // this.canvas.repaint = true
             }, 200)
             break
           case 'remove':

@@ -4,17 +4,14 @@ import Edge from './Edge'
 export interface INodeOptions extends IGraphOptions {
   x?: number
   y?: number
-  id: number | string
+  id?: any
 }
 // export type BoundingRect = [Vector2d,Vector2d,Vector2d,Vector2d]
 export type BoundingRect = Vector2d[]
 export type handler = (node: Node) => void | true
 export abstract class Node extends Graph {
 
-  /**
-   * id
-   */
-  id: number | string
+  id: any
 
   /**
    * 位置
@@ -46,6 +43,18 @@ export abstract class Node extends Graph {
   get miniMapVisible(): boolean {
     if (this.parent && (!this.parent.miniMapVisible || !this.parent.isExpanded)) return false
     return true
+  }
+
+  get text() {
+    return this._text
+  }
+
+  set text(value: string) {
+    this._text = value
+    this.render()
+    if (this.canvas) {
+      this.canvas.repaint = true
+    }
   }
 
   /**
@@ -250,14 +259,6 @@ export abstract class Node extends Graph {
   }
 
   /**
-   * 根据id获取子节点
-   * @param id 
-   */
-  getChildById(id: Node['id']): Node | undefined {
-    return this.children.find(child => child.id === id)
-  }
-
-  /**
    * 获取激活状态的子节点列表
    */
   getActiveChild(): Node[] {
@@ -330,23 +331,13 @@ export abstract class Node extends Graph {
    * 获取根节点
    */
   get root(): Node {
-    let cur: Node = this
-    while (cur.parent !== undefined) {
-      cur = cur.parent
-    }
-    return cur
+    return this.parent ? this.parent.root : this
   }
   /**
    * 获取节点深度
    */
   get depth(): number {
-    let depth = 0
-    let cur: Node = this
-    while (cur.parent !== undefined) {
-      cur = cur.parent
-      depth++
-    }
-    return depth
+    return this.parent ? this.parent.depth + 1 : 0
   }
 
   /**

@@ -66,6 +66,28 @@
       container: document.getElementById('topology')
     })
 
+    // 上下文菜单插件
+    const contextMenu = new ContextMenu()
+    // 使用插件
+    canvas.use(contextMenu)
+    // 用户鼠标右键时执行
+    // 返回一个数组来控制菜单选项
+    contextMenu.onContextMenu = function (instance, target, activeNodes, activeEdges) {
+      const menu = []
+      if (target) {
+        menu.push({
+          label: '重命名',
+          command: 'rename',
+          target
+        }, {
+          label: '删除',
+          command: 'remove',
+          target
+        })
+      }
+      return menu
+    }
+
     // 切换模式
     const changeMode = function (mode) {
       canvas.setMode(mode)
@@ -79,6 +101,7 @@
     // 自定义一个节点
     class MyNode extends RectDomNode {
       deviceType = ''
+      canResize = true
       constructor(options) {
         super(options)
         this.deviceType = options.deviceType || 'host'
@@ -181,31 +204,22 @@
     })
 
     canvas.eventEmitter.on('canvas:menu', function (e) {
-      // 获取激活状态的节点
-      const activeNodes = canvas.getActiveNodes()
-      // 获取激活状态的边线
-      const activeEdges = canvas.getActiveEdges()
+      const target = e.target
       switch (e.command) {
         case 'rename':
-          const node = activeNodes[0]
-          if (node) {
+          if (target) {
             setTimeout(() => {
-              const result = prompt(node.text)
-              node.text = result
-              node.render()
+              const result = prompt('输入新名称', target.text)
+              target.text = result
             }, 300)
           }
           break
         case 'remove':
-          if (activeNodes.length) {
-            activeNodes.forEach(item => {
-              canvas.removeNode(item)
-            })
+          if (target instanceof Node) {
+            canvas.removeNode(target)
           }
-          if (activeEdges.length) {
-            activeEdges.forEach(item => {
-              canvas.removeEdge(item)
-            })
+          if (target instanceof Edge) {
+            canvas.removeEdge(target)
           }
           break
       }

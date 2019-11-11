@@ -70,11 +70,7 @@ export class Canvas {
   topCanvasMounted: boolean = false
   topCanvasCtx: CanvasRenderingContext2D
   // 辅助节点(不需要实际渲染的)
-  virtualNode: VirtualNode = new VirtualNode({
-    x: 0,
-    y: 0,
-    id: 'vn'
-  })
+  virtualNode: VirtualNode = new VirtualNode({})
 
   mousedownPosition = new Vector2d()
   mouseupPosition = new Vector2d()
@@ -97,11 +93,7 @@ export class Canvas {
   /**
    * 画布根节点（虚拟节点，不可见）
    */
-  rootNode: VirtualNode = new VirtualNode({
-    x: 0,
-    y: 0,
-    id: 'rootNode'
-  })
+  rootNode: VirtualNode = new VirtualNode({})
 
   /**
    * 插件列表
@@ -117,6 +109,7 @@ export class Canvas {
     this.maxScale = options.maxScale || 5
     this.minScale = options.minScale || 0.1
     this.rootNode.canvas = this
+    this.virtualNode.maxDepth = true
     this.ro = new ResizeObserver((entries, observer) => {
       for (const entry of entries) {
         const { width, height } = entry.contentRect

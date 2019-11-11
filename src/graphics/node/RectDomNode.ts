@@ -1,13 +1,10 @@
 import RectNode, { IRectNodeOptions } from '../graph/RectNode'
 
-export interface IRectDomNodeOptions extends IRectNodeOptions {
-  text?: string
-}
+export interface IRectDomNodeOptions extends IRectNodeOptions { }
 
 export class RectDomNode extends RectNode {
   renderType = 'DOM'
   $el = document.createElement('div')
-  text: string
 
   constructor(options: IRectDomNodeOptions) {
     super(options)
@@ -16,7 +13,6 @@ export class RectDomNode extends RectNode {
       left: 0,
       top: 0
     })
-    this.text = options.text || ''
   }
 
   mount(): void {

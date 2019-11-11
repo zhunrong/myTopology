@@ -11,14 +11,19 @@ export interface IStyle {
 export interface IGraphOptions {
   visible?: boolean
   zIndex?: number
+  text?: string
   data?: any
 }
+
 let graphId = 1
 
 export abstract class Graph {
+
   canvas: Canvas | undefined
   active: boolean = false
   _visible: boolean
+  protected _text: string
+
   /**
    * 可见性
    */
@@ -28,6 +33,21 @@ export abstract class Graph {
   set visible(visible: boolean) {
     this._visible = visible
   }
+
+  /**
+   * 文本
+   */
+  get text() {
+    return this._text
+  }
+
+  set text(value: string) {
+    this._text = value
+    if (this.canvas) {
+      this.canvas.repaint = true
+    }
+  }
+
   /**
    * 在鹰眼地图上是否可见
    */
@@ -44,7 +64,7 @@ export abstract class Graph {
   /**
    * 用户数据
    */
-  data: any
+  data: any = null
 
   /**
    * 样式属性
@@ -59,6 +79,7 @@ export abstract class Graph {
   renderSign: any
   constructor(options: IGraphOptions) {
     this._visible = options.visible || true
+    this._text = options.text || ''
     this.zIndex = options.zIndex || 0
     this.data = options.data
   }

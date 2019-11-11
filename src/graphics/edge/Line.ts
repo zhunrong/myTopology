@@ -13,8 +13,6 @@ const ARROW_SIZE = { width: 8, height: 10 }
 export interface ILineOptions extends IEdgeOptions {
   // 是否虚线
   dash?: boolean
-  // 显示文本
-  text?: string
   // 显示箭头
   arrow?: boolean
   // 双箭头
@@ -29,7 +27,6 @@ export interface ILineStyle extends IStyle {
 
 export class Line extends Edge {
   dash: boolean
-  text: string
   arrow: boolean
   doubleArrow: boolean
   begin: Vector2d | undefined
@@ -42,7 +39,6 @@ export class Line extends Edge {
   constructor(options: ILineOptions) {
     super(options)
     this.dash = options.dash || false
-    this.text = options.text || 'line'
     this.arrow = options.arrow || false
     this.doubleArrow = options.doubleArrow || false
     this.textElement.text = this.text
