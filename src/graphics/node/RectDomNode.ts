@@ -28,6 +28,7 @@ export class RectDomNode extends RectNode {
   }
 
   render(ctx?: CanvasRenderingContext2D) {
+    this.$el.style.backgroundColor = 'white'
     this.$el.innerHTML = `<div style="height:100%;
                                       display:flex;
                                       align-items:center;
@@ -48,7 +49,8 @@ export class RectDomNode extends RectNode {
       transform: `translate3d(${x}px,${y}px,0)`,
       width: `${width}px`,
       height: `${height}px`,
-      boxShadow: active ? '0 0 5px 0 rgba(255,0,0,0.8)' : 'none'
+      boxShadow: active ? '0 0 5px 0 rgba(255,0,0,0.8)' : 'none',
+      zIndex: this.depth
     })
   }
 }

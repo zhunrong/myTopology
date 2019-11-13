@@ -524,6 +524,8 @@ export class Canvas {
     })
     this.graphCanvas.width = this.topCanvas.width = this.viewWidth
     this.graphCanvas.height = this.topCanvas.height = this.viewHeight
+    this.graphCanvas.style.zIndex = '1'
+    this.graphCanvas.style.pointerEvents = 'none'
   }
 
   /**
