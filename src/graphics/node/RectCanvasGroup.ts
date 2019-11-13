@@ -7,7 +7,7 @@ export interface IRectCanvasGroupOptions extends IRectCanvasNodeOptions {
 /**
  * 矩形组
  */
-export class RectGroup extends RectCanvasNode {
+export class RectCanvasGroup extends RectCanvasNode {
   static shape = 'rect'
   // 是组
   isGroup = true
@@ -66,5 +66,5 @@ export class RectGroup extends RectCanvasNode {
   }
 }
 
-export default RectGroup
+export default RectCanvasGroup
 

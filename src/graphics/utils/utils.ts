@@ -1,3 +1,8 @@
+import Node from '../graph/Node'
+import RectNode from '../graph/RectNode'
+import CircleNode from '../graph/CircleNode'
+import RectDomGroup from '../node/RectDomGroup'
+
 /**
  * 节流函数
  * @param func
@@ -43,4 +48,28 @@ export function applyMixins(derivedCtor: any, baseCtors: any[]) {
       derivedCtor.prototype[name] = baseCtor.prototype[name]
     })
   })
+}
+
+/**
+ * 是否为矩形节点
+ * @param node 
+ */
+export function isRectNode(node: Node): node is RectNode {
+  return node instanceof RectNode
+}
+
+/**
+ * 是否为圆形节点
+ * @param node 
+ */
+export function isCircleNode(node: Node): node is CircleNode {
+  return node instanceof CircleNode
+}
+
+/**
+ * 是否为矩形DOM组
+ * @param node 
+ */
+export function isRectDomGroup(node: Node): node is RectDomGroup {
+  return node instanceof RectDomGroup
 }

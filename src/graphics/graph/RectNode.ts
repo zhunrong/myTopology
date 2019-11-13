@@ -57,6 +57,12 @@ export abstract class RectNode extends Node {
     return this.getCenterPoint()
   }
 
+  get circumradius() {
+    const width = this.getWidth()
+    const height = this.getHeight()
+    return Math.sqrt(width ** 2 + height ** 2) / 2
+  }
+
   /**
    * 获取实际位置
    */

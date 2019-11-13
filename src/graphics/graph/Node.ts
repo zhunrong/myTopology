@@ -78,6 +78,11 @@ export abstract class Node extends Graph {
   abstract get boundingRect(): Vector2d[]
 
   /**
+   * 外接圆半径
+   */
+  abstract get circumradius(): number
+
+  /**
    * 渲染类型
    */
   abstract readonly renderType: string

@@ -7,6 +7,7 @@ import Triangle from '../element/Triangle'
 import Text from '../element/Text'
 import Polyline from '../element/Polyline'
 import PathAnimate from '../animate/PathAnimate'
+import { isCircleNode } from '../utils/utils'
 
 const ARROW_SIZE = { width: 8, height: 10 }
 
@@ -89,9 +90,17 @@ export class Line extends Edge {
       const sourceCenter = sourceNode.centerPoint
       const targetCenter = targetNode.centerPoint
       const beginToEnd: [Vector2d, Vector2d] = [sourceCenter, targetCenter]
-      this.begin = sourceNode.shapeType === 'rect' ? intersectWithRect(beginToEnd, sourceNode.boundingRect) : intersectWithCircle(sourceCenter, (sourceNode as any).radius, targetCenter)
+      if (isCircleNode(sourceNode)) {
+        this.begin = intersectWithCircle(sourceCenter, sourceNode.radius, targetCenter)
+      } else {
+        this.begin = intersectWithRect(beginToEnd, sourceNode.boundingRect)
+      }
       if (!this.begin) return
-      this.end = targetNode.shapeType === 'rect' ? intersectWithRect(beginToEnd, targetNode.boundingRect) : intersectWithCircle(targetCenter, (targetNode as any).radius, sourceCenter)
+      if (isCircleNode(targetNode)) {
+        this.end = intersectWithCircle(targetCenter, targetNode.radius, sourceCenter)
+      } else {
+        this.end = intersectWithRect(beginToEnd, targetNode.boundingRect)
+      }
       if (!this.end) return
 
       const sourceToTarget = Vector2d.copy(this.end).substract(this.begin)

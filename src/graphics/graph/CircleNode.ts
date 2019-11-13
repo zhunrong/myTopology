@@ -27,6 +27,10 @@ export abstract class CircleNode extends Node {
     return this.getBoundingRect()
   }
 
+  get circumradius() {
+    return this.radius
+  }
+
   constructor(options: ICircleNodeOptions) {
     super(options)
     this.radius = options.radius || 50

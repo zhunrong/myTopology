@@ -1,6 +1,6 @@
 import Interaction from './Interaction'
 import Canvas from '../core/Canvas'
-import RectGroup from '../node/RectCanvasGroup'
+import RectDomGroup from '../node/RectDomGroup'
 import Node from '../graph/Node'
 import ContextMenu from '../plugin/ContextMenu'
 
@@ -14,7 +14,7 @@ export class CreateGroupInteraction extends Interaction {
   canvas!: Canvas
   // 父节点
   parentNode: Node | undefined
-  ctor: any = RectGroup
+  ctor: any = RectDomGroup
   constructor(options?: ICreateGroupInteraction) {
     super()
     if (options) {

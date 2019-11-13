@@ -8,6 +8,7 @@ import VirtualNode from '../graph/VirtualNode'
 import Interaction from '../interaction/Interaction'
 import modeManager, { MODE_DEFAULT } from '../mode/modes'
 import Plugin from '../plugin/Plugin'
+import Layout from '../layout/Layout'
 import { globalClock } from './Clock'
 import style from './canvas.less'
 import config from '../config/config'
@@ -94,12 +95,16 @@ export class Canvas {
   /**
    * 画布根节点（虚拟节点，不可见）
    */
-  rootNode: VirtualNode = new VirtualNode({})
+  rootNode: VirtualNode = new VirtualNode({
+    id: 'rootNode'
+  })
 
   /**
    * 插件列表
    */
   plugins: Plugin[] = []
+
+  layout: Layout | null = null
 
   constructor(options: ICanvasOptions) {
     this.container = options.container
@@ -407,6 +412,9 @@ export class Canvas {
     return this.canvasToViewportCoordinate(this.pixelToCanvasCoordinate(coordinate))
   }
 
+  /**
+   * 画布可见边界盒
+   */
   get canvasVisibleRect() {
     return [
       new Vector2d(0, 0), // 左上
@@ -556,7 +564,7 @@ export class Canvas {
     this.wrapper.removeChild(this.topCanvas)
     this.topCanvasMounted = false
   }
-  
+
   start() {
     if (this._running) return
     this._running = true
@@ -578,15 +586,16 @@ export class Canvas {
         this.graphCanvasCtx.scale(this.canvasScale, this.canvasScale)
         this.renderNodes()
         this.graphCanvasCtx.restore()
-        // 交互onUpdate钩子
-        const interactions = modeManager.use(this.interactionMode)
-        interactions.forEach(action => {
+        // 交互更新
+        modeManager.use(this.interactionMode).forEach(action => {
           action.onUpdate(this)
         })
         // 插件更新
         this.plugins.forEach(plugin => {
           plugin.enable && plugin.update()
         })
+        // 布局更新
+        this.layout && this.layout.update()
         this.repaint = false
       }
       this.loop()

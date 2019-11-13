@@ -7,7 +7,7 @@ interface IGroupOptions extends ICircleCanvasNodeOptions {
 /**
  * 圆形组
  */
-export class CircleGroup extends CircleCanvasNode {
+export class CircleCanvasGroup extends CircleCanvasNode {
   static shape = 'circle'
   isGroup = true
   canResize = true
@@ -51,4 +51,4 @@ export class CircleGroup extends CircleCanvasNode {
 
 }
 
-export default CircleGroup
+export default CircleCanvasGroup
