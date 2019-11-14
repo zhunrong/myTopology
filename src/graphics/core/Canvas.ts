@@ -637,7 +637,7 @@ export class Canvas {
         edge.renderSign = this._animationFrameId
       })
       // 裁剪层级高的节点区域
-      if (isRectNode(node)) {
+      if (isRectNode(node) && node.visible) {
         const { x, y } = node.getPosition()
         const width = node.getWidth()
         const height = node.getHeight()

@@ -21,10 +21,6 @@ export class RectDomNode extends RectNode {
     if (this.mounted || !this.canvas) return
     this.mounted = true
     this.canvas.wrapper.appendChild(this.$el)
-    // const layer = this.canvas.layers[this.zIndex]
-    // if (layer) {
-    //   layer.div.appendChild(this.$el)
-    // }
   }
 
   unmount(): void {

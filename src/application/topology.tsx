@@ -237,6 +237,10 @@ export default class Topology extends Component<IProps, IState> {
             break
           case 'circularLayout':
             this.circularLayout.duration = 1000
+            this.circularLayout.gap = 10
+            this.circularLayout.nodeRadius = 40 * Math.sqrt(2)
+            // this.circularLayout.radius = 300
+            this.circularLayout.endAngle = Math.PI * 6
             this.circularLayout.layout()
             break
         }
