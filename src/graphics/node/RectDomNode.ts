@@ -11,24 +11,31 @@ export class RectDomNode extends RectNode {
     Object.assign(this.$el.style, {
       position: 'absolute',
       left: 0,
-      top: 0
+      top: 0,
+      backgroundColor: 'white',
+      pointerEvents: 'auto'
     })
   }
 
   mount(): void {
     if (this.mounted || !this.canvas) return
     this.mounted = true
-    this.canvas.domCanvas.appendChild(this.$el)
+    this.canvas.wrapper.appendChild(this.$el)
+    // const layer = this.canvas.layers[this.zIndex]
+    // if (layer) {
+    //   layer.div.appendChild(this.$el)
+    // }
   }
 
   unmount(): void {
     if (!this.mounted || !this.canvas) return
     this.mounted = false
-    this.canvas.domCanvas.removeChild(this.$el)
+    if (this.$el.parentElement) {
+      this.$el.parentElement.removeChild(this.$el)
+    }
   }
 
   render(ctx?: CanvasRenderingContext2D) {
-    this.$el.style.backgroundColor = 'white'
     this.$el.innerHTML = `<div style="height:100%;
                                       display:flex;
                                       align-items:center;
@@ -41,16 +48,18 @@ export class RectDomNode extends RectNode {
   }
 
   update(ctx?: CanvasRenderingContext2D) {
+    if (!this.canvas) return
     const { x, y } = this.getPosition()
     const width = this.getWidth()
     const height = this.getHeight()
     const { active } = this
     Object.assign(this.$el.style, {
-      transform: `translate3d(${x}px,${y}px,0)`,
+      transform: `scale(${this.canvas.canvasScale}) translate3d(${x}px,${y}px,0)`,
+      transformOrigin: 'top left',
       width: `${width}px`,
       height: `${height}px`,
       boxShadow: active ? '0 0 5px 0 rgba(255,0,0,0.8)' : 'none',
-      zIndex: this.depth
+      // zIndex: this.depth
     })
   }
 }

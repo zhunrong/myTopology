@@ -338,6 +338,7 @@ export abstract class Node extends Graph {
   get root(): Node {
     return this.parent ? this.parent.root : this
   }
+
   /**
    * 获取节点深度
    */

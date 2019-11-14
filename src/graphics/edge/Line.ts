@@ -80,11 +80,13 @@ export class Line extends Edge {
     return false
   }
   render(ctx?: CanvasRenderingContext2D) {
-    ctx = ctx || (this.canvas && this.canvas.graphCanvasCtx)
-    if (!ctx) return
-
     const targetNode = this.getTargetNode()
     const sourceNode = this.getSourceNode()
+    // const level = Math.max(targetNode.zIndex, sourceNode.zIndex)
+    ctx = ctx || (this.canvas && this.canvas.graphCanvasCtx)
+    // ctx = ctx || (this.canvas && this.canvas.layers[level] && this.canvas.layers[level].getContext('2d') as CanvasRenderingContext2D)
+    if (!ctx) return
+
     if (sourceNode.visible || targetNode.visible) {
 
       const sourceCenter = sourceNode.centerPoint

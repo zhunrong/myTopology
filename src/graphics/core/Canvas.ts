@@ -1,7 +1,7 @@
 import { EventEmitter } from '../events/eventEmitter'
 import Vector2d from '../utils/Vector2d'
 import { Edge } from '../graph/Edge'
-import { throttle } from '../utils/utils'
+import { throttle, isRectNode } from '../utils/utils'
 import ResizeObserver from 'resize-observer-polyfill'
 import Node from '../graph/Node'
 import VirtualNode from '../graph/VirtualNode'
@@ -58,6 +58,7 @@ export class Canvas {
   protected container: HTMLElement
   // canvas与div的容器
   wrapper: HTMLDivElement = document.createElement('div')
+  canvasWrapper = document.createElement('div')
   containerClientRect: ClientRect | undefined
   // 主画布(用于绘制图形) 位于图层最底层
   protected graphCanvas: HTMLCanvasElement = document.createElement('canvas')
@@ -254,6 +255,10 @@ export class Canvas {
     parent.addChild(node)
     node.unmount()
     node.mount()
+    node.getDescendantBF(child => {
+      child.unmount()
+      child.mount()
+    })
     this.repaint = true
   }
 
@@ -524,6 +529,7 @@ export class Canvas {
     })
     this.graphCanvas.width = this.topCanvas.width = this.viewWidth
     this.graphCanvas.height = this.topCanvas.height = this.viewHeight
+    this.topCanvas.style.zIndex = '2'
     this.graphCanvas.style.zIndex = '1'
     this.graphCanvas.style.pointerEvents = 'none'
   }
@@ -534,7 +540,8 @@ export class Canvas {
   mount() {
     if (this.mounted) return
     this.wrapper.appendChild(this.graphCanvas)
-    this.wrapper.appendChild(this.domCanvas)
+    // this.wrapper.appendChild(this.canvasWrapper)
+    // this.wrapper.appendChild(this.domCanvas)
     this.container.appendChild(this.wrapper)
     this.eventEmitter.emit('canvas:mounted')
     this.mounted = true
@@ -608,43 +615,37 @@ export class Canvas {
    * 渲染节点
    */
   private renderNodes() {
-    this.rootNode.getDescendantBF(node => {
-      const nodeVisible = node.visible
-      // 节点连线渲染
-      node.edges.forEach(edge => {
-        if (edge.renderSign === this._animationFrameId) return
-        if (edge.sourceNode === node) {
-          if (edge.targetNode.depth <= node.depth) {
-            edge.render()
-            edge.renderSign = this._animationFrameId
-          }
-        } else {
-          if (edge.sourceNode.depth <= node.depth) {
-            edge.render()
-            edge.renderSign = this._animationFrameId
-          }
-        }
-      })
 
-      if (node.renderType === 'CANVAS') {
-        if (nodeVisible) {
+    this.virtualNode.edges.forEach(edge => {
+      edge.render(this.graphCanvasCtx)
+    })
+    this.rootNode.getDescendantBF(node => {
+      if (node.visible) {
+        node.mount()
+        if (node.isUpdate) {
           node.update()
+          node.isUpdate = false
         }
-      }
-      if (node.renderType === 'DOM') {
-        if (nodeVisible) {
-          node.mount()
-          if (node.isUpdate) {
-            node.update()
-            node.isUpdate = false
-          }
-        } else {
-          node.unmount()
-        }
+      } else {
+        node.unmount()
       }
     })
-    this.virtualNode.edges.forEach(edge => {
-      edge.render()
+    this.rootNode.getDescendantDF(node => {
+      node.edges.forEach(edge => {
+        if (edge.renderSign === this._animationFrameId) return
+        edge.render(this.graphCanvasCtx)
+        edge.renderSign = this._animationFrameId
+      })
+      // 裁剪层级高的节点区域
+      if (isRectNode(node)) {
+        const { x, y } = node.getPosition()
+        const width = node.getWidth()
+        const height = node.getHeight()
+        this.graphCanvasCtx.beginPath()
+        this.graphCanvasCtx.rect(0, 0, this.canvasWidth, this.canvasHeight)
+        this.graphCanvasCtx.rect(x, y, width, height)
+        this.graphCanvasCtx.clip('evenodd')
+      }
     })
   }
 }

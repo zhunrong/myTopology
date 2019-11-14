@@ -17,7 +17,6 @@ export class RectDomGroup extends RectDomNode {
   }
 
   render() {
-    this.$el.style.backgroundColor = 'white'
     this.$el.innerHTML = `<div style="height:100%;
                                       display:flex;
                                       align-items:center;
