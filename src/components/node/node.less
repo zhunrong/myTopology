@@ -10,11 +10,33 @@
   box-sizing: border-box;
   border: 1px dashed #999;
   background: rgba(255, 255, 255, 1);
+  position: relative;
+
+  &:hover {
+    .tool-tip {
+      display: block;
+    }
+  }
+
   img {
     height: 40px;
   }
 
   span {
     color: #666;
+  }
+
+  .tool-tip {
+    position: absolute;
+    width: 100px;
+    height: 80px;
+    left: 50%;
+    margin-left: -50px;
+    border-radius: 5px;
+    background: #f8f8f8;
+    top: 90px;
+    color: #666;
+    line-height: 30px;
+    display: none;
   }
 }

@@ -58,13 +58,11 @@ export class Canvas {
   protected container: HTMLElement
   // canvas与div的容器
   wrapper: HTMLDivElement = document.createElement('div')
-  canvasWrapper = document.createElement('div')
+
   containerClientRect: ClientRect | undefined
   // 主画布(用于绘制图形) 位于图层最底层
   protected graphCanvas: HTMLCanvasElement = document.createElement('canvas')
   graphCanvasCtx: CanvasRenderingContext2D
-  // dom节点画布(用于渲染dom节点) 位于图层中间层
-  domCanvas: HTMLDivElement = document.createElement('div')
   // 交互画布(交互时用到的辅助画布) 位于图层最顶层
   topCanvas: HTMLCanvasElement = document.createElement('canvas')
   /**
@@ -128,7 +126,7 @@ export class Canvas {
         this.getBoundingClientRect()
       }
       this.mount()
-      this.render()
+      this.initCanvas()
       this.optimizeNode()
       this.repaint = true
     })
@@ -145,7 +143,7 @@ export class Canvas {
     this.canvasScale = scale
     this.canvasWidth = this.viewWidth / this.canvasScale
     this.canvasHeight = this.viewHeight / this.canvasScale
-    this.render()
+    this.initCanvas()
     this.optimizeNode()
     this.repaint = true
   }
@@ -447,7 +445,7 @@ export class Canvas {
       child.translate(offset)
     })
     this.optimizeNode()
-    this.render()
+    this.initCanvas()
     this.repaint = true
     this.eventEmitter.emit('canvas:zoom')
   }
@@ -471,7 +469,7 @@ export class Canvas {
       child.translate(offset)
     })
     this.optimizeNode()
-    this.render()
+    this.initCanvas()
     this.repaint = true
     this.eventEmitter.emit('canvas:zoom')
   }
@@ -503,9 +501,7 @@ export class Canvas {
     if (!this.optimize) return
     // 优化：缓存画布可视矩形
     const canvasRect = this.canvasVisibleRect
-    const nodes = this.rootNode.getDescendantBF()
-
-    nodes.forEach(node => {
+    this.rootNode.getDescendantDF(node => {
       node.visible = node.isInRect(canvasRect)
     })
   }
@@ -519,19 +515,20 @@ export class Canvas {
     this.plugins.push(plugin)
   }
 
-  render() {
-    Object.assign(this.domCanvas.style, {
-      width: `${this.canvasWidth}px`,
-      height: `${this.canvasHeight}px`,
-      left: `${(this.viewWidth - this.canvasWidth) / 2}px`,
-      top: `${(this.viewHeight - this.canvasHeight) / 2}px`,
-      transform: `scale(${this.canvasScale})`
-    })
+  /**
+   * 初始化画布
+   */
+  initCanvas() {
     this.graphCanvas.width = this.topCanvas.width = this.viewWidth
     this.graphCanvas.height = this.topCanvas.height = this.viewHeight
-    this.topCanvas.style.zIndex = '2'
-    this.graphCanvas.style.zIndex = '1'
-    this.graphCanvas.style.pointerEvents = 'none'
+    Object.assign(this.topCanvas.style, {
+      pointerEvents: 'none',
+      zIndex: 2
+    })
+    Object.assign(this.graphCanvas.style, {
+      pointerEvents: 'none',
+      zIndex: 1
+    })
   }
 
   /**
@@ -540,8 +537,6 @@ export class Canvas {
   mount() {
     if (this.mounted) return
     this.wrapper.appendChild(this.graphCanvas)
-    // this.wrapper.appendChild(this.canvasWrapper)
-    // this.wrapper.appendChild(this.domCanvas)
     this.container.appendChild(this.wrapper)
     this.eventEmitter.emit('canvas:mounted')
     this.mounted = true
@@ -593,7 +588,7 @@ export class Canvas {
         this.graphCanvasCtx.clearRect(0, 0, this.viewWidth, this.viewHeight)
         this.graphCanvasCtx.save()
         this.graphCanvasCtx.scale(this.canvasScale, this.canvasScale)
-        this.renderNodes()
+        this.render()
         this.graphCanvasCtx.restore()
         // 交互更新
         modeManager.use(this.interactionMode).forEach(action => {
@@ -614,7 +609,7 @@ export class Canvas {
   /**
    * 渲染节点
    */
-  private renderNodes() {
+  private render() {
 
     this.virtualNode.edges.forEach(edge => {
       edge.render(this.graphCanvasCtx)
@@ -647,6 +642,7 @@ export class Canvas {
         this.graphCanvasCtx.clip('evenodd')
       }
     })
+    
   }
 }
 

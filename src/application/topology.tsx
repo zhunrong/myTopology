@@ -4,7 +4,7 @@ import { Canvas, CircleCanvasNode, Line as Edge, RectCanvasGroup, RectDomGroup, 
 // plugins
 import { MiniMap, ContextMenu, IMenu } from '../graphics'
 // layout
-import { HorizontalLayout, CircularLayout } from '../graphics'
+import { HorizontalLayout, CircularLayout, MatrixLayout } from '../graphics'
 import CustomNode from '../components/node/Node'
 // import CustomCanvasNode from '../components/node/CanvasNode'
 import NodePanel from '../components/nodePanel/nodePanel'
@@ -32,6 +32,7 @@ export default class Topology extends Component<IProps, IState> {
   miniMapRef = React.createRef<HTMLDivElement>()
   canvas!: Canvas
   circularLayout!: CircularLayout
+  matrixLayout!: MatrixLayout
   state = {
     mode: MODE_DEFAULT
   }
@@ -72,6 +73,9 @@ export default class Topology extends Component<IProps, IState> {
             menu.push({
               label: '环形布局',
               command: 'circularLayout'
+            }, {
+              label: '行列布局',
+              command: 'matrixLayout'
             })
             break
         }
@@ -166,6 +170,7 @@ export default class Topology extends Component<IProps, IState> {
 
         // const horizontalLayout = new HorizontalLayout(this.canvas)
         this.circularLayout = new CircularLayout(this.canvas)
+        this.matrixLayout = new MatrixLayout(this.canvas)
 
       })
       this.canvas.eventEmitter.on('canvas:drop', (params) => {
@@ -242,6 +247,11 @@ export default class Topology extends Component<IProps, IState> {
             // this.circularLayout.radius = 300
             this.circularLayout.endAngle = Math.PI * 6
             this.circularLayout.layout()
+            break
+          case 'matrixLayout':
+            // this.matrixLayout.rows = 7
+            // this.matrixLayout.columns = 20
+            this.matrixLayout.layout()
             break
         }
       })

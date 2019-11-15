@@ -21,13 +21,31 @@ export default class Node extends RectDomNode {
     this.deviceType = options.deviceType || '主机1'
     this.width = options.width || 80
     this.height = options.height || 80
+    this.$el.addEventListener('mouseenter', this.handleMouseEnter)
+    this.$el.addEventListener('mouseleave', this.handleMouseLeave)
   }
   render(): void {
     this.$el.innerHTML = `
       <div class="${style.node}">
         <img draggable="false" src="${deviceMap[this.deviceType]}" />
         <span>${this.text}</span>
+        <div class="tool-tip">
+          this is tool tip!!!
+        </div>
       </div>
     `
+  }
+
+  beforeDestroy() {
+    console.log('beforeDestroy')
+    this.$el.removeEventListener('mouseenter', this.handleMouseEnter)
+    this.$el.removeEventListener('mouseleave', this.handleMouseLeave)
+  }
+
+  handleMouseEnter = () => {
+    this.$el.style.zIndex = '1'
+  }
+  handleMouseLeave = () => {
+    this.$el.style.zIndex = '0'
   }
 }

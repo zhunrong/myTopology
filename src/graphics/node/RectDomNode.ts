@@ -13,7 +13,8 @@ export class RectDomNode extends RectNode {
       left: 0,
       top: 0,
       backgroundColor: 'white',
-      pointerEvents: 'auto'
+      pointerEvents: 'auto',
+      transformOrigin: 'top left'
     })
   }
 
@@ -48,14 +49,11 @@ export class RectDomNode extends RectNode {
     const { x, y } = this.getPosition()
     const width = this.getWidth()
     const height = this.getHeight()
-    const { active } = this
     Object.assign(this.$el.style, {
       transform: `scale(${this.canvas.canvasScale}) translate3d(${x}px,${y}px,0)`,
-      transformOrigin: 'top left',
       width: `${width}px`,
       height: `${height}px`,
-      boxShadow: active ? '0 0 5px 0 rgba(255,0,0,0.8)' : 'none',
-      // zIndex: this.depth
+      boxShadow: this.active ? `0 0 5px 0 ${this.style.activeColor}` : 'none'
     })
   }
 }
