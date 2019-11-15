@@ -4,11 +4,10 @@ import { Canvas, CircleCanvasNode, Line as Edge, RectCanvasGroup, RectDomGroup, 
 // plugins
 import { MiniMap, ContextMenu, IMenu } from '../graphics'
 // layout
-import { HorizontalLayout, CircularLayout, MatrixLayout } from '../graphics'
+import { CircularLayout, MatrixLayout } from '../graphics'
 import CustomNode from '../components/node/Node'
 // import CustomCanvasNode from '../components/node/CanvasNode'
 import NodePanel from '../components/nodePanel/nodePanel'
-import { nodeDatas, edgeDatas } from '../data/topoData'
 import { Menu, Dropdown } from 'antd'
 import {
   MODE_CREATE_EDGE_DOUBLE_ARROW,
@@ -24,8 +23,6 @@ interface IState {
 // type Node = CircleCanvasNode | RectCanvasNode | RectDomNode | CustomNode
 
 export default class Topology extends Component<IProps, IState> {
-  nodeDatas: any[] = nodeDatas
-  edgeDatas: any[] = edgeDatas
   nodes: Node[] = []
   edges: Edge[] = []
   containerRef: React.RefObject<HTMLDivElement> = React.createRef()
@@ -244,8 +241,10 @@ export default class Topology extends Component<IProps, IState> {
             this.circularLayout.duration = 1000
             this.circularLayout.gap = 10
             this.circularLayout.nodeRadius = 40 * Math.sqrt(2)
-            // this.circularLayout.radius = 300
-            this.circularLayout.endAngle = Math.PI * 6
+            // this.circularLayout.radius = 0
+            // this.circularLayout.endAngle = 0
+            this.circularLayout.endAngle = Math.PI * 3
+            // this.circularLayout.clockwise = false
             this.circularLayout.layout()
             break
           case 'matrixLayout':

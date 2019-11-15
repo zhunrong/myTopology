@@ -39,6 +39,5 @@ export * from './element/Polyline'
 export * from './plugin/MiniMap'
 export * from './plugin/ContextMenu'
 // layout
-export * from './layout/HorizontalLayout'
 export * from './layout/CircularLayout'
 export * from './layout/MatrixLayout'

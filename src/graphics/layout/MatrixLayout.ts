@@ -38,6 +38,7 @@ export class MatrixLayout extends Layout {
     const nodes = this.canvas.rootNode.children
     const count = nodes.length
     if (count === 0) return
+    this.transports = []
     let rows = 0
     let columns = 0
     if (this.rows > 0) {

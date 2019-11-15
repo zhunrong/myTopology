@@ -18,71 +18,63 @@ export class CircularLayout extends Layout {
 
   layout() {
     this.canvas.layout = this
-    const count = this.canvas.rootNode.children.length
+    const nodes = this.canvas.rootNode.children
+    const count = nodes.length
     if (count === 0) return
-    this.transports = []
-    const origin = new Vector2d(this.canvas.canvasWidth / 2, this.canvas.canvasHeight / 2)
-    let totalAngle = Math.abs(this.endAngle - this.startAngle)
-    // 第一圈半径
-    let radius = this.radius
-    let angleInterval = 0
 
+    this.transports = []
+    let totalAngle = Math.abs(this.endAngle - this.startAngle)
     // 圈数
-    let rounds = 1
-    // 每圈节点数
-    let num = 0
-    if /* 圈数大于1 */ (totalAngle > PI2) {
+    let rounds = 0
+    // 每圈个数
+    let nums = 0
+    // 内圈半径
+    let innerRadius = this.radius
+
+    if (totalAngle > 0) {
       rounds = Math.ceil(totalAngle / PI2)
-      num = Math.floor(count / (totalAngle / PI2))
-      angleInterval = PI2 / num
-      radius = (this.nodeRadius + this.gap / 2) / Math.sin(angleInterval / 2)
-    } /* 圈数等于1 */ else if (totalAngle > 0) {
-      angleInterval = totalAngle / count
-      radius = (this.nodeRadius + this.gap / 2) / Math.sin(angleInterval / 2)
-      num = Math.floor(PI2 / angleInterval)
-      rounds = 1
-    } /* 给定布局半径 */ else if (radius) {
-      angleInterval = Math.asin((this.nodeRadius + this.gap / 2) / radius) * 2
-      totalAngle = angleInterval * count
-      num = Math.floor(PI2 / angleInterval)
-      rounds = Math.ceil(totalAngle / PI2)
+      nums = Math.ceil(count / (totalAngle / PI2))
+      innerRadius = (this.nodeRadius + this.gap / 2) / Math.sin(rounds === 1 ? totalAngle / count / 2 : PI2 / nums / 2)
+    } else if (innerRadius > 0) {
+      const avgAngle = Math.asin((this.nodeRadius + this.gap / 2) / innerRadius) * 2
+      nums = Math.floor(PI2 / avgAngle)
+      rounds = Math.ceil(count / nums)
+      totalAngle = PI2 / nums * count
     } else {
       totalAngle = PI2
-      angleInterval = totalAngle / count
-      radius = (this.nodeRadius + this.gap / 2) / Math.sin(angleInterval / 2)
       rounds = 1
-      num = Math.floor(PI2 / angleInterval)
+      nums = count
+      innerRadius = (this.nodeRadius + this.gap / 2) / Math.sin(totalAngle / count / 2)
     }
+    const origin = new Vector2d(this.canvas.canvasWidth / 2, this.canvas.canvasHeight / 2)
 
-    if /* 自动计算半径 */ (radius <= 0) {
-      radius = (this.nodeRadius + this.gap / 2) / Math.sin(angleInterval / 2)
-    }
-    let rotateRadian = this.startAngle
-    this.canvas.rootNode.children.forEach((node, index) => {
-      let halfRadian = 0
-      let curRound = 0
-      // 判断是否最后一圈
-      if ((index + 1) > (rounds - 1) * num) {
-        const lastNum = count - num * (rounds - 1)
-        halfRadian = (totalAngle % PI2 || PI2) / lastNum / 2
-        rotateRadian = this.startAngle + ((index + 1 - num * (rounds - 1)) % lastNum * 2 + 1) * halfRadian
-        curRound = rounds
-      } else {
-        halfRadian = angleInterval / 2
-        rotateRadian = (index % num) * angleInterval + halfRadian + this.startAngle
-        curRound = Math.floor((index + 1) / num)
+    for /* 圈数 */ (let r = 1; r <= rounds; r++) {
+      for /* 节点次序 */ (let n = 1; n <= nums; n++) {
+        const node = nodes[(r - 1) * nums + n - 1]
+        if (!node) break
+        const transport = new Transport()
+        this.transports.push(transport)
+        transport.node = node
+        transport.duration = this.duration
+        transport.destination.copy(Vector2d.xAxis)
+        const radius = innerRadius + (r - 1) * (this.nodeRadius * 2 + this.gap)
+        if /* 最后一圈 */ (r === rounds) {
+          const lastAngle = totalAngle % PI2 || PI2
+          const lastNum = count % nums || nums
+          const angleInterval = lastAngle === PI2 ? lastAngle / lastNum : lastAngle / ((lastNum - 1) || 2)
+          const angle = angleInterval * (n % lastNum)
+          const rotate = this.startAngle + (this.clockwise ? angle : -angle)
+          transport.destination.scale(radius).rotate(rotate).add(origin)
+        } else {
+          const angleInterval = PI2 / nums
+          const angle = angleInterval * (n - 1)
+          const rotate = this.startAngle + (this.clockwise ? angle : -angle)
+          transport.destination.scale(radius).rotate(rotate).add(origin)
+        }
       }
-      // 先加上半个弧度，表示节点中心对应得旋转弧度
-      // rotateRadian += this.clockwise ? halfRadian : -halfRadian
-      const r = radius + (curRound - 1) * (this.nodeRadius * 2 + this.gap)
-      const v = Vector2d.xAxis.clone().scale(r).rotate(rotateRadian).add(origin)
-      // rotateRadian += this.clockwise ? halfRadian : -halfRadian
-      const transport = new Transport()
-      transport.duration = this.duration
-      transport.node = node
-      transport.destination = v
-      this.transports.push(transport)
-    })
+    }
+    // debugger
+
   }
 
 }
