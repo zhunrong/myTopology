@@ -243,13 +243,13 @@ export default class Topology extends Component<IProps, IState> {
             this.circularLayout.nodeRadius = 40 * Math.sqrt(2)
             // this.circularLayout.radius = 0
             // this.circularLayout.endAngle = 0
-            this.circularLayout.endAngle = Math.PI * 3
+            this.circularLayout.endAngle = Math.PI * 6
             // this.circularLayout.clockwise = false
             this.circularLayout.layout()
             break
           case 'matrixLayout':
-            // this.matrixLayout.rows = 7
-            // this.matrixLayout.columns = 20
+            this.matrixLayout.rows = 5
+            // this.matrixLayout.columns = 2
             this.matrixLayout.layout()
             break
         }

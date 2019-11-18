@@ -51,8 +51,14 @@ export class MatrixLayout extends Layout {
       rows = Math.ceil(Math.sqrt(count))
       columns = Math.ceil(count / rows)
     }
+    const totalWidth = columns * this.nodeRadius * 2 + (columns - 1) * this.columnGap
+    const totalHeight = rows * this.nodeRadius * 2 + (rows - 1) * this.rowGap
+    const origin = new Vector2d(
+      (this.canvas.canvasWidth - totalWidth) / 2 + this.nodeRadius,
+      (this.canvas.canvasHeight - totalHeight) / 2 + this.nodeRadius
+    )
+    console.log(totalWidth, totalHeight, origin)
 
-    const origin = new Vector2d()
     for /* 行 */ (let r = 1; r <= rows; r++) {
       for /* 列 */ (let c = 1; c <= columns; c++) {
         const node = nodes[(r - 1) * columns + c - 1]

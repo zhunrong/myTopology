@@ -7,7 +7,6 @@ const PI2 = Math.PI * 2
  * 环形布局
  */
 export class CircularLayout extends Layout {
-  center = new Vector2d()
   clockwise = true
   radius = 0
   startAngle = 0
