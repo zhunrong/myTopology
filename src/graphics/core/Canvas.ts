@@ -588,6 +588,8 @@ export class Canvas {
         this.graphCanvasCtx.clearRect(0, 0, this.viewWidth, this.viewHeight)
         this.graphCanvasCtx.save()
         this.graphCanvasCtx.scale(this.canvasScale, this.canvasScale)
+        // 布局更新
+        this.layout && this.layout.update()
         this.render()
         this.graphCanvasCtx.restore()
         // 交互更新
@@ -598,8 +600,7 @@ export class Canvas {
         this.plugins.forEach(plugin => {
           plugin.enable && plugin.update()
         })
-        // 布局更新
-        this.layout && this.layout.update()
+        
         this.repaint = false
       }
       this.loop()

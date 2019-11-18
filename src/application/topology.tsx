@@ -4,7 +4,7 @@ import { Canvas, CircleCanvasNode, Line as Edge, RectCanvasGroup, RectDomGroup, 
 // plugins
 import { MiniMap, ContextMenu, IMenu } from '../graphics'
 // layout
-import { CircularLayout, MatrixLayout } from '../graphics'
+import { CircularLayout, MatrixLayout, ForceLayout } from '../graphics'
 import CustomNode from '../components/node/Node'
 // import CustomCanvasNode from '../components/node/CanvasNode'
 import NodePanel from '../components/nodePanel/nodePanel'
@@ -30,6 +30,7 @@ export default class Topology extends Component<IProps, IState> {
   canvas!: Canvas
   circularLayout!: CircularLayout
   matrixLayout!: MatrixLayout
+  forceLayout!: ForceLayout
   state = {
     mode: MODE_DEFAULT
   }
@@ -73,6 +74,9 @@ export default class Topology extends Component<IProps, IState> {
             }, {
               label: '行列布局',
               command: 'matrixLayout'
+            }, {
+              label: '力导布局',
+              command: 'forceLayout'
             })
             break
         }
@@ -168,6 +172,7 @@ export default class Topology extends Component<IProps, IState> {
         // const horizontalLayout = new HorizontalLayout(this.canvas)
         this.circularLayout = new CircularLayout(this.canvas)
         this.matrixLayout = new MatrixLayout(this.canvas)
+        this.forceLayout = new ForceLayout(this.canvas)
 
       })
       this.canvas.eventEmitter.on('canvas:drop', (params) => {
@@ -243,14 +248,17 @@ export default class Topology extends Component<IProps, IState> {
             this.circularLayout.nodeRadius = 40 * Math.sqrt(2)
             // this.circularLayout.radius = 0
             // this.circularLayout.endAngle = 0
-            this.circularLayout.endAngle = Math.PI * 6
+            // this.circularLayout.endAngle = Math.PI * 6
             // this.circularLayout.clockwise = false
             this.circularLayout.layout()
             break
           case 'matrixLayout':
-            this.matrixLayout.rows = 5
+            // this.matrixLayout.rows = 5
             // this.matrixLayout.columns = 2
             this.matrixLayout.layout()
+            break
+          case 'forceLayout':
+            this.forceLayout.layout()
             break
         }
       })

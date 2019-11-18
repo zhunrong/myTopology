@@ -41,3 +41,4 @@ export * from './plugin/ContextMenu'
 // layout
 export * from './layout/CircularLayout'
 export * from './layout/MatrixLayout'
+export * from './layout/ForceLayout'

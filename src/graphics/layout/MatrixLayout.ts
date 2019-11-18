@@ -57,7 +57,6 @@ export class MatrixLayout extends Layout {
       (this.canvas.canvasWidth - totalWidth) / 2 + this.nodeRadius,
       (this.canvas.canvasHeight - totalHeight) / 2 + this.nodeRadius
     )
-    console.log(totalWidth, totalHeight, origin)
 
     for /* 行 */ (let r = 1; r <= rows; r++) {
       for /* 列 */ (let c = 1; c <= columns; c++) {
