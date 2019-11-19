@@ -27,6 +27,8 @@ const nativeEvents = [
   'mouseenter'
 ]
 
+type RenderType = 'CANVAS' | 'DOM'
+
 export interface ICanvasOptions {
   container: HTMLElement
   scale?: number
@@ -34,6 +36,7 @@ export interface ICanvasOptions {
   minScale?: number
   mode?: string
   animate?: boolean
+  renderType?: RenderType
 }
 export class Canvas {
   /**
@@ -52,6 +55,12 @@ export class Canvas {
   eventEmitter: EventEmitter = new EventEmitter()
   nativeEvent: Event | null = null
   optimize: boolean = true
+
+  /**
+   * 节点渲染类型
+   */
+  renderType: RenderType
+
   // 交互模式
   interactionMode: string = MODE_DEFAULT
   // 最外层div
@@ -114,6 +123,7 @@ export class Canvas {
     this.maxScale = options.maxScale || 5
     this.minScale = options.minScale || 0.1
     this.animate = options.animate || false
+    this.renderType = options.renderType || 'DOM'
     this.rootNode.canvas = this
     this.virtualNode.maxDepth = true
     this.ro = new ResizeObserver((entries, observer) => {
@@ -483,13 +493,11 @@ export class Canvas {
       console.warn(`该模式不存在:${mode}`)
       return
     }
-    let interactions = modeManager.use(this.interactionMode)
-    interactions.forEach(action => {
+    modeManager.use(this.interactionMode).forEach(action => {
       action.onUninstall(this)
     })
     this.interactionMode = mode
-    interactions = modeManager.use(this.interactionMode)
-    interactions.forEach(action => {
+    modeManager.use(this.interactionMode).forEach(action => {
       action.onInstall(this)
     })
   }
@@ -600,7 +608,7 @@ export class Canvas {
         this.plugins.forEach(plugin => {
           plugin.enable && plugin.update()
         })
-        
+
         this.repaint = false
       }
       this.loop()
@@ -612,38 +620,70 @@ export class Canvas {
    */
   private render() {
 
-    this.virtualNode.edges.forEach(edge => {
-      edge.render(this.graphCanvasCtx)
-    })
-    this.rootNode.getDescendantBF(node => {
-      if (node.visible) {
-        node.mount()
-        if (node.isUpdate) {
+    if (this.renderType === 'CANVAS') {
+      this.rootNode.getDescendantBF(node => {
+        const nodeVisible = node.visible
+        // 节点连线渲染
+        node.edges.forEach(edge => {
+          if (edge.renderSign === this._animationFrameId) return
+          const targetNode = edge.targetNode
+          const sourceNode = edge.sourceNode
+          if (sourceNode === node) {
+            if (node.depth > targetNode.depth || targetNode.renderSign === this._animationFrameId) {
+              edge.render()
+              edge.renderSign = this._animationFrameId
+            }
+          } else {
+            if (node.depth > sourceNode.depth || sourceNode.renderSign === this._animationFrameId) {
+              edge.render()
+              edge.renderSign = this._animationFrameId
+            }
+          }
+        })
+
+        if (nodeVisible) {
           node.update()
-          node.isUpdate = false
         }
-      } else {
-        node.unmount()
-      }
-    })
-    this.rootNode.getDescendantDF(node => {
-      node.edges.forEach(edge => {
-        if (edge.renderSign === this._animationFrameId) return
-        edge.render(this.graphCanvasCtx)
-        edge.renderSign = this._animationFrameId
+        node.renderSign = this._animationFrameId
       })
-      // 裁剪层级高的节点区域
-      if (isRectNode(node) && node.visible) {
-        const { x, y } = node.getPosition()
-        const width = node.getWidth()
-        const height = node.getHeight()
-        this.graphCanvasCtx.beginPath()
-        this.graphCanvasCtx.rect(0, 0, this.canvasWidth, this.canvasHeight)
-        this.graphCanvasCtx.rect(x, y, width, height)
-        this.graphCanvasCtx.clip('evenodd')
-      }
-    })
-    
+      this.virtualNode.edges.forEach(edge => {
+        edge.render()
+      })
+    } else {
+      this.virtualNode.edges.forEach(edge => {
+        edge.render(this.graphCanvasCtx)
+      })
+      this.rootNode.getDescendantBF(node => {
+        if (node.visible) {
+          node.mount()
+          if (node.isUpdate) {
+            node.update()
+            node.isUpdate = false
+          }
+        } else {
+          node.unmount()
+        }
+        node.renderSign = this._animationFrameId
+      })
+      this.rootNode.getDescendantDF(node => {
+        node.edges.forEach(edge => {
+          if (edge.renderSign === this._animationFrameId) return
+          edge.render(this.graphCanvasCtx)
+          edge.renderSign = this._animationFrameId
+        })
+
+        // 裁剪层级高的节点区域
+        if (isRectNode(node) && node.visible) {
+          const { x, y } = node.getPosition()
+          const width = node.getWidth()
+          const height = node.getHeight()
+          this.graphCanvasCtx.beginPath()
+          this.graphCanvasCtx.rect(0, 0, this.canvasWidth, this.canvasHeight)
+          this.graphCanvasCtx.rect(x, y, width, height)
+          this.graphCanvasCtx.clip('evenodd')
+        }
+      })
+    }
   }
 }
 

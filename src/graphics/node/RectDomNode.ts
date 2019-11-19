@@ -1,4 +1,5 @@
 import RectNode, { IRectNodeOptions } from '../graph/RectNode'
+import style from './rectDomNode.less'
 
 export interface IRectDomNodeOptions extends IRectNodeOptions { }
 
@@ -8,14 +9,9 @@ export class RectDomNode extends RectNode {
 
   constructor(options: IRectDomNodeOptions) {
     super(options)
-    Object.assign(this.$el.style, {
-      position: 'absolute',
-      left: 0,
-      top: 0,
-      backgroundColor: 'white',
-      pointerEvents: 'auto',
-      transformOrigin: 'top left'
-    })
+    this.$el.className = style.node
+    // this.$el.style.width = '80px'
+    // this.$el.style.height = '80px'
   }
 
   mount(): void {
@@ -55,6 +51,7 @@ export class RectDomNode extends RectNode {
       height: `${height}px`,
       boxShadow: this.active ? `0 0 5px 0 ${this.style.activeColor}` : 'none'
     })
+    // this.$el.style.transform = `scale(${this.canvas.canvasScale}) translate3d(${x}px,${y}px,0)`
   }
 }
 

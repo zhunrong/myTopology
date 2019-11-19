@@ -18,7 +18,19 @@ class ForceTransport extends Transport {
    * 加速度
    */
   accelerate = new Vector2d()
+
+  update() {
+    if (!this.node) return
+    this.accelerate.copy(this.force).scale(1 / this.M)
+    this.speed.add(this.accelerate)
+    this.node.translate(this.speed)
+  }
 }
+
+/**
+ * 节点中心最小距离
+ */
+const MIN_DISTANCE_BETWEEN_NODE = 30
 
 /**
  * 力导布局
@@ -28,7 +40,7 @@ export class ForceLayout extends Layout {
   /**
    * 弹性系数
    */
-  elasticity = 0.1
+  elasticity = 0.01
   /**
    * 中心吸引系数
    */
@@ -36,16 +48,22 @@ export class ForceLayout extends Layout {
   /**
    * 斥力系数
    */
-  repulsion = 10
+  repulsion = 20
   /**
    * 阻尼系数
    */
   damping = 0.1
+  /**
+   * 连线自然长度
+   */
+  edgeLength = 100
+  complete = false
   layout() {
     this.canvas.layout = this
     const nodes = this.canvas.rootNode.children
     const count = nodes.length
     if (count === 0) return
+    this.complete = false
     this.transports = nodes.map(node => {
       const transport = new ForceTransport()
       transport.node = node
@@ -54,15 +72,16 @@ export class ForceLayout extends Layout {
   }
 
   update() {
+    if (this.complete) return
     this.calculateForce()
-
+    let complete = true
     this.transports.forEach(transport => {
-      const node = transport.node!
-      transport.accelerate.copy(transport.force).scale(1 / transport.M)
-      transport.speed.add(transport.accelerate)
-      node.translate(transport.speed)
+      transport.update()
+      if (complete) {
+        complete = complete && transport.speed.magnitude < 0.1
+      }
     })
-
+    this.complete = complete
     this.canvas.optimizeNode()
   }
 
@@ -86,7 +105,7 @@ export class ForceLayout extends Layout {
         const targetNode = target.node!
         const targetToSource = sourceNode.centerPoint.substract(targetNode.centerPoint)
         let distance = targetToSource.magnitude
-        distance = distance < 1 ? 1 : distance
+        distance = distance < MIN_DISTANCE_BETWEEN_NODE ? MIN_DISTANCE_BETWEEN_NODE : distance
         const forceSize = (source.Q * target.Q) / distance ** 2 * this.repulsion
         const coulombForce = targetToSource.normalize().scale(forceSize)
         source.force.add(coulombForce)
@@ -101,8 +120,9 @@ export class ForceLayout extends Layout {
         // 鼠标虚拟节点
         if (targetNode.renderType === 'NONE') return
         const sourceToTarget = targetNode.centerPoint.substract(sourceNode.centerPoint)
-        const distance = sourceToTarget.magnitude
-        const forceSize = distance > 200 ? (distance - 200) * this.elasticity : 0
+        let L = sourceToTarget.magnitude
+        L = L > this.edgeLength ? L - this.edgeLength : this.edgeLength
+        const forceSize = L * this.elasticity
         const pullForce = sourceToTarget.normalize().scale(forceSize)
         source.force.add(pullForce)
       })

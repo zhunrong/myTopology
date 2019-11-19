@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { MODE_DEFAULT, MODE_VIEW, MODE_CREATE_EDGE, MODE_AREA_PICK, MODE_CREATE_L, MODE_BORDER } from '../graphics'
+import { MODE_DEFAULT, MODE_VIEW, MODE_CREATE_EDGE, MODE_AREA_PICK, MODE_CREATE_L, MODE_BORDER, RectCanvasNode } from '../graphics'
 import { Canvas, CircleCanvasNode, Line as Edge, RectCanvasGroup, RectDomGroup, CircleCanvasGroup, L, Img, Node } from '../graphics'
 // plugins
 import { MiniMap, ContextMenu, IMenu } from '../graphics'
@@ -41,7 +41,8 @@ export default class Topology extends Component<IProps, IState> {
     if (this.containerRef.current) {
       this.canvas = new Canvas({
         container: this.containerRef.current,
-        scale: 1
+        scale: 1,
+        renderType: 'CANVAS'
       })
       this.canvas.animate = true
 
@@ -86,6 +87,19 @@ export default class Topology extends Component<IProps, IState> {
       this.canvas.eventEmitter.on('canvas:mounted', () => {
         this.canvas.removeAllNode()
         const topoData = JSON.parse(localStorage.getItem('topoData') || JSON.stringify({ nodes: [], edges: [], zoom: 1 }))
+
+        // performance test
+        // topoData.nodes = new Array(100).fill({
+        //   width: 80,
+        //   height: 80,
+        //   x: 0,
+        //   y: 0,
+        //   id: Math.random(),
+        //   nodeType: 'customNode',
+        //   text: '???',
+        //   parentId: 'rootNode'
+        // })
+
         this.canvas.setZoom(topoData.zoom || 1)
         this.nodes = topoData.nodes.map((item: any) => {
           switch (item.nodeType) {
@@ -109,14 +123,15 @@ export default class Topology extends Component<IProps, IState> {
                 isExpanded: item.isExpanded
               })
             case 'customNode':
-              return new CustomNode({
-                width: item.width,
-                height: item.height,
+              return new CircleCanvasNode({
+                // width: item.width,
+                // height: item.height,
+                radius: 30,
                 id: item.id,
                 x: item.x,
                 y: item.y,
                 text: item.text,
-                deviceType: item.deviceType,
+                // deviceType: item.deviceType,
                 data: item
               })
             default:
@@ -151,8 +166,8 @@ export default class Topology extends Component<IProps, IState> {
                 arrow: item.arrow,
                 text: item.text
               })
-              edge.animate.element = new Img(require('../assets/双箭头.png'))
-              edge.animate.duration = 5000
+              // edge.animate.element = new Img(require('../assets/双箭头.png'))
+              // edge.animate.duration = 5000
               this.canvas.addEdge(edge)
             } else {
               const edge = new L({
@@ -162,8 +177,8 @@ export default class Topology extends Component<IProps, IState> {
                 arrow: item.arrow,
                 text: item.text
               })
-              edge.animate.element = new Img(require('../assets/绿箭头.png'))
-              edge.animate.duration = 4000
+              // edge.animate.element = new Img(require('../assets/绿箭头.png'))
+              // edge.animate.duration = 4000
               this.canvas.addEdge(edge)
             }
           }
@@ -188,11 +203,12 @@ export default class Topology extends Component<IProps, IState> {
           case '服务器':
           case '交换机1':
           case '交换机2':
-            node = new CustomNode({
+            node = new CircleCanvasNode({
               x: coordinate.x - 40,
               y: coordinate.y - 40,
               text: type,
-              deviceType: type,
+              radius: 30,
+              // deviceType: type,
               id
             })
             break
@@ -258,6 +274,8 @@ export default class Topology extends Component<IProps, IState> {
             this.matrixLayout.layout()
             break
           case 'forceLayout':
+            // this.forceLayout.attractive = 0.002
+            // this.forceLayout.elasticity = 0.1
             this.forceLayout.layout()
             break
         }
