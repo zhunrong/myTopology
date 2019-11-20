@@ -5,7 +5,7 @@ import { Canvas, CircleCanvasNode, Line as Edge, RectCanvasGroup, RectDomGroup, 
 import { MiniMap, ContextMenu, IMenu } from '../graphics'
 // layout
 import { CircularLayout, MatrixLayout, ForceLayout } from '../graphics'
-import CustomNode from '../components/node/Node'
+import Device from '../components/node/Node'
 // import CustomCanvasNode from '../components/node/CanvasNode'
 import NodePanel from '../components/nodePanel/nodePanel'
 import { Menu, Dropdown } from 'antd'
@@ -19,8 +19,6 @@ interface IProps { }
 interface IState {
   mode: string
 }
-
-// type Node = CircleCanvasNode | RectCanvasNode | RectDomNode | CustomNode
 
 export default class Topology extends Component<IProps, IState> {
   nodes: Node[] = []
@@ -42,7 +40,7 @@ export default class Topology extends Component<IProps, IState> {
       this.canvas = new Canvas({
         container: this.containerRef.current,
         scale: 1,
-        renderType: 'CANVAS'
+        // renderType: 'CANVAS'
       })
       this.canvas.animate = true
 
@@ -123,10 +121,10 @@ export default class Topology extends Component<IProps, IState> {
                 isExpanded: item.isExpanded
               })
             case 'customNode':
-              return new CircleCanvasNode({
-                // width: item.width,
-                // height: item.height,
-                radius: 30,
+              return new Device({
+                width: item.width,
+                height: item.height,
+                // radius: 30,
                 id: item.id,
                 x: item.x,
                 y: item.y,
@@ -203,11 +201,13 @@ export default class Topology extends Component<IProps, IState> {
           case '服务器':
           case '交换机1':
           case '交换机2':
-            node = new CircleCanvasNode({
+            node = new Device({
               x: coordinate.x - 40,
               y: coordinate.y - 40,
               text: type,
-              radius: 30,
+              // radius: 30,
+              width: 80,
+              height: 80,
               // deviceType: type,
               id
             })
@@ -334,7 +334,7 @@ export default class Topology extends Component<IProps, IState> {
           isExpanded: node.isExpanded,
           nodeType: 'circleGroup'
         })
-      } else if (node instanceof CustomNode) {
+      } else if (node instanceof Device) {
         nodes.push({
           x,
           y,

@@ -33,10 +33,23 @@
     left: 50%;
     margin-left: -50px;
     border-radius: 5px;
-    background: #f8f8f8;
+    background: #fff;
     top: 90px;
     color: #666;
     line-height: 30px;
     display: none;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+
+    &::before {
+      content: '';
+      display: block;
+      position: absolute;
+      border-bottom: 8px solid #fff;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      top: 0;
+      left: 50%;
+      transform: translate(-50%, -100%);
+    }
   }
 }

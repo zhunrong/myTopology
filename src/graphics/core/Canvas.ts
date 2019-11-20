@@ -261,11 +261,9 @@ export class Canvas {
     node.zIndex = Math.max(zIndex, node.zIndex)
     parent.removeChild(node, false)
     parent.addChild(node)
-    node.unmount()
-    node.mount()
+    node.mount(true)
     node.getDescendantBF(child => {
-      child.unmount()
-      child.mount()
+      child.mount(true)
     })
     this.repaint = true
   }

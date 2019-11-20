@@ -85,7 +85,7 @@ export abstract class Node extends Graph {
   /**
    * 渲染类型
    */
-  abstract readonly renderType: string
+  abstract readonly renderType: 'CANVAS' | 'DOM' | 'NONE'
 
   /**
    * 形状
@@ -363,7 +363,7 @@ export abstract class Node extends Graph {
   /**
    * 挂载（只对DOM节点有效）
    */
-  mount(): void { }
+  mount(force = false): void { }
 
   /**
    * 卸载（只对DOM节点有效）

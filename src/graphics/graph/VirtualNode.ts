@@ -3,7 +3,7 @@ import Vector2d from '../utils/Vector2d'
 
 export class VirtualNode extends Node {
   maxDepth = false
-  renderType: string = 'NONE'
+  renderType: 'NONE' = 'NONE'
   shapeType = 'circle'
   radius = 1
   constructor(options: INodeOptions) {
@@ -39,6 +39,10 @@ export class VirtualNode extends Node {
 
   get depth(): number {
     return this.maxDepth ? Number.MAX_SAFE_INTEGER : (this.parent ? this.parent.depth + 1 : 0)
+  }
+
+  get circumradius() {
+    return this.radius
   }
 
   isInRect() { return false }
