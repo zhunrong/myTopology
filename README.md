@@ -9,7 +9,6 @@
 1. 画布
 
    + 类名：`Canvas`
-
    + 参数：options: Object
       - `container`: ***HTMLElement*** 放置画布的容器元素
       - `scale`?: ***number*** 画布缩放值
@@ -45,18 +44,47 @@
 
 2. 节点
 
-   1. 矩形-DOM节点
-      + 类名：`RectDomNode`
+   1. 节点（抽象类）
+
+      + 类名：`Node`
       + 参数：options: Object
+
          - `x`?: ***number*** 横坐标
          - `y`?: ***number*** 纵坐标
          - `id`?: ***any*** id
          - `text`?: ***string*** 显示文本
+         - `data?`: ***any*** 用户数据
+
+   2. 矩形节点（抽象类）
+
+      + 类名：`RectNode`
+      + 继承：`Node`
+      + 参数：options: Object
+
          - `width`?: ***number*** 宽度
          - `height`?: ***number*** 高度
          - `minWidth`?: ***number*** 最小宽度
          - `minHeight`?:  ***number*** 最小高度
-         - `data?`: ***any*** 用户数据
+         - 其他参数参考`Node`
+
+   3. 圆形节点（抽象类）
+
+      + 类名：`CircleNode`
+      + 继承：`Node`
+      + 参数：options: Object
+
+         - `radius`?: ***number*** 半径
+         - `minRadius`?: ***number*** 最小半径
+         - 其他参数参考`Node`
+
+   2. 矩形-DOM节点
+
+      + 类名：`RectDomNode`
+      + 继承：`RectNode`
+      + 参数：options: Object
+
+         - 参考`RectNode`参数
+
    2. 矩形-DOM节点组
    3. 矩形-CANVAS节点
    4. ...
