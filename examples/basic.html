@@ -174,33 +174,16 @@
       // coordinate 是鼠标释放坐标位置
       // dataTransfer
       const { coordinate, dataTransfer } = e
-      let node
-      switch (dataTransfer.getData('deviceType')) {
-        case 'host':
-          node = new MyNode({
-            id: Math.random(),
-            width: 70,
-            height: 70,
-            x: coordinate.x - 35,
-            y: coordinate.y - 35,
-            text: 'host',
-            deviceType: 'host'
-          })
-          canvas.addNode(node)
-          break
-        case 'server':
-          node = new MyNode({
-            id: Math.random(),
-            width: 70,
-            height: 70,
-            x: coordinate.x - 35,
-            y: coordinate.y - 35,
-            text: 'server',
-            deviceType: 'server'
-          })
-          canvas.addNode(node)
-          break
-      }
+      let node = new MyNode({
+        id: Math.random(),
+        width: 70,
+        height: 70,
+        x: coordinate.x - 35,
+        y: coordinate.y - 35,
+        text: dataTransfer.getData('deviceType'),
+        deviceType: dataTransfer.getData('deviceType')
+      })
+      canvas.addNode(node)
     })
 
     canvas.eventEmitter.on('canvas:menu', function (e) {

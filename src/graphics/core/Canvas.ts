@@ -108,6 +108,13 @@ export class Canvas {
   })
 
   /**
+   * 舞台
+   */
+  get stage() {
+    return this.rootNode
+  }
+
+  /**
    * 插件列表
    */
   plugins: Plugin[] = []
@@ -595,7 +602,7 @@ export class Canvas {
         this.graphCanvasCtx.save()
         this.graphCanvasCtx.scale(this.canvasScale, this.canvasScale)
         // 布局更新
-        this.layout && this.layout.update()
+        const repaint = this.layout && this.layout.update() || false
         this.render()
         this.graphCanvasCtx.restore()
         // 交互更新
@@ -606,8 +613,7 @@ export class Canvas {
         this.plugins.forEach(plugin => {
           plugin.enable && plugin.update()
         })
-
-        this.repaint = false
+        this.repaint = repaint
       }
       this.loop()
     })

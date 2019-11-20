@@ -57,7 +57,14 @@ export class ForceLayout extends Layout {
    * 连线自然长度
    */
   edgeLength = 100
+  /**
+   * 布局完成?
+   */
   complete = false
+  /**
+   * 布局动画?
+   */
+  animate = true
   layout() {
     this.canvas.layout = this
     const nodes = this.canvas.rootNode.children
@@ -69,10 +76,11 @@ export class ForceLayout extends Layout {
       transport.node = node
       return transport
     })
+    this.canvas.repaint = true
   }
 
-  update() {
-    if (this.complete) return
+  update(): boolean {
+    if (this.complete) return false
     this.calculateForce()
     let complete = true
     this.transports.forEach(transport => {
@@ -83,6 +91,7 @@ export class ForceLayout extends Layout {
     })
     this.complete = complete
     this.canvas.optimizeNode()
+    return this.animate ? true : this.update()
   }
 
   /**

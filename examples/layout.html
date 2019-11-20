@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>鹰眼地图示例</title>
+  <title>布局示例</title>
   <style>
     #topology {
       width: 800px;
@@ -58,7 +58,9 @@
 <body>
   <button onclick="changeMode(MODE_DEFAULT)">默认模式</button>
   <button onclick="changeMode(MODE_CREATE_EDGE)">连线模式</button>
-  <button onclick="changeMode(MODE_BORDER)">边框模式</button>
+  <button onclick="layout('matrixLayout')">行列布局</button>
+  <button onclick="layout('circularLayout')">环形布局</button>
+  <button onclick="layout('forceLayout')">力导布局</button>
   <div class="node-list">
     <img ondragstart="dragStart(event)" data-type="host" draggable="true" src="./images/windows主机.png">
     <img ondragstart="dragStart(event)" data-type="server" draggable="true" src="./images/服务器.png">
@@ -107,6 +109,26 @@
       canvas.setMode(mode)
     }
 
+    // 布局
+    const matrixLayout = new MatrixLayout(canvas)
+    const circularLayout = new CircularLayout(canvas)
+    const forceLayout = new ForceLayout(canvas)
+    const layout = function (type) {
+      switch (type) {
+        case 'matrixLayout':
+          matrixLayout.duration = 1000
+          matrixLayout.layout()
+          break
+        case 'circularLayout':
+          circularLayout.duration = 1000
+          circularLayout.layout()
+          break
+        case 'forceLayout':
+          forceLayout.layout()
+          break
+      }
+    }
+
     const dragStart = function (e) {
       // 设置类型
       e.dataTransfer.setData('deviceType', e.target.dataset.type)
@@ -145,42 +167,37 @@
       }
     }
 
+    const randomInt = (min, max) => Math.floor(Math.random() * (max - min)) + min
+
     // 监听画布 “挂载”事件, 确保挂载后才能 添加节点或连线
     canvas.eventEmitter.on('canvas:mounted', function () {
 
-      // 实例化节点
-      const node1 = new MyNode({
-        id: 1,
-        width: 70,
-        height: 70,
-        x: 10,
-        y: 10,
-        text: '主机',
-        deviceType: 'host'
-      })
+      let nodeCount = 0
+      while (nodeCount < 20) {
+        const node = new MyNode({
+          id: nodeCount,
+          width: 70,
+          height: 70,
+          x: randomInt(0, 700),
+          y: randomInt(0, 400),
+          text: '主机' + nodeCount,
+          deviceType: 'host'
+        })
+        canvas.addNode(node)
+        nodeCount++
+      }
 
-      const node2 = new MyNode({
-        id: 2,
-        width: 70,
-        height: 70,
-        x: 200,
-        y: 200,
-        text: '服务器',
-        deviceType: 'server'
-      })
-
-      // 实例化连线
-      const line = new Line({
-        sourceNode: node1,
-        targetNode: node2,
-        arrow: true
-      })
-
-      // 添加节点
-      canvas.addNode(node1)
-      canvas.addNode(node2)
-      // 添加连线
-      canvas.addEdge(line)
+      let lineCount = 0
+      while (lineCount < 10) {
+        const sourceIndex = randomInt(0, 10)
+        const targetIndex = randomInt(10, 20)
+        const line = new Line({
+          sourceNode: canvas.rootNode.children[sourceIndex],
+          targetNode: canvas.rootNode.children[targetIndex]
+        })
+        canvas.addEdge(line)
+        lineCount++
+      }
     })
 
     // 监听“拖拽释放”事件，添加节点
@@ -188,16 +205,33 @@
       // coordinate 是鼠标释放坐标位置
       // dataTransfer
       const { coordinate, dataTransfer } = e
-      let node = new MyNode({
-        id: Math.random(),
-        width: 70,
-        height: 70,
-        x: coordinate.x - 35,
-        y: coordinate.y - 35,
-        text: dataTransfer.getData('deviceType'),
-        deviceType: dataTransfer.getData('deviceType')
-      })
-      canvas.addNode(node)
+      let node
+      switch (dataTransfer.getData('deviceType')) {
+        case 'host':
+          node = new MyNode({
+            id: Math.random(),
+            width: 70,
+            height: 70,
+            x: coordinate.x - 35,
+            y: coordinate.y - 35,
+            text: 'host',
+            deviceType: 'host'
+          })
+          canvas.addNode(node)
+          break
+        case 'server':
+          node = new MyNode({
+            id: Math.random(),
+            width: 70,
+            height: 70,
+            x: coordinate.x - 35,
+            y: coordinate.y - 35,
+            text: 'server',
+            deviceType: 'server'
+          })
+          canvas.addNode(node)
+          break
+      }
     })
 
     canvas.eventEmitter.on('canvas:menu', function (e) {

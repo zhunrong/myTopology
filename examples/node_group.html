@@ -9,7 +9,7 @@
   <style>
     #topology {
       width: 800px;
-      height: 800px;
+      height: 500px;
       border: 1px solid #ccc;
     }
 
@@ -46,13 +46,24 @@
       color: #999;
       line-height: 20px;
     }
+
+    .my-group {
+      height: 100%;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      background: rgba(255, 255, 255, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      user-select: none;
+    }
   </style>
 </head>
 
 <body>
   <button onclick="changeMode(MODE_DEFAULT)">默认模式</button>
   <button onclick="changeMode(MODE_CREATE_EDGE)">连线模式</button>
-  <button onclick="changeMode(MODE_AREA_PICK)">框选模式</button>
+  <button onclick="changeMode(MODE_AREA_PICK_2)">框选模式</button>
   <button onclick="changeMode(MODE_BORDER)">边框模式</button>
   <div class="node-list">
     <img ondragstart="dragStart(event)" data-type="host" draggable="true" src="./images/windows主机.png">
@@ -87,6 +98,8 @@
       constructor(options) {
         super(options)
         this.deviceType = options.deviceType || 'host'
+        // 节点激活状态颜色
+        this.style.activeColor = 'green'
       }
       render() {
         let img = ''
@@ -115,38 +128,31 @@
 
     let img
     // 自定义一个分组
-    class MyGroup extends RectGroup {
-      async update() {
-        if (!this.canvas) return
-        const { graphCanvasCtx } = this.canvas
-        const width = this.getWidth()
-        const height = this.getHeight()
-        const { x, y } = this.getPosition()
-        const center = this.centerPoint
-
-        graphCanvasCtx.beginPath()
-        graphCanvasCtx.rect(x, y, width, height)
-
-        if /*折叠状态*/ (!this.isExpanded) {
-
-          // 绘制折叠状态的图标
-          if (!img) {
-            img = await imgLoad('./images/设备组.svg')
-            canvas.repaint = true
-          }
-          graphCanvasCtx.drawImage(img, center.x - 16, center.y - 16)
-        }
-
-        graphCanvasCtx.save()
-        if (this.active) {
-          graphCanvasCtx.shadowBlur = 5
-          graphCanvasCtx.shadowColor = 'rgba(255,0,0,0.8)'
-        }
-        graphCanvasCtx.strokeStyle = '#066df2'
-        graphCanvasCtx.stroke()
-        graphCanvasCtx.restore()
+    class MyGroup extends RectDomGroup {
+      constructor(options) {
+        super(options)
+        this.style.activeColor = 'red'
+      }
+      render() {
+        this.$el.innerHTML = `
+          <div class="my-group">
+            ${this.isExpanded ?
+            '' :
+            '<img draggable="false" src="./images/设备组.svg" />'}
+          </div>
+        `
       }
     }
+
+    const MODE_AREA_PICK_2 = '自定义的框选模式'
+    Canvas.registerMode(MODE_AREA_PICK_2, [
+      new WheelZoomInteraction(),
+      new AreaPickInteraction(),
+      // 创建组的交互，参数（可选）：一个返回分组实例的函数
+      new CreateGroupInteraction(() => new MyGroup({
+        id: Math.random()
+      }))
+    ])
 
     // 监听画布 “挂载”事件, 确保挂载后才能 添加节点或连线
     canvas.eventEmitter.on('canvas:mounted', function () {
@@ -220,33 +226,16 @@
       // coordinate 是鼠标释放坐标位置
       // dataTransfer
       const { coordinate, dataTransfer } = e
-      let node
-      switch (dataTransfer.getData('deviceType')) {
-        case 'host':
-          node = new MyNode({
-            id: Math.random(),
-            width: 70,
-            height: 70,
-            x: coordinate.x - 35,
-            y: coordinate.y - 35,
-            text: 'host',
-            deviceType: 'host'
-          })
-          canvas.addNode(node)
-          break
-        case 'server':
-          node = new MyNode({
-            id: Math.random(),
-            width: 70,
-            height: 70,
-            x: coordinate.x - 35,
-            y: coordinate.y - 35,
-            text: 'server',
-            deviceType: 'server'
-          })
-          canvas.addNode(node)
-          break
-      }
+      let node = new MyNode({
+        id: Math.random(),
+        width: 70,
+        height: 70,
+        x: coordinate.x - 35,
+        y: coordinate.y - 35,
+        text: dataTransfer.getData('deviceType'),
+        deviceType: dataTransfer.getData('deviceType')
+      })
+      canvas.addNode(node)
     })
 
     canvas.start()

@@ -72,8 +72,8 @@ export class CircularLayout extends Layout {
         }
       }
     }
-    // debugger
-
+    
+    this.canvas.repaint = true
   }
 
 }

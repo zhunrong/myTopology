@@ -31,6 +31,11 @@ export class MatrixLayout extends Layout {
    */
   nodeRadius = 50
 
+  /**
+   * 布局过渡时间
+   */
+  duration = 0
+
   transports: Transport[] = []
 
   layout() {
@@ -67,10 +72,12 @@ export class MatrixLayout extends Layout {
         transport.destination.copy(origin)
         transport.destination.x += (c - 1) * (this.nodeRadius * 2 + this.columnGap)
         transport.destination.y += (r - 1) * (this.nodeRadius * 2 + this.rowGap)
-        transport.duration = 1000
+        transport.duration = this.duration
         this.transports.push(transport)
       }
     }
+
+    this.canvas.repaint = true
   }
 }
 

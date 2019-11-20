@@ -41,12 +41,12 @@ export abstract class Layout {
   /**
    * 更新
    */
-  update() {
+  update(): boolean {
     const activeTrans = this.transports.filter(item => !item.complete)
-    if (activeTrans.length) {
-      this.canvas.optimizeNode()
-      activeTrans.forEach(transport => transport.update())
-    }
+    this.canvas.optimizeNode()
+    if (!activeTrans.length) return false
+    activeTrans.forEach(transport => transport.update())
+    return true
   }
 
   /**

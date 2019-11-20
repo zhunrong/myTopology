@@ -52,7 +52,7 @@
 <body>
   <button onclick="changeMode(MODE_DEFAULT)">默认模式</button>
   <button onclick="changeMode(MODE_CUSTOM_1)">创建连线（虚线、双箭头）</button>
-  <button onclick="changeMode(MODE_CUSTOM_2)">创建连线（实线、有箭头）</button>
+  <button onclick="changeMode(MODE_CUSTOM_2)">创建连线（实线、单箭头）</button>
   <div class="node-list">
     <img ondragstart="dragStart(event)" data-type="host" draggable="true" src="./images/windows主机.png">
     <img ondragstart="dragStart(event)" data-type="server" draggable="true" src="./images/服务器.png">
@@ -90,7 +90,7 @@
       }
     }
     const MODE_CUSTOM_1 = '创建连线（虚线、双箭头）'
-    const MODE_CUSTOM_2 = '创建连线（实线、有箭头）'
+    const MODE_CUSTOM_2 = '创建连线（实线、单箭头）'
 
     // 注册一个自定义的模式
     // 参数一是模式的名字 string
@@ -199,33 +199,16 @@
       // coordinate 是鼠标释放坐标位置
       // dataTransfer
       const { coordinate, dataTransfer } = e
-      let node
-      switch (dataTransfer.getData('deviceType')) {
-        case 'host':
-          node = new MyNode({
-            id: Math.random(),
-            width: 70,
-            height: 70,
-            x: coordinate.x - 35,
-            y: coordinate.y - 35,
-            text: 'host',
-            deviceType: 'host'
-          })
-          canvas.addNode(node)
-          break
-        case 'server':
-          node = new MyNode({
-            id: Math.random(),
-            width: 70,
-            height: 70,
-            x: coordinate.x - 35,
-            y: coordinate.y - 35,
-            text: 'server',
-            deviceType: 'server'
-          })
-          canvas.addNode(node)
-          break
-      }
+      let node = new MyNode({
+        id: Math.random(),
+        width: 70,
+        height: 70,
+        x: coordinate.x - 35,
+        y: coordinate.y - 35,
+        text: dataTransfer.getData('deviceType'),
+        deviceType: dataTransfer.getData('deviceType')
+      })
+      canvas.addNode(node)
     })
 
     canvas.eventEmitter.on('canvas:menu', function (e) {
