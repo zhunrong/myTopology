@@ -91,7 +91,7 @@ export class L extends Edge {
     if (!ctx) return
     const sourceNode = this.getSourceNode()
     const targetNode = this.getTargetNode()
-    
+
     // 两端节点都存在且至少有一个是可见的
     if (sourceNode.visible || targetNode.visible) {
 
@@ -173,9 +173,11 @@ export class L extends Edge {
         this.targetArrowElement.render(ctx)
       }
 
-      this.animate.path = [sourceJoinPoint, ...this.middlePoints, targetJoinPoint]
-      this.animate.update()
-      this.animate.render(ctx)
+      if (this.canvas) {
+        this.animate.path = [sourceJoinPoint, ...this.middlePoints, targetJoinPoint]
+        this.animate.update(this.canvas.clock.getDelta())
+        this.animate.render(ctx)
+      }
 
       ctx.restore()
     }

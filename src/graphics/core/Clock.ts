@@ -11,6 +11,4 @@ export class Clock {
   }
 }
 
-export const globalClock = new Clock()
-
 export default Clock

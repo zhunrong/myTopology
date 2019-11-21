@@ -141,9 +141,11 @@ export class Line extends Edge {
         this.targetArrowElement.render(ctx)
       }
 
-      this.animate.path = [this.begin, this.end]
-      this.animate.update()
-      this.animate.render(ctx)
+      if (this.canvas) {
+        this.animate.path = [this.begin, this.end]
+        this.animate.update(this.canvas.clock.getDelta())
+        this.animate.render(ctx)
+      }
 
       ctx.restore()
     }

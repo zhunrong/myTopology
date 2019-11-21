@@ -9,7 +9,7 @@ import Interaction from '../interaction/Interaction'
 import modeManager, { MODE_DEFAULT } from '../mode/modes'
 import Plugin from '../plugin/Plugin'
 import Layout from '../layout/Layout'
-import { globalClock } from './Clock'
+import Clock from './Clock'
 import style from './canvas.less'
 import config from '../config/config'
 
@@ -55,6 +55,11 @@ export class Canvas {
   eventEmitter: EventEmitter = new EventEmitter()
   nativeEvent: Event | null = null
   optimize: boolean = true
+
+  /**
+   * 时钟
+   */
+  clock = new Clock()
 
   /**
    * 节点渲染类型
@@ -595,7 +600,7 @@ export class Canvas {
   loop() {
     if (!this._running) return
     this._animationFrameId = requestAnimationFrame(() => {
-      globalClock.update()
+      this.clock.update()
       // 判断是否需要重绘
       if (this.repaint || this.animate) {
         this.graphCanvasCtx.clearRect(0, 0, this.viewWidth, this.viewHeight)

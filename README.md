@@ -21,9 +21,12 @@
 
    + 属性：
 
-      - `interactionMode`：当前交互模式
-      - `renderType`：节点渲染类型
-      - `stage`：画布舞台（根节点）
+      - `interactionMode`: ***string*** 当前交互模式
+      - `renderType`: ***string*** 节点渲染类型
+      - `rootNode`: ***Node*** 根节点
+      - `stage`: ***Node*** 画布舞台（`rootNode`的别名）
+      - `eventEmitter`: ***EventEmitter*** 事件模型
+      - `plugins`: ***Plugin[]*** 插件列表
       - ...
 
    + 实例方法：
@@ -47,7 +50,7 @@
 
    + 静态方法：
 
-      - `registerMode`：注册自定义模式
+      - `registerMode(modeName: string, interactions: Interaction[])`：注册自定义模式
 
 2. 节点
 
@@ -386,6 +389,8 @@
       - `unmount(): void` 卸载
       - 其他方法参考`Plugin`
 
+---
+
 ### 四、布局
 
 0. 布局基类（抽象类）
@@ -450,3 +455,40 @@
    + 实例方法：
 
       - 参考`Layout`方法
+
+---
+
+### 五、其他
+
+1. 事件触发器
+
+   + 类名：`EventEmitter`
+   + 属性：
+
+      - `events`: ***IEvents*** 事件池
+
+   + 实例方法
+
+      - `on(eventName: string, listener: (event?: any): void): void` 监听事件
+      - `off(eventName: string, listener: (event?: any): void): void` 移除监听
+      - `emit(eventName: string, params?: any): void` 触发事件
+
+2. 二维向量
+
+   + 类名：`Vector2d`
+
+3. Math2d
+
+   + 类名：`Math2d`
+   + 静态方法：
+
+      - `isPointInRect(P: Vector2d, rectPosition: Vector2d, width: number, height: number): boolean` 判断点是否在矩形内
+      - `isPointInCircle(P: Vector2d, C: Vector2d, radius: number): boolean` 判断点是否在圆内
+      - `isPointInTriangle(P: Vector2d, A: Vector2d, B: Vector2d, C: Vector2d): boolean` 判断点是否在三角形内
+      - `isPointInPolygon(P: Vector2d, points: Vector2d[]): boolean` 判断点是否在多边形内
+      - `isPointInLineSegment(P: Vector2d, lineSegment: [Vector2d, Vector2d], deviation: number = 0.01): boolean` 判断点是否在线段上
+      - `isPointInPolyline(P: Vector2d, polyline: Vector2d[], deviation: number = 0.01): boolean` 判断点是否在多线段上
+      - `isIntersect(line1: [Vector2d, Vector2d], line2: [Vector2d, Vector2d]): boolean` 判断两条线是否相交
+      - `getLineIntersect(line1: [Vector2d, Vector2d], line2: [Vector2d, Vector2d]): Vector2d` 获取两条相交线段的交点
+      - `getLinePoint(line: Vector2d[], ratio: number): Vector2d | null` 根据ratio,获取线段上点的坐标,起点为0,终点为1
+      - `getPolyLineLength(line: Vector2d[]): number` 获取多线段的长度

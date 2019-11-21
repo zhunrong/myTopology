@@ -1,6 +1,5 @@
 import Canvas from '../core/Canvas'
 import Vector2d from '../utils/Vector2d'
-import { globalClock } from '../core/Clock'
 import Node from '../graph/Node'
 
 export class Transport {
@@ -11,9 +10,8 @@ export class Transport {
   duration = 0
   pass = 0
   complete = false
-  update() {
+  update(timeDelta: number) {
     if (!this.node || this.complete) return
-    const timeDelta = globalClock.getDelta()
     this.pass += timeDelta
     const timeRemain = this.duration > this.pass ? this.duration - this.pass : 0
     this.distance.copy(this.destination).substract(this.node.centerPoint)
@@ -45,7 +43,8 @@ export abstract class Layout {
     const activeTrans = this.transports.filter(item => !item.complete)
     this.canvas.optimizeNode()
     if (!activeTrans.length) return false
-    activeTrans.forEach(transport => transport.update())
+    const timeDelta = this.canvas.clock.getDelta()
+    activeTrans.forEach(transport => transport.update(timeDelta))
     return true
   }
 

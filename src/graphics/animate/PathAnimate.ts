@@ -1,7 +1,6 @@
 import Vector2d from '../utils/Vector2d'
 import Element from '../element/Element'
 import Math2d from '../utils/Math2d'
-import { globalClock } from '../core/Clock'
 
 export class PathAnimate {
   path: Vector2d[] = []
@@ -10,10 +9,9 @@ export class PathAnimate {
   progress: number = 0
   private _lastPoint: Vector2d | null = null
 
-  update() {
+  update(timeDelta: number) {
     if (!this.element) return
     if (this.duration <= 0) return
-    const timeDelta = globalClock.getDelta()
     this.progress += timeDelta / this.duration
     this.progress %= 1
     const currentPoint = Math2d.getLinePoint(this.path, this.progress)
