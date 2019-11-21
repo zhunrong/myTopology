@@ -3,7 +3,7 @@ import Circle, { ICircleNodeOptions } from '../graph/CircleNode'
 export interface ICircleCanvasNodeOptions extends ICircleNodeOptions { }
 
 export class CircleCanvasNode extends Circle {
-  renderType: 'CANVAS' = 'CANVAS'
+  readonly renderType = 'CANVAS'
   cacheCanvas = document.createElement('canvas')
 
   constructor(options: ICircleCanvasNodeOptions) {

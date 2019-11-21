@@ -79,7 +79,7 @@
       }
       // 处理画布的原生事件,例如click,mousedown,mousemove,mouseup等等
       handleEvent(canvas, event) {
-        switch(event.type){
+        switch (event.type) {
           case 'mousedown':
             // do ...
             break
@@ -99,12 +99,12 @@
       new SelectInteraction(), // 内置交互,用于选中节点或连线,一般建议放在前面
       new MoveCanvasInteraction(), // 内置交互,用于拖拽整个画布
       new WheelZoomInteraction(), // 内置交互,使用鼠标滚轮缩放画布
-      new CreateLineInteraction({
+      new CreateEdgeInteraction((sourceNode, targetNode) => new Line({
+        sourceNode,
+        targetNode,
         dash: true,
-        arrow: false,
-        doubleArrow: true,
-        text: 'text'
-      }),
+        doubleArrow: true
+      })),
       new MyInteraction() // 自定义交互
     ])
 
@@ -112,11 +112,11 @@
       new SelectInteraction(),
       new MoveCanvasInteraction(),
       new WheelZoomInteraction(),
-      new CreateLineInteraction({
-        dash: false,
-        arrow: true,
-        text: ''
-      })
+      new CreateEdgeInteraction((sourceNode, targetNode) => new Line({
+        sourceNode,
+        targetNode,
+        arrow: true
+      })),
     ])
 
 

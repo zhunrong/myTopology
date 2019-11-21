@@ -2,33 +2,28 @@ import Interaction from './Interaction'
 import Canvas from '../core/Canvas'
 import Node from '../graph/Node'
 import Line from '../edge/Line'
+import Edge from '../graph/Edge'
 
-interface ICreateLineInteraction {
-  text?: string
-  arrow?: boolean
-  dash?: boolean
-  doubleArrow?: boolean
-}
+type CreateEdge = (sourceNode: Node, targetNode: Node) => Edge
+
 /**
- * 连线（直线）
+ * 创建连线
  */
-export class CreateLineInteraction extends Interaction {
+export class CreateEdgeInteraction extends Interaction {
   targetNode: Node | undefined
   sourceNode: Node | undefined
-  edge: Line | undefined
-
-  text: string = ''
-  arrow: boolean = false
-  dash: boolean = false
-  doubleArrow: boolean = false
-  constructor(options?: ICreateLineInteraction) {
+  edge: Edge | undefined
+  onCreate: CreateEdge
+  constructor(onCreate?: CreateEdge) {
     super()
-    if (options) {
-      this.text = options.text || ''
-      this.arrow = options.arrow || false
-      this.dash = options.dash || false
-      this.doubleArrow = options.doubleArrow || false
-    }
+    this.onCreate = onCreate || ((sourceNode, targetNode) => new Line({
+      text: '',
+      sourceNode,
+      targetNode,
+      arrow: true,
+      dash: false,
+      doubleArrow: false
+    }))
   }
   onMouseUp = (canvas: Canvas) => {
     if (this.edge) {
@@ -63,14 +58,7 @@ export class CreateLineInteraction extends Interaction {
         }
       })
       if (this.sourceNode) {
-        this.edge = new Line({
-          sourceNode: this.sourceNode,
-          targetNode: canvas.virtualNode,
-          arrow: this.arrow,
-          text: this.text,
-          dash: this.dash,
-          doubleArrow: this.doubleArrow
-        })
+        this.edge = this.onCreate(this.sourceNode, canvas.virtualNode)
         canvas.addEdge(this.edge)
       }
     }
@@ -104,5 +92,4 @@ export class CreateLineInteraction extends Interaction {
   }
 }
 
-export const createEdgeInteraction = new CreateLineInteraction()
-export default CreateLineInteraction
+export default CreateEdgeInteraction

@@ -3,7 +3,7 @@ import RectNode, { IRectNodeOptions } from '../graph/RectNode'
 export interface IRectCanvasNodeOptions extends IRectNodeOptions { }
 
 export class RectCanvasNode extends RectNode {
-  renderType: 'CANVAS' = 'CANVAS'
+  readonly renderType = 'CANVAS'
   cacheCanvas = document.createElement('canvas')
 
   constructor(options: IRectCanvasNodeOptions) {

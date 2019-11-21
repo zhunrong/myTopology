@@ -10,6 +10,7 @@
 
    + 类名：`Canvas`
    + 参数：options: Object
+
       - `container`: ***HTMLElement*** 放置画布的容器元素
       - `scale`?: ***number*** 画布缩放值
       - `maxScale`?: ***number*** 最大缩放值
@@ -17,12 +18,16 @@
       - `mode`?: ***string*** 交互模式
       - `animate`?: ***boolean*** 开启动画，使用连线动画时，需要设置为`true`
       - `renderType`?: ***string*** 渲染类型，默认为`DOM`用于渲染DOM类型的节点，如果要渲染canvas节点需要设置为`CANVAS` 
+
    + 属性：
+
       - `interactionMode`：当前交互模式
       - `renderType`：节点渲染类型
       - `stage`：画布舞台（根节点）
       - ...
+
    + 实例方法：
+
       - `setZoom(scale: number): void` 设置画布缩放
       - `setMode(mode: string): void` 设置交互模式
       - `destroy(): void` 销毁
@@ -39,12 +44,14 @@
       - `use(plugin: Plugin): void` 使用插件
       - `start(): void` 开始绘制
       - `stop(): void` 停止绘制
+
    + 静态方法：
+
       - `registerMode`：注册自定义模式
 
 2. 节点
 
-   1. 节点（抽象类）
+   1. 节点基类（抽象类）
 
       + 类名：`Node`
       + 参数：options: Object
@@ -54,6 +61,49 @@
          - `id`?: ***any*** id
          - `text`?: ***string*** 显示文本
          - `data?`: ***any*** 用户数据
+
+      + 属性：
+
+         - `position`: ***Vector2d*** 位置
+         - `id`: ***any*** id
+         - `mounted`: ***boolean*** 是否已挂载
+         - `visible`: ***boolean*** 是否可见
+         - `miniMapVisible`: ***boolean*** 在鹰眼地图上是否可见
+         - `text`: ***string*** 文本
+         - `vertexes`: ***Vector2d[]*** 顶点坐标
+         - `centerPoint`: ***Vector2d*** 几何中心
+         - `boundingJoinPoints`: ***Vector2d[]*** 边界矩形上的连接点
+         - `boundingRect`: ***Vector2d[]*** 同`vertexes`
+         - `circumradius`: ***number*** 外接圆半径
+         - `renderType`: ***string*** 渲染类型（只读）
+         - `isGroup`: ***boolean*** 是否为组
+         - `isExpanded`: ***boolean*** 是否展开
+         - `canResize`: ***boolean*** 是否可以调节大小
+         - `children`: ***Node[]*** 子节点
+         - `parent`: ***Node | undefined*** 父节点
+         - `edges`: ***Edge[]*** 相连的连线
+         - `root`: ***Node*** 根节点
+         - `depth`: ***number*** 节点深度
+
+      + 实例方法：
+         
+         - `translate(offset: Vector2d): void` 移动节点以及其后代元素
+         - `addEdge(edge: Edge): void` 添加连线
+         - `removeEdge(edge: Edge): void` 删除连线
+         - `addChild(child: Node): Node|undefined` 添加子节点
+         - `removeChild(child: Node, destroy: boolean = true): boolean` 删除并且销毁子节点
+         - `removeAllChild(destroy: boolean = true): void` 删除所有子节点
+         - `hasChild(child: Node): boolean` 判断一个节点是否为子节点
+         - `hasDescendant(descendant: Node): boolean` 判断一个节点是否为后代节点
+         - `hasActiveAncestor(): boolean` 判断是否有激活的祖先节点
+         - `getActiveChild(): Node[]` 获取激活状态的子节点列表
+         - `getActiveDescendant(): Node[]` 获取激活状态的后代节点列表
+         - `getDescendantDF(handler?: handler): Node[]` 遍历后代节点。1.深度优先；2.从右到左；3.从下到上
+         - `getDescendantBF(handler?: handler): Node[]` 遍历后代节点。1.广度优先；
+         2.从左到右；3.从上到下
+         - `mount(force = false): void` 挂载
+         - `unmount(): void` 卸载
+         - `destroy(): void` 销毁
 
    2. 矩形节点（抽象类）
 
@@ -67,6 +117,14 @@
          - `minHeight`?:  ***number*** 最小高度
          - 其他参数参考`Node`
 
+      + 属性：
+
+         - 参考`Node`属性
+
+      + 实例方法：
+
+         - 参考`Node`方法
+
    3. 圆形节点（抽象类）
 
       + 类名：`CircleNode`
@@ -77,6 +135,14 @@
          - `minRadius`?: ***number*** 最小半径
          - 其他参数参考`Node`
 
+      + 属性：
+
+         - 参考`Node`属性
+
+      + 实例方法：
+
+         - 参考`Node`方法
+
    4. 矩形-DOM节点
 
       + 类名：`RectDomNode`
@@ -84,6 +150,14 @@
       + 参数：options: Object
 
          - 参考`RectNode`参数
+
+      + 属性：
+
+         - 参考`RectNode`属性
+
+      + 实例方法：
+
+         - 参考`RectNode`方法
 
    5. 矩形-DOM节点组
 
@@ -93,6 +167,14 @@
          
          - `isExpanded`?: ***boolean*** 是否展开
          - 其他参数参考`RectDomNode`
+
+      + 属性：
+
+         - 参考`RectNode`属性
+
+      + 实例方法：
+
+         - 参考`RectNode`方法
 
    6. 矩形-CANVAS节点
    7. 矩形-CANVAS节点组
@@ -174,43 +256,28 @@
       + 类名：`SelectInteraction`
       + 参数：无
 
-   6. 节点连线（直线）
+   6. 节点连线
 
-      + 类名：`CreateLineInteraction`
-      + 参数：options: Object
+      + 类名：`CreateEdgeInteraction`
+      + 参数：(onCreate?: (sourceNode: Node, targetNode: Node) => Edge)
 
-         - `text`?: ***string*** 连线文本
-         - `arrow`?: ***boolean*** 单箭头
-         - `doubleArrow`?: ***boolean*** 双箭头
-         - `dash`?: ***boolean*** 虚线
-
-   7. 节点连线（折线）
-
-      + 类名：`CreateLInteraction`
-      + 参数：options: Object
-
-         - `text`?: ***string*** 连线文本
-         - `arrow`?: ***boolean*** 单箭头
-         - `doubleArrow`?: ***boolean*** 双箭头
-         - `dash`?: ***boolean*** 虚线
-
-   8. 框选节点
+   7. 框选节点
 
       + 类名：`AreaPickInteraction`
       + 参数：无
 
-   9. 右键菜单创建分组
+   8. 右键菜单创建分组
 
       + 类名：`CreateGroupInteraction`
       + 参数：(`onCreate`?: () => Node)
       + 依赖插件：`ContextMenu`
 
-   10. 折叠或展开节点
+   9. 折叠或展开节点
 
-       + 类名：`CollapseAndExpandInteraction`
-       + 参数：无
+      + 类名：`CollapseAndExpandInteraction`
+      + 参数：无
 
-   11. 鼠标调整节点大小
+   10. 鼠标调整节点大小
 
        + 类名：`ResizeInteraction`
        + 参数：无
@@ -245,7 +312,7 @@
 
          1. `SelectInteraction`
          2. `WheelZoomInteraction`
-         3. `CreateLineInteraction`
+         3. `CreateEdgeInteraction`
          4. `MoveCanvasInteraction`
 
    4. 连线模式（折线）
@@ -255,7 +322,7 @@
 
          1. `SelectInteraction`
          2. `WheelZoomInteraction`
-         3. `CreateLInteraction`
+         3. `CreateEdgeInteraction`
          4. `MoveCanvasInteraction`
 
    5. 框选模式
@@ -282,12 +349,31 @@
 0. 插件基类（抽象类）
 
    + 类名：`Plugin`
+   + 实例方法：
+   
+      - `install(canvas: Canvas): void` 安装
+      - `destroy(): void` 销毁
+      - `update(): void` 更新，画布重绘时，内部调用
 
 1. 右键菜单
 
    + 类名：`ContextMenu`
    + 继承：`Plugin`
    + 参数：无
+   + 属性：
+
+      - `onContextMenu`: ***(instance: this, target: Node | Edge | null, nodes: Node[], edges: Edge[]) => IMenu[]*** 该属性是一个返回菜单数组的函数，鼠标右键时执行
+      - `menu`: ***IMenu[]*** 菜单列表
+         
+         + `IMenu`(菜单项)字段
+
+            - `label`: ***string***
+            - `command`: ***string***
+   
+   + 实例方法
+
+      - `show(menu: IMenu[] = [], left?: number, top?: number): void` 显示菜单，left,top为显示位置
+      - `hide(): void` 隐藏
 
 2. 鹰眼地图
 
@@ -298,7 +384,7 @@
 
       - `mount(container: HTMLElement): void` 挂载到容器元素内
       - `unmount(): void` 卸载
-      - `destroy(): void` 销毁
+      - 其他方法参考`Plugin`
 
 ### 四、布局
 

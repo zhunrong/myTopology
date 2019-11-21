@@ -3,13 +3,13 @@ import DragInteraction from '../interaction/dragInteraction'
 import DropInteraction from '../interaction/dropInteraction'
 import MoveCanvasInteraction from '../interaction/moveCanvasInteraction'
 import WheelZoomInteraction from '../interaction/wheelZoomInteraction'
-import CreateLineInteraction from '../interaction/createEdgeInteraction'
-import CreateLInteraction from '../interaction/createLInteraction'
 import SelectInteraction from '../interaction/selectInteraction'
 import AreaPickInteraction from '../interaction/areaPickInteraction'
 import CreateGroupInteraction from '../interaction/createGroupInteraction'
 import ResizeInteraction from '../interaction/resizeInteraction'
 import CollapseAndExpandInteraction from '../interaction/collapseAndExpandInteraction'
+import CreateEdgeInteraction from '../interaction/CreateEdgeInteraction'
+import L from '../edge/L'
 
 // 默认模式
 export const MODE_DEFAULT = 'mode.default'
@@ -71,7 +71,6 @@ modeManager.registerMode(MODE_DEFAULT, [
   new DragInteraction(),
   new DropInteraction(),
   new WheelZoomInteraction(),
-  // new MenuInteraction(),
   new CollapseAndExpandInteraction()
 ])
 modeManager.registerMode(MODE_VIEW, [
@@ -81,16 +80,18 @@ modeManager.registerMode(MODE_VIEW, [
 modeManager.registerMode(MODE_CREATE_EDGE, [
   new SelectInteraction(),
   new WheelZoomInteraction(),
-  new CreateLineInteraction({
-    arrow: true
-  }),
+  new CreateEdgeInteraction(),
   new MoveCanvasInteraction()
 ])
 modeManager.registerMode(MODE_CREATE_L, [
   new SelectInteraction(),
   new WheelZoomInteraction(),
-  new CreateLInteraction({
-    arrow: true
+  new CreateEdgeInteraction((sourceNode, targetNode) => {
+    return new L({
+      sourceNode,
+      targetNode,
+      arrow: true
+    })
   }),
   new MoveCanvasInteraction()
 ])

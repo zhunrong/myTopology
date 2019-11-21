@@ -4,7 +4,7 @@ import style from './rectDomNode.less'
 export interface IRectDomNodeOptions extends IRectNodeOptions { }
 
 export class RectDomNode extends RectNode {
-  renderType: 'DOM' = 'DOM'
+  readonly renderType = 'DOM'
   $el = document.createElement('div')
 
   constructor(options: IRectDomNodeOptions) {
