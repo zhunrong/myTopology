@@ -26,7 +26,6 @@ export interface ILOptions extends IEdgeOptions {
 
 const sourceJoinPointCopy = new Vector2d()
 const targetNodeCenterCopy = new Vector2d()
-const pixelCoordinateCopy = new Vector2d()
 
 const ARROW_SIZE = { width: 8, height: 10 }
 

@@ -476,6 +476,36 @@
 2. 二维向量
 
    + 类名：`Vector2d`
+   + 实例属性：
+    
+      - `x`: ***number*** 横坐标
+      - `y`: ***number*** 纵坐标
+      - `magnitude`: ***number*** 模
+
+   + 静态属性：
+
+      - `xAxis`: ***Vector2d*** x轴单位向量
+      - `yAxis`: ***Vector2d*** y轴单位向量
+
+   + 实例方法：
+
+      - `add(target: Vector2d): this` 矢量加
+      - `substract(target: Vector2d): this` 矢量减
+      - `dotProduct(target: Vector2d): number` 点积
+      - `crossProduct(target: Vector2d): number` 叉积
+      - `scale(scalar: number): this` 与标量相乘
+      - `edge(target: Vector2d): Vector2d` 边缘向量
+      - `perpendicular(): Vector2d` 正交向量
+      - `normalize(): Vector2d` 单位向量
+      - `normal(): Vector2d` 法向量
+      - `cosAngle(target: Vector2d): number` 求与目标向量的夹角余弦值
+      - `angle(target: Vector2d): number` 求与目标向量的夹角（弧度值）
+      - `xAxisAngle(): number` 与x轴夹角(顺时针为正) [-Math.PI,Math.PI]
+      - `rotate(deg: number): this` 旋转向量
+      - `project(target: Vector2d): Vector2d` 在目标向量上的投影
+      - `equal(target: Vector2d): boolean` 是否与目标向量相等
+      - `copy(target: Vector2d): this` 复制目标向量
+      - `clone(): Vector2d` 克隆当前向量
 
 3. Math2d
 
@@ -492,3 +522,92 @@
       - `getLineIntersect(line1: [Vector2d, Vector2d], line2: [Vector2d, Vector2d]): Vector2d` 获取两条相交线段的交点
       - `getLinePoint(line: Vector2d[], ratio: number): Vector2d | null` 根据ratio,获取线段上点的坐标,起点为0,终点为1
       - `getPolyLineLength(line: Vector2d[]): number` 获取多线段的长度
+
+4. canvas基本元素
+
+   0. Element基类（抽象类）
+
+      + 类名：`Element`
+      + 属性：
+
+         - `position`: ***Vector2d*** 位置
+         - `offset`: ***Vector2d*** 偏移
+
+      + 实例方法：
+
+         - `render(ctx: CanvasRenderingContext2D): void` 渲染
+         - `isPointIn(point: Vector2d): boolean` 判断点是否在图形内
+
+   1. 矩形
+
+      + 类名：`Rect`
+      + 继承：`Element`
+      + 属性：
+
+         - `width`: ***number*** 宽
+         - `height`: ***height*** 高
+         - `fillStyle`: ***string***
+         - `strokeStyle`: ***string***
+         - 其他属性参考`Element`
+
+      + 实例方法：
+
+         - 参考`Element`
+
+   2. 三角形
+
+      + 类名：`Triangle`
+      + 继承：`Element`
+      + 属性：
+
+         - `width`: ***number*** 宽
+         - `height`: ***height*** 高
+         - 其他属性参考`Element`
+
+      + 实例方法：
+
+         - 参考`Element`
+
+   3. 图片
+
+      + 类名：`Img`
+      + 继承：`Element`
+      + 属性：
+
+         - `image`: ***CanvasImageSource | undefined***
+         - 其他属性参考`Element`
+
+      + 实例方法：
+
+         - 参考`Element`
+
+   4. 多线段
+
+      + 类名：`Polyline`
+      + 继承：`Element`
+      + 属性：
+
+         - `points`: ***Vector2d[]***
+         - `lineWidth`: ***number***
+         - 其他属性参考`Element`
+
+      + 实例方法：
+
+         - 参考`Element`
+
+   5. 文字
+
+      + 类名：`Text`
+      + 继承：`Element`
+      + 属性：
+
+         - `text`: ***string***
+         - `font`: ***string***
+         - `backgroundColor`: ***string***
+         - 其他属性参考`Element`
+
+      + 实例方法：
+
+         - 参考`Element`
+      
+

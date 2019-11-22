@@ -125,7 +125,7 @@ module.exports = NODE_ENV => ({
     new HtmlWebpackPlugin({
       template: path.resolve(root, 'template.ejs'),
       filename: 'index.html',
-      // favicon: path.resolve(root, 'favicon.ico'),
+      favicon: path.resolve(root, 'favicon.ico'),
       cache: false
     }),
     // copy文件

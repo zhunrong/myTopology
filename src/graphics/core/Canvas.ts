@@ -1,4 +1,4 @@
-import { EventEmitter } from '../events/eventEmitter'
+import EventEmitter from '../events/eventEmitter'
 import Vector2d from '../utils/Vector2d'
 import { Edge } from '../graph/Edge'
 import { throttle, isRectNode } from '../utils/utils'
@@ -11,7 +11,6 @@ import Plugin from '../plugin/Plugin'
 import Layout from '../layout/Layout'
 import Clock from './Clock'
 import style from './canvas.less'
-import config from '../config/config'
 
 /**
  * 原生事件监听列表
@@ -47,7 +46,6 @@ export class Canvas {
   static registerMode(modeName: string, interactions: Interaction[]) {
     modeManager.registerMode(modeName, interactions)
   }
-  static config = config
   private mounted: boolean = false
   private _running: boolean = false
   private _animationFrameId: number = 0
@@ -124,6 +122,9 @@ export class Canvas {
    */
   plugins: Plugin[] = []
 
+  /**
+   * 布局
+   */
   layout: Layout | null = null
 
   constructor(options: ICanvasOptions) {

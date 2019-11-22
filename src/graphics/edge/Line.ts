@@ -82,9 +82,7 @@ export class Line extends Edge {
   render(ctx?: CanvasRenderingContext2D) {
     const targetNode = this.getTargetNode()
     const sourceNode = this.getSourceNode()
-    // const level = Math.max(targetNode.zIndex, sourceNode.zIndex)
     ctx = ctx || (this.canvas && this.canvas.graphCanvasCtx)
-    // ctx = ctx || (this.canvas && this.canvas.layers[level] && this.canvas.layers[level].getContext('2d') as CanvasRenderingContext2D)
     if (!ctx) return
 
     if (sourceNode.visible || targetNode.visible) {
