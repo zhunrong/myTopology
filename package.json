@@ -1,24 +1,21 @@
 {
-  "name": "my-graphics",
+  "name": "ivory-topology",
   "version": "1.0.0",
   "description": "my graphics",
-  "main": "postcss.config.js",
+  "main": "./bundle/topology.js",
   "scripts": {
     "start": "npm run dev",
     "dev": "webpack-dev-server --config ./build/index.js --env.NODE_ENV=development",
     "build": "webpack --config ./build/index.js --env.NODE_ENV=production",
-    "lib": "webpack --config ./build/index.js --env.NODE_ENV=lib"
+    "lib": "webpack --config ./build/index.js --env.NODE_ENV=lib",
+    "bundle": "tsc --build tsconfig-bundle.json"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/zhunrong/myWebsite.git"
   },
-  "author": "",
+  "author": "chenzr",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/zhunrong/myWebsite/issues"
-  },
-  "homepage": "https://github.com/zhunrong/myWebsite#readme",
   "devDependencies": {
     "@babel/core": "^7.4.0",
     "@babel/plugin-proposal-class-properties": "^7.4.0",
