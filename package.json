@@ -1,6 +1,6 @@
 {
   "name": "ivory-topology",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "my graphics",
   "main": "./bundle/topology.js",
   "scripts": {
@@ -8,16 +8,18 @@
     "dev": "webpack-dev-server --config ./build/index.js --env.NODE_ENV=development",
     "build": "webpack --config ./build/index.js --env.NODE_ENV=production",
     "lib": "webpack --config ./build/index.js --env.NODE_ENV=lib",
-    "bundle": "tsc --build tsconfig-bundle.json"
+    "types": "tsc --build tsconfig-types.json"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zhunrong/myWebsite.git"
+    "url": "git@gitee.com:shsnc_big_screen/graphics.git"
   },
   "files": [
-    "bundle",
-    "examples"
+    "lib",
+    "examples",
+    "types"
   ],
+  "types": "types",
   "author": "chenzr",
   "license": "ISC",
   "devDependencies": {

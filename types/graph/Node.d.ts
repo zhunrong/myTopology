@@ -1,0 +1,57 @@
+import Graph, { IGraphOptions } from './Graph';
+import Vector2d from '../utils/Vector2d';
+import Edge from './Edge';
+export interface INodeOptions extends IGraphOptions {
+    x?: number;
+    y?: number;
+    id?: any;
+}
+export declare type BoundingRect = Vector2d[];
+export declare type handler = (node: Node) => void | true;
+export declare abstract class Node extends Graph {
+    id: any;
+    position: Vector2d;
+    mounted: boolean;
+    getPosition(): Vector2d;
+    get visible(): boolean;
+    set visible(visible: boolean);
+    get miniMapVisible(): boolean;
+    get text(): string;
+    set text(value: string);
+    abstract get vertexes(): Vector2d[];
+    abstract get centerPoint(): Vector2d;
+    abstract get boundingJoinPoints(): Vector2d[];
+    abstract get boundingRect(): Vector2d[];
+    abstract get circumradius(): number;
+    abstract readonly renderType: 'CANVAS' | 'DOM' | 'NONE';
+    abstract readonly shapeType: string;
+    isGroup: boolean;
+    isExpanded: boolean;
+    canResize: boolean;
+    children: Node[];
+    parent: Node | undefined;
+    edges: Edge[];
+    constructor(options: INodeOptions);
+    translate(offset: Vector2d): void;
+    addEdge(edge: Edge): void;
+    removeEdge(edge: Edge): void;
+    addChild(child: Node): Node | undefined;
+    addChildAt(child: Node, index: number): Node | undefined;
+    removeChild(child: Node, destroy?: boolean): boolean;
+    removeAllChild(destroy?: boolean): void;
+    hasChild(child: Node): boolean;
+    hasDescendant(descendant: Node): boolean;
+    hasActiveAncestor(): boolean;
+    getActiveChild(): Node[];
+    getActiveDescendant(): Node[];
+    getDescendantDF(handler?: handler): Node[];
+    getDescendantBF(handler?: handler): Node[];
+    get root(): Node;
+    get depth(): number;
+    get firstChild(): Node | undefined;
+    get lastChild(): Node | undefined;
+    mount(force?: boolean): void;
+    unmount(): void;
+    destroy(): void;
+}
+export default Node;

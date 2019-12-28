@@ -1,0 +1,10 @@
+import Node from '../graph/Node';
+import RectNode from '../graph/RectNode';
+import CircleNode from '../graph/CircleNode';
+import RectDomGroup from '../node/RectDomGroup';
+export declare function throttle(func: (...params: any[]) => void): (...params: any[]) => void;
+export declare function imgLoad(src: string): Promise<HTMLImageElement>;
+export declare function applyMixins(derivedCtor: any, baseCtors: any[]): void;
+export declare function isRectNode(node: Node): node is RectNode;
+export declare function isCircleNode(node: Node): node is CircleNode;
+export declare function isRectDomGroup(node: Node): node is RectDomGroup;
