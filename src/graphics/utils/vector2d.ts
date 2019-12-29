@@ -158,7 +158,11 @@ export class Vector2d {
    * @param target 
    */
   distance(target: Vector2d): number {
-    return this.edge(target).magnitude
+    return Math.sqrt(this.squareDistance(target))
+  }
+
+  squareDistance(target: Vector2d): number {
+    return (this.x - target.x) ** 2 + (this.y - target.y) ** 2
   }
 
   /**
