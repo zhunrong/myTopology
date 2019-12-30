@@ -129,10 +129,10 @@ module.exports = NODE_ENV => ({
       cache: false
     }),
     // copy文件
-    new CopyWebpackPlugin([{
-      from: path.resolve(root, 'static'),
-      to: path.resolve(root, 'docs/static')
-    }]),
+    // new CopyWebpackPlugin([{
+    //   from: path.resolve(root, 'static'),
+    //   to: path.resolve(root, 'docs/static')
+    // }]),
     new webpack.ProvidePlugin({
       // 'editormd': 'editor.md/editormd.min.js'
     })

@@ -56,11 +56,20 @@ export class ContextMenu extends Plugin {
       return `<div class="item" data-command="${item.command}">${item.label}</div>`
     })
     this.container.innerHTML = html.join('')
+    document.body.appendChild(this.container)
     Object.assign(this.container.style, {
       left: `${x}px`,
-      top: `${y}px`
+      top: `${y}px`,
     })
-    document.body.appendChild(this.container)
+    const domRect = this.container.getBoundingClientRect()
+    const viewWidth = window.innerWidth - 10
+    const viewHeight = window.innerHeight - 10
+    const offsetX = domRect.right > viewWidth ? viewWidth - domRect.right : 0
+    const offsetY = domRect.bottom > viewHeight ? viewHeight - domRect.bottom : 0
+    Object.assign(this.container.style, {
+      left: `${x + offsetX}px`,
+      top: `${y + offsetY}px`,
+    })
   }
 
   /**
@@ -76,9 +85,9 @@ export class ContextMenu extends Plugin {
    * 处理上下文菜单事件
    */
   handleContextMenu = (e: MouseEvent) => {
-    if (!this.canvas || !this.onContextMenu) return
     this.position.x = e.clientX
     this.position.y = e.clientY
+    if (!this.canvas || !this.onContextMenu) return
     const activeNodes = this.canvas.getActiveNodes()
     const activeEdges = this.canvas.getActiveEdges()
     let target = activeNodes.find(node => node.isPointIn()) || activeEdges.find(edge => edge.isPointIn()) || null

@@ -35,7 +35,6 @@ export class CreateGroupInteraction extends Interaction {
     const contextMenu = canvas.plugins.find(plugin => plugin instanceof ContextMenu) as ContextMenu | undefined
     if (!contextMenu) return
     const activeNodes = canvas.getActiveNodes()
-    const event = e as MouseEvent
     if (activeNodes.length) {
       this.parentNode = undefined
       const index = activeNodes.findIndex(node => {
@@ -50,19 +49,19 @@ export class CreateGroupInteraction extends Interaction {
             label: '添加到组',
             command: 'addToGroup'
           }
-        ], event.clientX, event.clientY)
+        ])
       }
     }
   }
   onInstall = (canvas: Canvas) => {
     this.canvas = canvas
-    canvas.eventEmitter.on('canvas:menu', this.onAddToGroup)
+    canvas.eventEmitter.on('canvas:menu', this.onCanvasMenu)
   }
   onUninstall = (canvas: Canvas) => {
-    canvas.eventEmitter.off('canvas:menu', this.onAddToGroup)
+    canvas.eventEmitter.off('canvas:menu', this.onCanvasMenu)
   }
   //
-  onAddToGroup = (menu: any) => {
+  onCanvasMenu = (menu: any) => {
     if (menu.command !== 'addToGroup') return
     const activeNodes = this.canvas.getActiveNodes()
     if (!activeNodes.length) return

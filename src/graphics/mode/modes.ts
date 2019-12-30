@@ -1,14 +1,15 @@
 import Interaction from '../interaction/Interaction'
-import DragInteraction from '../interaction/dragInteraction'
-import DropInteraction from '../interaction/dropInteraction'
-import MoveCanvasInteraction from '../interaction/moveCanvasInteraction'
-import WheelZoomInteraction from '../interaction/wheelZoomInteraction'
-import SelectInteraction from '../interaction/selectInteraction'
-import AreaPickInteraction from '../interaction/areaPickInteraction'
-import CreateGroupInteraction from '../interaction/createGroupInteraction'
-import ResizeInteraction from '../interaction/resizeInteraction'
-import CollapseAndExpandInteraction from '../interaction/collapseAndExpandInteraction'
+import DragInteraction from '../interaction/DragInteraction'
+import DropInteraction from '../interaction/DropInteraction'
+import MoveCanvasInteraction from '../interaction/MoveCanvasInteraction'
+import WheelZoomInteraction from '../interaction/WheelZoomInteraction'
+import SelectInteraction from '../interaction/SelectInteraction'
+import AreaPickInteraction from '../interaction/AreaPickInteraction'
+import CreateGroupInteraction from '../interaction/CreateGroupInteraction'
+import ResizeInteraction from '../interaction/ResizeInteraction'
+import CollapseAndExpandInteraction from '../interaction/CollapseAndExpandInteraction'
 import CreateEdgeInteraction from '../interaction/CreateEdgeInteraction'
+import ManualAlignInteraction from '../interaction/ManualAlignInteraction'
 import L from '../edge/L'
 
 // 默认模式
@@ -71,7 +72,8 @@ modeManager.registerMode(MODE_DEFAULT, [
   new DragInteraction(),
   new DropInteraction(),
   new WheelZoomInteraction(),
-  new CollapseAndExpandInteraction()
+  new CollapseAndExpandInteraction(),
+  new ManualAlignInteraction()
 ])
 modeManager.registerMode(MODE_VIEW, [
   new MoveCanvasInteraction(),
@@ -98,7 +100,8 @@ modeManager.registerMode(MODE_CREATE_L, [
 modeManager.registerMode(MODE_AREA_PICK, [
   new WheelZoomInteraction(),
   new AreaPickInteraction(),
-  new CreateGroupInteraction()
+  new CreateGroupInteraction(),
+  new ManualAlignInteraction()
 ])
 modeManager.registerMode(MODE_BORDER, [
   new ResizeInteraction(),
