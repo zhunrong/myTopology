@@ -80,8 +80,8 @@ export class DragInteraction extends Interaction {
     this.moveNodes.forEach(node => {
       node.translate(pixelOffset)
     })
-    canvas.repaint = true
     this.autoAlign(canvas)
+    canvas.repaint = true
   }
 
   onMouseUp = (canvas: Canvas) => {
@@ -91,6 +91,7 @@ export class DragInteraction extends Interaction {
     this.moveNodes = []
     this.mousedown = false
     topCanvasCtx.clearRect(0, 0, viewWidth, viewHeight)
+    canvas.repaint = true
   }
 
   handleEvent(canvas: Canvas, event: Event) {

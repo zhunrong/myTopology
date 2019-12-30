@@ -116,10 +116,9 @@
 
     // 自定义一个节点
     class MyNode extends RectDomNode {
-      deviceType = ''
-      canResize = true
       constructor(options) {
         super(options)
+        this.canResize = true
         this.deviceType = options.deviceType || 'host'
       }
       render() {

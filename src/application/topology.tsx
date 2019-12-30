@@ -42,7 +42,7 @@ export default class Topology extends Component<IProps, IState> {
         scale: 1,
         // renderType: 'CANVAS'
       })
-      this.canvas.animate = true
+      // this.canvas.animate = true
 
       // mini map
       const map = new MiniMap()

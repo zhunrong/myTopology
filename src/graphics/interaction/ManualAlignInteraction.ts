@@ -98,6 +98,7 @@ export class ManualAlignInteraction extends Interaction {
       }
       node.translate(offset)
     })
+    this.canvas.repaint = true
   }
 
 }
