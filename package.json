@@ -1,8 +1,8 @@
 {
   "name": "ivory-topology",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "description": "my graphics",
-  "main": "./lib/graphics.js",
+  "main": "./lib/index.js",
   "scripts": {
     "start": "npm run dev",
     "dev": "webpack-dev-server --config ./build/index.js --env.NODE_ENV=development",
@@ -16,10 +16,8 @@
   },
   "files": [
     "lib",
-    "examples",
-    "types"
+    "examples"
   ],
-  "types": "types",
   "author": "chenzr",
   "license": "ISC",
   "devDependencies": {

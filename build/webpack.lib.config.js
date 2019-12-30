@@ -10,10 +10,11 @@ module.exports = NODE_ENV => ({
   },
   output: {
     path: path.resolve(__dirname, '../lib'),
-    filename: '[name].js',
+    filename: 'index.js',
     libraryTarget: 'umd'
   },
   target: 'web',
+  devtool: 'none',
   mode: 'production',
   resolve: {
     // 创建模块别名，在import require时使用别名会更简洁
@@ -124,8 +125,8 @@ module.exports = NODE_ENV => ({
       onEnd: {
         copy: [
           {
-            source: path.resolve(root, 'lib/*'),
-            destination: path.resolve(root, 'examples/lib')
+            source: path.resolve(root, 'lib/index.js'),
+            destination: path.resolve(root, 'examples/lib/graphics.js')
           }
         ]
       }
