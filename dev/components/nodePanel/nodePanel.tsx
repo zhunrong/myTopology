@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import style from './nodePanel.scss'
+import style from './nodePanel.less'
 
 interface IState {
   nodeTypes: any[]

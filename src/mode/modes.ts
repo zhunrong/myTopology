@@ -32,8 +32,50 @@ interface IMode {
 /**
  * 模式管理器
  */
-class ModeManager {
+export class ModeManager {
   modes: IMode = {}
+  constructor() {
+    this.registerMode(MODE_DEFAULT, [
+      new SelectInteraction(),
+      new DragInteraction(),
+      new DropInteraction(),
+      new WheelZoomInteraction(),
+      new CollapseAndExpandInteraction(),
+      new ManualAlignInteraction()
+    ])
+    this.registerMode(MODE_VIEW, [
+      new MoveCanvasInteraction(),
+      new WheelZoomInteraction()
+    ])
+    this.registerMode(MODE_CREATE_EDGE, [
+      new SelectInteraction(),
+      new WheelZoomInteraction(),
+      new CreateEdgeInteraction(),
+      new MoveCanvasInteraction()
+    ])
+    this.registerMode(MODE_CREATE_L, [
+      new SelectInteraction(),
+      new WheelZoomInteraction(),
+      new CreateEdgeInteraction((sourceNode, targetNode) => {
+        return new L({
+          sourceNode,
+          targetNode,
+          arrow: true
+        })
+      }),
+      new MoveCanvasInteraction()
+    ])
+    this.registerMode(MODE_AREA_PICK, [
+      new WheelZoomInteraction(),
+      new AreaPickInteraction(),
+      new CreateGroupInteraction(),
+      new ManualAlignInteraction()
+    ])
+    this.registerMode(MODE_BORDER, [
+      new ResizeInteraction(),
+      new WheelZoomInteraction()
+    ])
+  }
   /**
    * 注册一个模式
    * @param modeName 
@@ -65,47 +107,5 @@ class ModeManager {
   }
 }
 
-const modeManager = new ModeManager()
 
-modeManager.registerMode(MODE_DEFAULT, [
-  new SelectInteraction(),
-  new DragInteraction(),
-  new DropInteraction(),
-  new WheelZoomInteraction(),
-  new CollapseAndExpandInteraction(),
-  new ManualAlignInteraction()
-])
-modeManager.registerMode(MODE_VIEW, [
-  new MoveCanvasInteraction(),
-  new WheelZoomInteraction()
-])
-modeManager.registerMode(MODE_CREATE_EDGE, [
-  new SelectInteraction(),
-  new WheelZoomInteraction(),
-  new CreateEdgeInteraction(),
-  new MoveCanvasInteraction()
-])
-modeManager.registerMode(MODE_CREATE_L, [
-  new SelectInteraction(),
-  new WheelZoomInteraction(),
-  new CreateEdgeInteraction((sourceNode, targetNode) => {
-    return new L({
-      sourceNode,
-      targetNode,
-      arrow: true
-    })
-  }),
-  new MoveCanvasInteraction()
-])
-modeManager.registerMode(MODE_AREA_PICK, [
-  new WheelZoomInteraction(),
-  new AreaPickInteraction(),
-  new CreateGroupInteraction(),
-  new ManualAlignInteraction()
-])
-modeManager.registerMode(MODE_BORDER, [
-  new ResizeInteraction(),
-  new WheelZoomInteraction()
-])
-
-export default modeManager
+export default ModeManager

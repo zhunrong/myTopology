@@ -8,12 +8,12 @@ export declare const MODE_BORDER = "mode.border";
 interface IMode {
     [name: string]: Interaction[];
 }
-declare class ModeManager {
+export declare class ModeManager {
     modes: IMode;
+    constructor();
     registerMode(modeName: string, interactions: Interaction[]): void;
     unregisterMode(modeName: string): void;
     use(modeName: string): Interaction[];
     hasMode(modeName: string): boolean;
 }
-declare const modeManager: ModeManager;
-export default modeManager;
+export default ModeManager;

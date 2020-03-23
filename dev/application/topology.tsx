@@ -6,15 +6,14 @@ import { MiniMap, ContextMenu, IMenu } from '../../src'
 // layout
 import { CircularLayout, MatrixLayout, ForceLayout } from '../../src'
 import Device from '../components/node/Node'
-// import CustomCanvasNode from '../components/node/CanvasNode'
 import NodePanel from '../components/nodePanel/nodePanel'
 import { Menu, Dropdown } from 'antd'
 import {
   MODE_CREATE_EDGE_DOUBLE_ARROW,
-  MODE_CREATE_L_DOUBLE_ARROW
+  MODE_CREATE_L_DOUBLE_ARROW,
+  registerMode
 } from './modes'
-import "./topology.scss"
-// import "./treeTest"
+import "./topology.less"
 interface IProps { }
 interface IState {
   mode: string
@@ -42,7 +41,7 @@ export default class Topology extends Component<IProps, IState> {
         scale: 1,
         // renderType: 'CANVAS'
       })
-      // this.canvas.animate = true
+      registerMode(this.canvas)
 
       // mini map
       const map = new MiniMap()
@@ -85,18 +84,6 @@ export default class Topology extends Component<IProps, IState> {
       this.canvas.eventEmitter.on('canvas:mounted', () => {
         this.canvas.removeAllNode()
         const topoData = JSON.parse(localStorage.getItem('topoData') || JSON.stringify({ nodes: [], edges: [], zoom: 1 }))
-
-        // performance test
-        // topoData.nodes = new Array(100).fill({
-        //   width: 80,
-        //   height: 80,
-        //   x: 0,
-        //   y: 0,
-        //   id: Math.random(),
-        //   nodeType: 'customNode',
-        //   text: '???',
-        //   parentId: 'rootNode'
-        // })
 
         this.canvas.setZoom(topoData.zoom || 1)
         this.nodes = topoData.nodes.map((item: any) => {

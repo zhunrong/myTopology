@@ -6,7 +6,7 @@ import ResizeObserver from 'resize-observer-polyfill'
 import Node from '../graph/Node'
 import VirtualNode from '../graph/VirtualNode'
 import Interaction from '../interaction/Interaction'
-import modeManager, { MODE_DEFAULT } from '../mode/modes'
+import ModeManager, { MODE_DEFAULT } from '../mode/modes'
 import Plugin from '../plugin/Plugin'
 import Layout from '../layout/Layout'
 import Clock from './Clock'
@@ -43,8 +43,8 @@ export class Canvas {
    * @param modeName 
    * @param interactions 
    */
-  static registerMode(modeName: string, interactions: Interaction[]) {
-    modeManager.registerMode(modeName, interactions)
+  registerMode(modeName: string, interactions: Interaction[]) {
+    this.modeManager.registerMode(modeName, interactions)
   }
   private mounted: boolean = false
   private _running: boolean = false
@@ -66,6 +66,7 @@ export class Canvas {
 
   // 交互模式
   interactionMode: string = MODE_DEFAULT
+  modeManager: ModeManager = new ModeManager()
   // 最外层div
   protected container: HTMLElement
   // canvas与div的容器
@@ -246,7 +247,7 @@ export class Canvas {
     this.plugins.forEach(plugin => {
       plugin.handleEvent(event)
     })
-    modeManager.use(this.interactionMode).forEach(interaction => {
+    this.modeManager.use(this.interactionMode).forEach(interaction => {
       interaction.handleEvent(this, event)
     })
     this.eventEmitter.emit(event.type, event)
@@ -500,15 +501,15 @@ export class Canvas {
    * @param mode 
    */
   setMode(mode: string) {
-    if (!modeManager.hasMode(mode)) {
+    if (!this.modeManager.hasMode(mode)) {
       console.warn(`该模式不存在:${mode}`)
       return
     }
-    modeManager.use(this.interactionMode).forEach(action => {
+    this.modeManager.use(this.interactionMode).forEach(action => {
       action.onUninstall(this)
     })
     this.interactionMode = mode
-    modeManager.use(this.interactionMode).forEach(action => {
+    this.modeManager.use(this.interactionMode).forEach(action => {
       action.onInstall(this)
     })
   }
@@ -612,7 +613,7 @@ export class Canvas {
         this.render()
         this.graphCanvasCtx.restore()
         // 交互更新
-        modeManager.use(this.interactionMode).forEach(action => {
+        this.modeManager.use(this.interactionMode).forEach(action => {
           action.onUpdate(this)
         })
         // 插件更新

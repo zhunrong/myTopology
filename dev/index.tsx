@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './application/topology'
 import 'antd/dist/antd.css'
-import './styles/styles.scss'
+import './assets/styles/styles.less'
 ReactDOM.render(<App />, document.getElementById('app'))
 
 if(module.hot){

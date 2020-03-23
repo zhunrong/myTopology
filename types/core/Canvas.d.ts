@@ -4,6 +4,7 @@ import { Edge } from '../graph/Edge';
 import Node from '../graph/Node';
 import VirtualNode from '../graph/VirtualNode';
 import Interaction from '../interaction/Interaction';
+import ModeManager from '../mode/modes';
 import Plugin from '../plugin/Plugin';
 import Layout from '../layout/Layout';
 import Clock from './Clock';
@@ -18,7 +19,7 @@ export interface ICanvasOptions {
     renderType?: RenderType;
 }
 export declare class Canvas {
-    static registerMode(modeName: string, interactions: Interaction[]): void;
+    registerMode(modeName: string, interactions: Interaction[]): void;
     private mounted;
     private _running;
     private _animationFrameId;
@@ -29,6 +30,7 @@ export declare class Canvas {
     clock: Clock;
     renderType: RenderType;
     interactionMode: string;
+    modeManager: ModeManager;
     protected container: HTMLElement;
     wrapper: HTMLDivElement;
     containerClientRect: ClientRect | undefined;

@@ -99,7 +99,7 @@
       // 注册一个自定义的模式
       // 参数一是模式的名字 string
       // 参数二是交互对象数组 Interaction[]
-      Canvas.registerMode(MODE_CUSTOM_1, [
+      canvas.registerMode(MODE_CUSTOM_1, [
         new SelectInteraction(), // 内置交互,用于选中节点或连线,一般建议放在前面
         new MoveCanvasInteraction(), // 内置交互,用于拖拽整个画布
         new WheelZoomInteraction(), // 内置交互,使用鼠标滚轮缩放画布
@@ -115,7 +115,7 @@
         new MyInteraction() // 自定义交互
       ])
 
-      Canvas.registerMode(MODE_CUSTOM_2, [
+      canvas.registerMode(MODE_CUSTOM_2, [
         new SelectInteraction(),
         new MoveCanvasInteraction(),
         new WheelZoomInteraction(),
