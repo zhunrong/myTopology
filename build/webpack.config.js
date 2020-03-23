@@ -7,21 +7,20 @@ const root = path.resolve(__dirname, '../')
 module.exports = NODE_ENV => ({
   entry: {
     // polyfill: "babel-polyfill",
-    app: path.resolve(__dirname, '../src/index.tsx')
+    app: path.resolve(__dirname, '../dev/index.tsx')
   },
   output: {
     path: path.resolve(__dirname, '../docs'),
     // 使用[chunkhash]时,bundle文件名是对文件内容的映射,
     // 所以如果文件没有修改,名字不变,有利于客户端的缓存策略
-    filename: `./static/js/[name]${
-      NODE_ENV === 'production' ? '.[chunkhash]' : ''
-      }.js`
+    filename: `./static/js/[name]${NODE_ENV === 'production' ? '.[chunkhash]' : ''}.js`
   },
   target: 'web',
   resolve: {
     // 创建模块别名，在import require时使用别名会更简洁
     alias: {
-      '@': path.resolve(root, 'src/')
+      '@': path.resolve(root, 'dev/'),
+      topology: path.resolve(root, 'src/')
     },
     // 当导入文件没有明确扩展名，将依次使用一下扩展名进行推测
     extensions: ['.js', '.jsx', '.json', '.ts', '.tsx']
@@ -33,12 +32,12 @@ module.exports = NODE_ENV => ({
         // 需要安装"babel-plugin-syntax-dynamic-import"插件并配置
         test: /\.jsx?$/,
         loader: 'babel-loader',
-        include: path.resolve(root, 'src')
+        include: [path.resolve(root, 'src'), path.resolve(root, 'dev')]
       },
       {
         test: /\.tsx?$/,
         loader: 'babel-loader',
-        include: path.resolve(root, 'src')
+        include: [path.resolve(root, 'src'), path.resolve(root, 'dev')]
       },
       {
         test: /\.css$/,
@@ -137,6 +136,5 @@ module.exports = NODE_ENV => ({
       // 'editormd': 'editor.md/editormd.min.js'
     })
   ],
-  externals: {
-  }
+  externals: {}
 })

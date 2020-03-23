@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
-import { MODE_DEFAULT, MODE_VIEW, MODE_CREATE_EDGE, MODE_AREA_PICK, MODE_CREATE_L, MODE_BORDER, RectCanvasNode } from '../graphics'
-import { Canvas, CircleCanvasNode, Line as Edge, RectCanvasGroup, RectDomGroup, CircleCanvasGroup, L, Img, Node } from '../graphics'
+import { MODE_DEFAULT, MODE_VIEW, MODE_CREATE_EDGE, MODE_AREA_PICK, MODE_CREATE_L, MODE_BORDER, RectCanvasNode } from '../../src'
+import { Canvas, CircleCanvasNode, Line as Edge, RectCanvasGroup, RectDomGroup, CircleCanvasGroup, L, Img, Node } from '../../src'
 // plugins
-import { MiniMap, ContextMenu, IMenu } from '../graphics'
+import { MiniMap, ContextMenu, IMenu } from '../../src'
 // layout
-import { CircularLayout, MatrixLayout, ForceLayout } from '../graphics'
+import { CircularLayout, MatrixLayout, ForceLayout } from '../../src'
 import Device from '../components/node/Node'
 // import CustomCanvasNode from '../components/node/CanvasNode'
 import NodePanel from '../components/nodePanel/nodePanel'

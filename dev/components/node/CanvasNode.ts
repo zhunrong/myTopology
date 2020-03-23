@@ -1,5 +1,5 @@
-import RectCanvasNode, { IRectCanvasNodeOptions } from '../../graphics/node/RectCanvasNode'
-import { imgLoad } from '../../graphics/utils/utils'
+import { IRectCanvasNodeOptions, RectCanvasNode } from '../../../src'
+import { imgLoad } from '../../../src'
 
 const deviceMap: { [key: string]: string } = {
   '主机1': require('../../assets/device/主机1.png'),

@@ -6,7 +6,7 @@ const root = path.resolve(__dirname, '../')
 module.exports = NODE_ENV => ({
   entry: {
     // polyfill: "babel-polyfill",
-    graphics: path.resolve(__dirname, '../src/graphics/index.ts')
+    graphics: path.resolve(__dirname, '../src/index.ts')
   },
   output: {
     path: path.resolve(__dirname, '../lib'),
