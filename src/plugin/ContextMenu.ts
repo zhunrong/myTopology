@@ -11,11 +11,15 @@ export interface IMenu {
   [key: string]: any
 }
 
+export interface IOnContextMenu {
+  (instance: ContextMenu, target: Node | Edge | null, nodes: Node[], edges: Edge[]): IMenu[]
+}
+
 export class ContextMenu extends Plugin {
   position = new Vector2d()
   mounted = false
   container = document.createElement('div')
-  onContextMenu: ((instance: this, target: Node | Edge | null, nodes: Node[], edges: Edge[]) => IMenu[]) | null = null
+  onContextMenu: IOnContextMenu = () => []
   menu: IMenu[] = []
   constructor() {
     super()
@@ -46,8 +50,8 @@ export class ContextMenu extends Plugin {
    */
   show(menu: IMenu[] = [], left?: number, top?: number) {
     this.hide()
-    if (!menu.length) return
     this.menu = menu
+    if (!menu.length) return
     let { x, y } = this.position
     x = left !== undefined ? left : x
     y = top !== undefined ? top : y
@@ -87,7 +91,7 @@ export class ContextMenu extends Plugin {
   handleContextMenu = (e: MouseEvent) => {
     this.position.x = e.clientX
     this.position.y = e.clientY
-    if (!this.canvas || !this.onContextMenu) return
+    if (!this.canvas) return
     const activeNodes = this.canvas.getActiveNodes()
     const activeEdges = this.canvas.getActiveEdges()
     let target = activeNodes.find(node => node.isPointIn()) || activeEdges.find(edge => edge.isPointIn()) || null

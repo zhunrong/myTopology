@@ -8,11 +8,14 @@ export interface IMenu {
     command: string;
     [key: string]: any;
 }
+export interface IOnContextMenu {
+    (instance: ContextMenu, target: Node | Edge | null, nodes: Node[], edges: Edge[]): IMenu[];
+}
 export declare class ContextMenu extends Plugin {
     position: Vector2d;
     mounted: boolean;
     container: HTMLDivElement;
-    onContextMenu: ((instance: this, target: Node | Edge | null, nodes: Node[], edges: Edge[]) => IMenu[]) | null;
+    onContextMenu: IOnContextMenu;
     menu: IMenu[];
     constructor();
     handleEvent(event: Event): void;
