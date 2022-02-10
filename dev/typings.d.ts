@@ -6,8 +6,16 @@ declare module '*.less' {
   interface IStyle {
     [key: string]: string
   }
-  const style: IStyle
-  export default style
+  const style: IStyle;
+  export default style;
+}
+
+declare module '*.scss' {
+  interface IStyle {
+    [key: string]: string
+  }
+  const style: IStyle;
+  export default style;
 }
 
 declare module 'resize-observer-polyfill' {
@@ -17,5 +25,5 @@ declare module 'resize-observer-polyfill' {
     unobserve(el: HTMLElement): void
     disconnect(): void
   }
-  export default ResizeObserver
+  export default ResizeObserver;
 }

@@ -1,4 +1,4 @@
-import { Canvas, SelectInteraction, WheelZoomInteraction, MoveCanvasInteraction, CreateEdgeInteraction, Line, L } from '../../src'
+import { Canvas, SelectInteraction, WheelZoomInteraction, MoveCanvasInteraction, CreateEdgeInteraction, Line, L } from '../../package'
 
 /**
  * 模式：创建双箭头直线
